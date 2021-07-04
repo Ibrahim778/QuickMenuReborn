@@ -2,8 +2,8 @@
 #define WIDGETS_H_QM_REBORN
 
 #include "main.h"
+#include "../quickmenureborn/qm_reborn.h"
 #include "types.h"
-#include "quickmenureborn/qm_reborn.h"
 
 #define SCROLL_VIEW_BOX_ID 0x0EE0C8AF
 #define ON_PRESS_EVENT_ID 0x10000008

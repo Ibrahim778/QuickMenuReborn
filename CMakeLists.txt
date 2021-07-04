@@ -27,10 +27,15 @@ file(GLOB user_hfiles
     "${CMAKE_SOURCE_DIR}/src/user/*.h"
 )
 
+file(GLOB qm_reborn_includes
+    "${CMAKE_SOURCE_DIR}/src/quickmenureborn/*.h"
+)
+
 
 add_executable(${PROJECT_NAME}
     ${user_cppfiles}
     ${user_cfiles}
+    ${qm_reborn_includes}
     ${user_hfiles}
 )
 
@@ -52,7 +57,7 @@ install(DIRECTORY ${CMAKE_BINARY_DIR}/user_stubs/
   FILES_MATCHING PATTERN "*.a"
 )
 
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/src/user/quickmenureborn/
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/src/quickmenureborn/
   DESTINATION include/quickmenureborn
   FILES_MATCHING PATTERN "*.h"
 )

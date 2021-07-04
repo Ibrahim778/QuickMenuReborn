@@ -1,5 +1,5 @@
 #include "main.h"
-#include "quickmenureborn/qm_reborn.h"
+#include "../quickmenureborn/qm_reborn.h"
 
 #ifdef __cplusplus
 extern "C" {

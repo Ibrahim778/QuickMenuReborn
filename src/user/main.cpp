@@ -1,7 +1,7 @@
 #include "main.h"
 #include "types.h"
 #include "widgets.h"
-#include "quickmenureborn/qm_reborn.h"
+#include "../quickmenureborn/qm_reborn.h"
 #include "event_handler.cpp"
 
 SceUID mainThreadID = -1;
