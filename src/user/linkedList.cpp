@@ -24,7 +24,7 @@ public:
         node *tmp = head;
         while (tmp != NULL)
         {
-            if(!sceClibStrcmp(tmp->widget.refId, widget.refId))
+            if(sceClibStrcmp(tmp->widget.refId, widget.refId) == 0)
                 break;
             tmp = tmp->next;
         }
@@ -61,7 +61,7 @@ public:
         while (current != NULL)
         {
 
-            if(!sceClibStrcmp(refId, current->widget.refId))
+            if(sceClibStrcmp(refId, current->widget.refId) == 0)
             {
                 break;
             }
