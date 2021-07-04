@@ -6,15 +6,19 @@ QuickMenuReborn:
   main:
     start: module_start
     stop: module_stop
-    
-  #modules:
-  #  QuickMenuReborn:
-  #    syscall: false
-  #    functions:
-  #      - _Z18qm_reborn_ezbuttonPcS_7vector4S0_11widgetColorS_PFvvE
-  #      - _Z20qm_reborn_ezcheckboxPcS_7vector4S0_11widgetColorPFviE
-  #      - _Z16qm_reborn_eztextPcS_7vector4S0_11widgetColorS_
-  #      - _Z16unregisterWidgetPc
-  #      - _Z14registerWidget10widgetData
-  #      - makeWidgetColor
-  #      - makeWidgetVector4
+  modules:
+    QuickMenuReborn:
+      syscall: false
+      functions:
+        - qm_reborn_ezbutton
+        - qm_reborn_ezcheckbox
+        - qm_reborn_eztext
+        - unregisterWidget
+        - updateWidget
+        - registerWidget
+        - makeWidgetColor
+        - makeWidgetVector4
+        - qm_reborn_ezupdate_text
+        - qm_reborn_ezupdate_checkbox
+        - qm_reborn_ezupdate_plane
+        - qm_reborn_ezupdate_button

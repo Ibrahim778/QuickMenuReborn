@@ -7,7 +7,6 @@
 using namespace paf;
 using namespace widget;
 
-
 #pragma region EasyDefs
 #define Seconds * 1000 * 1000
 

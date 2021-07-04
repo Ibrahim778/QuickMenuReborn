@@ -72,6 +72,13 @@ typedef struct
 widgetColor makeWidgetColor(float r, float g, float b, float a);
 vector4 makeWidgetVector4(float x, float y, float z, float w);
 
+#define UPDATE_COLOR 0x1
+#define UPDATE_SIZE 0x2
+#define UPDATE_POSITION 0x4
+#define UPDATE_TEXT 0x8
+#define UPDATE_EVENT 0x10
+#define UPDATE_ALL 0xFF
+
 #ifdef __cplusplus
 }
 #endif

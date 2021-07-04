@@ -8,6 +8,7 @@ WString makeWString(const char *string)
     String *str = new String(string);
     WString wstr;
     str->ToWString(&wstr);
+    delete str;
     return wstr;
 }
 

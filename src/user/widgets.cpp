@@ -66,7 +66,9 @@ SceUInt32 getHashByID(char *id)
 
 Widget *makeWidget(char *refId, char *idType, char *type, Widget *parent)
 {
+    //WidgetInfo
     paf::Resource::Element winfo;
+    //SearchInfo
     paf::Resource::Element sinfo;
     paf::Resource::Element searchRequest;
 
@@ -75,6 +77,7 @@ Widget *makeWidget(char *refId, char *idType, char *type, Widget *parent)
     
     searchRequest.id.Set(idType);
     TRY_RET(sinfo.GetHashById(&searchRequest), sinfo.hash, SceUInt32);
+    
 
     Widget *newWidget;
     TRY_RET(imposePlugin->CreateWidgetWithStyle(parent, type, &winfo, &sinfo), newWidget, Widget *);
@@ -101,60 +104,109 @@ int setText(char *text, Widget *widget)
     return widget->SetLabel(&wstr);
 }
 
-int spawn(node *node)
+int updateWidget(widgetData data, int flags)
 {
-    Widget *made;
-    made = makeWidget(node->widget.refId, (char *)idTypes[node->widget.type], (char *)widgetTypes[node->widget.type], (node->widget.parentRefId == NULL ? main_plane : findWidgetByHash(getHashByID(node->widget.parentRefId))));
-    NULL_ERROR_FAIL(made);
-    SceFVector4 pos = makeSceVector4(node->widget.pos);
-    SceFVector4 size = makeSceVector4(node->widget.size);
-    Widget::Color col = makeSceColor(node->widget.col);
-    made->SetPosition(&pos);
-    made->SetSize(&size);
+    sceClibPrintf("Update widget called! %s %d\n", data.refId, flags);
+    //Update the widget in the linked list for when it needs to be redrawn
+    currentWidgets.update_node(data);
+
+    SceAppMgrAppState state;
+    _sceAppMgrGetAppState(&state, sizeof(state), 0);
+    //If quickMenu is being displayed, update the current widget
+    if(state.isSystemUiOverlaid)
+        editWidget(data, flags);
+    
+    return 0;
+}
+
+int updateValues(Widget *made, widgetData widget, int flags)
+{
+    SceFVector4 pos = makeSceVector4(widget.pos);
+    SceFVector4 size = makeSceVector4(widget.size);
+    Widget::Color col = makeSceColor(widget.col);
+    
+    if(flags & UPDATE_POSITION) made->SetPosition(&pos);
+    if(flags & UPDATE_SIZE) made->SetSize(&size);
 
     QMEventHandler *eh = new QMEventHandler();
-    switch (node->widget.type)
+    switch (widget.type)
     {
         case button:
         {
-            eh->pUserData = sce_paf_private_malloc(sizeof(widgetData));
-            sce_paf_private_memcpy(eh->pUserData, &node->widget, sizeof(widgetData));
-            made->SetFilterColor(&col);
-            setText(node->widget.data.ButtonData.label, made);
-            made->RegisterEventCallback(ON_PRESS_EVENT_ID, eh, 0);
+            if(flags & UPDATE_EVENT)
+            {
+                eh->pUserData = sce_paf_private_malloc(sizeof(widgetData));
+                sce_paf_private_memcpy(eh->pUserData, &widget, sizeof(widgetData));
+                made->RegisterEventCallback(ON_PRESS_EVENT_ID, eh, 0);
+            }
+            if(flags & UPDATE_COLOR) made->SetFilterColor(&col);
+            if(flags & UPDATE_TEXT) setText(widget.data.ButtonData.label, made);
             break;
         }
 
         case check_box:
         {
-            eh->pUserData = sce_paf_private_malloc(sizeof(widgetData));
-            sce_paf_private_memcpy(eh->pUserData, &node->widget, sizeof(widgetData));
-            made->SetFilterColor(&col);
-            made->RegisterEventCallback(ON_PRESS_EVENT_ID, eh, 0);
+            if(flags & UPDATE_EVENT)
+            {
+                eh->pUserData = sce_paf_private_malloc(sizeof(widgetData));
+                sce_paf_private_memcpy(eh->pUserData, &widget, sizeof(widgetData));
+                made->RegisterEventCallback(ON_PRESS_EVENT_ID, eh, 0);
+            }
+            if(flags & UPDATE_COLOR) made->SetFilterColor(&col);
             break;
         }
         
         case text:
         {
-            made->SetFilterColor(&col);
-            sceClibPrintf("got size = %.1f, %s bold\n", node->widget.data.TextData.fontSize, node->widget.data.TextData.isbold ? "is" : "is not");
-            TRY(made->SetOption(Widget::Option::Text_Bold, 0,0,node->widget.data.TextData.isbold));
-            setText(node->widget.data.TextData.label, made);
+            delete eh;
+            if(flags & UPDATE_COLOR) made->SetFilterColor(&col);
+            if(flags & UPDATE_TEXT)
+            {
+                TRY(made->SetOption(Widget::Option::Text_Bold, 0,0,widget.data.TextData.isbold));
+                setText(widget.data.TextData.label, made);
+            }
             break;
         }
         
         case plane:
         {
-            made->SetFilterColor(&col);
+            delete eh;
+            if(flags & UPDATE_COLOR) made->SetFilterColor(&col);
             break;
         }
 
         default:
         {
+            delete eh;
             break;
         }
     }
 
+    return 0;
+}
+
+int editWidget(widgetData data, int flags)
+{
+    sceClibPrintf("Editing widget %s, with flags 0x%X\n", data.refId, flags);
+    
+    Widget *toEdit = findWidgetByHash(getHashByID(data.refId));
+    sceClibPrintf("%s widget\n", toEdit ? "Found" : "Could not find");
+    updateValues(toEdit, data, flags);
+    return 0;
+}
+
+int spawn(node *node, int flags)
+{
+    Widget *made;
+    made = 
+    makeWidget(node->widget.refId, 
+    (char *)idTypes[node->widget.type], 
+    (char *)widgetTypes[node->widget.type], 
+    (node->widget.parentRefId == NULL ? main_plane : findWidgetByHash(getHashByID(node->widget.parentRefId))));
+
+    NULL_ERROR_FAIL(made);
+
+    updateValues(made, node->widget, flags);
     return 0;
 }
 
@@ -163,7 +215,7 @@ int displayWidgets()
     node *current = currentWidgets.head;
     while(current != NULL)
     {
-        spawn(current);
+        spawn(current, UPDATE_ALL);
         current = current->next;
     }
     

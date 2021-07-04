@@ -19,6 +19,23 @@ public:
         tail = NULL;
     }
 
+    void update_node(widgetData widget)
+    {
+        node *tmp = head;
+        while (tmp != NULL)
+        {
+            if(!sceClibStrcmp(tmp->widget.refId, widget.refId))
+                break;
+            tmp = tmp->next;
+        }
+        if(tmp == NULL)
+        {
+            return;
+        }
+
+        tmp->widget = widget;
+    }
+
     void add_node(widgetData widget)
     {
         node *tmp = new node;

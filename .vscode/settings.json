@@ -8,6 +8,7 @@
         "ranges": "cpp",
         "c_types.h": "c",
         "ez_widgets.h": "c",
-        "widgets.h": "c"
+        "widgets.h": "c",
+        "types.h": "c"
     }
 }

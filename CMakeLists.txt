@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.12)
 
 include($ENV{VITASDK}/common.cmake)
-
+#User Plugin
 project(QuickMenuReborn)
 
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -nostdlib")
@@ -15,23 +15,23 @@ file(GLOB appMgrStubs
     "${CMAKE_SOURCE_DIR}/appmgr_stubs/build/*.a"
 )
 
-file(GLOB cppfiles
-    "${CMAKE_SOURCE_DIR}/src/*.cpp"
+file(GLOB user_cppfiles
+    "${CMAKE_SOURCE_DIR}/src/user/*.cpp"
 )
 
-file(GLOB cfiles
-    "${CMAKE_SOURCE_DIR}/src/*.c"
+file(GLOB user_cfiles
+    "${CMAKE_SOURCE_DIR}/src/user/*.c"
 )
 
-file(GLOB hfiles
-    "${CMAKE_SOURCE_DIR}/src/*.h"
+file(GLOB user_hfiles
+    "${CMAKE_SOURCE_DIR}/src/user/*.h"
 )
 
 
 add_executable(${PROJECT_NAME}
-    ${cppfiles}
-    ${cfiles}
-    ${hfiles}
+    ${user_cppfiles}
+    ${user_cfiles}
+    ${user_hfiles}
 )
 
 target_link_libraries(${PROJECT_NAME}
@@ -39,19 +39,20 @@ target_link_libraries(${PROJECT_NAME}
     ScePaf_stub 
     ${pafStubs}
     ${appMgrStubs}
+    SceAppMgr_stub
     SceLibKernel_stub
     SceKernelThreadMgr_stub
 )
 
 vita_create_self(${PROJECT_NAME}.suprx ${PROJECT_NAME} CONFIG exports.yml UNSAFE)
-vita_create_stubs(stubs ${PROJECT_NAME} exports.yml)
+vita_create_stubs(user_stubs ${PROJECT_NAME} exports.yml)
 
-install(DIRECTORY ${CMAKE_BINARY_DIR}/stubs/
+install(DIRECTORY ${CMAKE_BINARY_DIR}/user_stubs/
   DESTINATION lib
   FILES_MATCHING PATTERN "*.a"
 )
 
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/src/quickmenureborn/
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/src/user/quickmenureborn/
   DESTINATION include/quickmenureborn
   FILES_MATCHING PATTERN "*.h"
 )
