@@ -8,20 +8,23 @@ SceUID mainThreadID = -1;
 
 int dispalyed = 0;
 
+/*
 SceVoid leakTestTask(void)
 {
     Allocator *glAlloc = Allocator::GetGlobalAllocator();
     SceInt32 sz = glAlloc->GetFreeSize();
+    
     sceClibPrintf("[EMPVA_DEBUG] Free heap memory: %u\n", sz);
 }
+*/
 
-int impose_thread(SceSize args, void *argp)
+int impose_thread(SceSize, void *)
 {
-    qm_reborn_eztext("mytext", NULL, makeWidgetVector4(300,75,0,0), makeWidgetVector4(0,0,0,0), makeWidgetColor(1,1,1,1), "Hi", 1);
+    qm_reborn_eztext("mytext", NULL, makeWidgetVector4(300.0f,75.0f,0.0f,0.0f), makeWidgetVector4(0.0f,0.0f,0.0f,0.0f), makeWidgetColor(1.0f,1.0f,1.0f,1.0f), (char *)"Hi", 1);
     SceAppMgrAppState state;
     while (1)
     {
-        _sceAppMgrGetAppState(&state, sizeof(state), 0);
+        sceAppMgrGetAppState(&state);
         if(state.isSystemUiOverlaid)
         {
             if(!dispalyed)
@@ -33,7 +36,7 @@ int impose_thread(SceSize args, void *argp)
                 //Delay a little to make sure it displays at the end
                 sceKernelDelayThread(1000);
 
-                leakTestTask();
+                //leakTestTask();
 
                 displayWidgets();
                 dispalyed = 1;
@@ -44,17 +47,16 @@ int impose_thread(SceSize args, void *argp)
         sceKernelDelayThread(10 * 1000);
     }
     
-    return sceKernelExitDeleteThread(0);
+    //return sceKernelExitDeleteThread(0);
 }
 
 extern "C"
 {
-    int _start(SceSize args, void *argp) __attribute__((weak, alias("module_start")));
-    int module_start(SceSize args, void *argp)
+    int module_start(SceSize, void *)
     {
         QMEventHandler eh;
         mainThreadID = sceKernelCreateThread("quickmenureborn", impose_thread, 250, 0x10000, 0, 0, NULL);
-        int start = sceKernelStartThread(mainThreadID, 0, NULL);
+        sceKernelStartThread(mainThreadID, 0, NULL);
         return SCE_KERNEL_START_SUCCESS;
     }
 

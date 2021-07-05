@@ -11,6 +11,14 @@
         "widgets.h": "c",
         "types.h": "c",
         "typeinfo": "c",
-        "qm_reborn.h": "c"
+        "qm_reborn.h": "c",
+        "main.h": "c",
+        "libkernel.h": "c",
+        "paf.h": "c",
+        "resource.h": "c",
+        "misc.h": "c",
+        "stdc.h": "c",
+        "kernel.h": "c",
+        "cdefs.h": "c"
     }
 }

@@ -56,7 +56,6 @@ extern "C"
         return toReturn;
     }
 
-
 }
 
 

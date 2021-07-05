@@ -14,13 +14,13 @@ vector4 makeWidgetVector4(float x, float y, float z, float w);
 extern "C" {
 #endif
 
-char *registerWidget(widgetData data);
+const char *registerWidget(widgetData data);
 int updateWidget(widgetData data, int flags);
 int editWidget(widgetData data, int flags);
 int unregisterWidget(char *refId);
 
 int qm_reborn_ezcheckbox(char *refID, char *parentRefID, vector4 Size, vector4 Position, widgetColor Color, void (*onToggle)(int state));
-int qm_reborn_eztext(char *refID, char *parentRefID, vector4 Size, vector4 Position, widgetColor Color, char *Text, int isBold);
+int qm_reborn_eztext(const char *refID, char *parentRefID, vector4 Size, vector4 Position, widgetColor Color, char *Text, int isBold);
 int qm_reborn_ezbutton(char *refID,  char *parentRefID, vector4 Size, vector4 Position, widgetColor Color, char *Text, void (*onPress)(void));
 int qm_reborn_ezseparator(char *refID);
 int qm_reborn_ezseparator2(char *refID);

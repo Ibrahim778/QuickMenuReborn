@@ -53,8 +53,8 @@ typedef struct
 
 typedef struct
 {
-    char *refId;
-    char *parentRefId;
+    const char *refId;
+    const char *parentRefId;
     widget_type type;
 
     vector4 pos;

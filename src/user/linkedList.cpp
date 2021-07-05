@@ -8,15 +8,11 @@ struct node
 
 class linked_list
 {
-private:
-    node *tail;
-
 public:
     node *head;
     linked_list()
     {
         head = NULL;
-        tail = NULL;
     }
 
     void update_node(widgetData widget)
@@ -24,7 +20,7 @@ public:
         node *tmp = head;
         while (tmp != NULL)
         {
-            if(sceClibStrcmp(tmp->widget.refId, widget.refId) == 0)
+            if(sce_paf_strcmp(tmp->widget.refId, widget.refId) == 0)
                 break;
             tmp = tmp->next;
         }
@@ -45,23 +41,17 @@ public:
         if(head == NULL)
         {
             head = tmp;
-            tail = tmp;
-        }
-        else
-        {
-            tail->next = tmp;
-            tail = tail->next;
         }
     }
 
-    void remove_node(char *refId)
+    void remove_node(const char *refId)
     {
-        node *prev;
+        node *prev = NULL;
         node *current = head;
         while (current != NULL)
         {
 
-            if(sceClibStrcmp(refId, current->widget.refId) == 0)
+            if(sce_paf_strcmp(refId, current->widget.refId) == 0)
             {
                 break;
             }
@@ -74,11 +64,13 @@ public:
         
         if(current == NULL)
             return;
-        else
+
+        if(current == head) 
         {
-            if(current == head) head = NULL; 
-            else prev->next = current->next;
-            delete current;
+            head = NULL; 
         }
+        else prev->next = current->next;
+
+        delete current;    
     }
 };

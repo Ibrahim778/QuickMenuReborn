@@ -27,14 +27,18 @@ file(GLOB user_hfiles
 file(GLOB qm_reborn_includes
     "${CMAKE_SOURCE_DIR}/src/quickmenureborn/*.h"
 )
+include(VitaDevelopmentSuite)
+
+set(CMAKE_C_STANDARD 99)
+
+enable_language(EMD)
+
 
 add_compile_options(
   -Xdiag=2 -Xquit=2
 )
 
 add_link_options(
-  --strip-duplicates
-  --strip-unused-data
   --prx-no-runtime-support
 )
 
@@ -42,14 +46,7 @@ link_directories(
   ${VDSUITE_LIBRARY_DIRECTORIES}
 )
 
-include_directories(${PROJECT_NAME}
-  ${CMAKE_SOURCE_DIR}
-  ${PSP2_SNC_STANDARD_INCLUDE_DIRECTORIES}
-  ${VDSUITE_USER_INCLUDE_DIRECTORIES}
-  ${VDSUITE_STANDARD_INCLUDE_DIRECTORIES}
-)
-
-add_library(${PROJECT_NAME}
+add_library(${PROJECT_NAME} MODULE
     ${user_cppfiles}
     ${user_cfiles}
     ${qm_reborn_includes}
@@ -57,14 +54,17 @@ add_library(${PROJECT_NAME}
     exports.emd
 )
 
+include_directories(${PROJECT_NAME} 
+    ${CMAKE_SOURCE_DIR}
+    ${VDSUITE_USER_INCLUDE_DIRECTORIES}
+    ${VDSUITE_STANDARD_INCLUDE_DIRECTORIES}
+)
+
 target_link_libraries(${PROJECT_NAME}
-    taihen_stub
-    ScePaf_stub 
+    SceAppMgrUser_stub
+    SceKernel_stub
     ${pafStubs}
     ${appMgrStubs}
-    SceAppMgr_stub
-    SceLibKernel_stub
-    SceKernelThreadMgr_stub
 )
 
 

@@ -5,8 +5,8 @@
 extern "C" {
 #endif
 
-__attribute__((used))
-int qm_reborn_eztext(char *refID, char *parentRefID, vector4 Size, vector4 Position, widgetColor Color, char *Text, int isBold)
+//__attribute__((used))
+int qm_reborn_eztext(const char *refID, char *parentRefID, vector4 Size, vector4 Position, widgetColor Color, char *Text, int isBold)
 {
     widgetData data;
     data.col = Color;
@@ -18,12 +18,11 @@ int qm_reborn_eztext(char *refID, char *parentRefID, vector4 Size, vector4 Posit
     data.data.TextData.label = Text;
     data.data.TextData.isbold = isBold;
 
-    char *id = registerWidget(data);
-    FAIL_IF(sceClibStrcmp(id, data.refId));
+    registerWidget(data);
     return 0;
 }
 
-__attribute__((used))
+//__attribute__((used))
 int qm_reborn_ezbutton(char *refID, char *parentRefID, vector4 Size, vector4 Position, widgetColor Color, char *Text, void (*OnPress)(void))
 {
     widgetData data;
@@ -36,12 +35,11 @@ int qm_reborn_ezbutton(char *refID, char *parentRefID, vector4 Size, vector4 Pos
     data.refId = refID;
     data.data.ButtonData.label = Text;
 
-    char *id = registerWidget(data);
-    FAIL_IF(sceClibStrcmp(id, data.refId));
+    registerWidget(data);
     return 0;
 }
 
-__attribute__((used))
+//__attribute__((used))
 int qm_reborn_ezupdate_button(char *refID, vector4 Size, vector4 Position, widgetColor Color, char *Text, void (*OnPress)(void), int flags)
 {
     widgetData data;
@@ -57,7 +55,7 @@ int qm_reborn_ezupdate_button(char *refID, vector4 Size, vector4 Position, widge
     return 0;
 }
 
-__attribute__((used))
+//__attribute__((used))
 int qm_reborn_ezcheckbox(char *refID, char *parentRefID, vector4 Size, vector4 Position, widgetColor Color, void (*onToggle)(int state))
 {
     widgetData data;
@@ -69,12 +67,11 @@ int qm_reborn_ezcheckbox(char *refID, char *parentRefID, vector4 Size, vector4 P
     data.refId = refID;
     data.data.CheckBoxData.OnToggle = onToggle;
 
-    char *id = registerWidget(data);
-    FAIL_IF(sceClibStrcmp(id, data.refId));
+    registerWidget(data);
     return 0;
 }
 
-__attribute__((used))
+//__attribute__((used))
 int qm_reborn_ezupdate_checkbox(char *refID, vector4 Size, vector4 Position, widgetColor Color, void (*onToggle)(int state), int flags)
 {
     widgetData data;
@@ -89,7 +86,7 @@ int qm_reborn_ezupdate_checkbox(char *refID, vector4 Size, vector4 Position, wid
     return 0;
 }
 
-__attribute__((used))
+//__attribute__((used))
 int qm_reborn_ezupdate_text(char *refId, vector4 Size, vector4 Position, widgetColor Color, char *Text, int isBold, int flags)
 {
     widgetData data;
@@ -105,7 +102,7 @@ int qm_reborn_ezupdate_text(char *refId, vector4 Size, vector4 Position, widgetC
     return 0;
 }
 
-__attribute__((used))
+//__attribute__((used))
 int qm_reborn_ezplane(char *refID, char *parentRefID, vector4 Size, vector4 Position, widgetColor Color)
 {
     widgetData data;
@@ -116,11 +113,11 @@ int qm_reborn_ezplane(char *refID, char *parentRefID, vector4 Size, vector4 Posi
     data.col = Color;
     data.type = plane;
 
-    FAIL_IF(sceClibStrcmp(registerWidget(data), data.refId));
+    FAIL_IF(sce_paf_strcmp(registerWidget(data), data.refId));
     return 0;
 }
 
-__attribute__((used))
+//__attribute__((used))
 int qm_reborn_ezupdate_plane(char *refID, vector4 Size, vector4 Position, widgetColor Color, int flags)
 {
     widgetData data;
@@ -134,29 +131,29 @@ int qm_reborn_ezupdate_plane(char *refID, vector4 Size, vector4 Position, widget
     return 0;
 }
 
-__attribute__((used))
+//__attribute__((used))
 int qm_reborn_ezseparator2(char *refID)
 {
     //Spacer
     char spacerId[0x100];
-    sceClibSnprintf(spacerId, 0x100, "qm_reborn_%s_spacer", refID);
-    qm_reborn_ezplane(spacerId, NULL, makeWidgetVector4(825,25,0,0), makeWidgetVector4(0,0,0,0), makeWidgetColor(1,1,1,0));
+    sce_paf_snprintf(spacerId, 0x100, "qm_reborn_%s_spacer", refID);
+    qm_reborn_ezplane(spacerId, NULL, makeWidgetVector4(825.0f,25.0f,0.0f,0.0f), makeWidgetVector4(0,0,0,0), makeWidgetColor(1.0f,1.0f,1.0f,0.0f));
 
     //Line
     char lineId[0x100];
-    sceClibSnprintf(lineId, 0x100, "qm_reborn_%s_line", refID);
-    qm_reborn_ezplane(lineId, NULL, makeWidgetVector4(825,2,0,0), makeWidgetVector4(0,0,0,0), makeWidgetColor(.75f,.75f,.75f,.75f));
+    sce_paf_snprintf(lineId, 0x100, "qm_reborn_%s_line", refID);
+    qm_reborn_ezplane(lineId, NULL, makeWidgetVector4(825.0f,2.0f,0.0f,0.0f), makeWidgetVector4(0.0f,0.0f,0.0f,0.0f), makeWidgetColor(.75f,.75f,.75f,.75f));
     return 0;
 }
 
-__attribute__((used))
+//__attribute__((used))
 int qm_reborn_ezseparator(char *refID)
 {
 
     //Line
     char lineId[0x100];
-    sceClibSnprintf(lineId, 0x100, "qm_reborn_%s_line", refID);
-    qm_reborn_ezplane(lineId, NULL, makeWidgetVector4(825,2,0,0), makeWidgetVector4(0,0,0,0), makeWidgetColor(.75f,.75f,.75f,.75f));
+    sce_paf_snprintf(lineId, 0x100, "qm_reborn_%s_line", refID);
+    qm_reborn_ezplane(lineId, NULL, makeWidgetVector4(825.0f,2.0f,0.0f,0.0f), makeWidgetVector4(0,0,0,0), makeWidgetColor(.75f,.75f,.75f,.75f));
     return 0;
 }
 

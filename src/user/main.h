@@ -4,7 +4,7 @@
 #include <kernel.h>
 #include <appmgr.h>
 #include <kernel/libkernel.h>
-#include <kernel/threadmgr.h>
+//#include <kernel/threadmgr.h>
 #include <paf.h>
 
 using namespace paf;

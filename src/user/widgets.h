@@ -11,10 +11,6 @@
 #define CHECKBOX_HANDLER(name) void name(int checked)
 #define BUTTON_HANDLER(name) void name()
 
-static widget::Widget *(*getImposeRoot)();
-static Plugin *imposePlugin;
-static widget::Widget *powerRoot;
-static Widget *main_plane;
 
 
 Widget *findWidgetByHash(SceUInt32 hash);

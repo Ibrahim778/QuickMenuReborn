@@ -4,7 +4,13 @@
 
 #include "widgets.h"
 #include "linkedList.cpp"
+#include <kernel/libkernel.h>
 #include "event_handler.cpp"
+
+static widget::Widget *(*getImposeRoot)();
+static Plugin *imposePlugin;
+static widget::Widget *powerRoot;
+static Widget *main_plane;
 
 const char *idTypes[] = 
 {
@@ -53,7 +59,7 @@ int initWidgets()
     return 0;
 }
 
-SceUInt32 getHashByID(char *id)
+SceUInt32 getHashByID(const char *id)
 {
     Resource::Element sinfo;
     Resource::Element searchRequest;
@@ -64,7 +70,7 @@ SceUInt32 getHashByID(char *id)
     return sinfo.hash;
 }
 
-Widget *makeWidget(char *refId, char *idType, char *type, Widget *parent)
+Widget *makeWidget(const char *refId, const char *idType, const char *type, Widget *parent)
 {
     //WidgetInfo
     paf::Resource::Element winfo;
@@ -84,14 +90,14 @@ Widget *makeWidget(char *refId, char *idType, char *type, Widget *parent)
     FAIL_IF(newWidget == NULL || newWidget < 0);
     return newWidget;
 }
-__attribute__((used))
-int unregisterWidget(char *refId)
+//__attribute__((used))
+int unregisterWidget(const char *refId)
 {
     currentWidgets.remove_node(refId);
     return 0;
 }
 
-char *registerWidget(widgetData data)
+const char *registerWidget(widgetData data)
 {
     //This is just a wrapper, it'll add the widgets to a linked list, widgets are made on demand when impose menu loads via another thread
     currentWidgets.add_node(data);
@@ -106,12 +112,11 @@ int setText(char *text, Widget *widget)
 
 int updateWidget(widgetData data, int flags)
 {
-    sceClibPrintf("Update widget called! %s %d\n", data.refId, flags);
     //Update the widget in the linked list for when it needs to be redrawn
     currentWidgets.update_node(data);
 
     SceAppMgrAppState state;
-    _sceAppMgrGetAppState(&state, sizeof(state), 0);
+    sceAppMgrGetAppState(&state);
     //If quickMenu is being displayed, update the current widget
     if(state.isSystemUiOverlaid)
         editWidget(data, flags);
@@ -135,8 +140,8 @@ int updateValues(Widget *made, widgetData widget, int flags)
         {
             if(flags & UPDATE_EVENT)
             {
-                eh->pUserData = sce_paf_private_malloc(sizeof(widgetData));
-                sce_paf_private_memcpy(eh->pUserData, &widget, sizeof(widgetData));
+                eh->pUserData = sce_paf_malloc(sizeof(widgetData));
+                sce_paf_memcpy(eh->pUserData, &widget, sizeof(widgetData));
                 made->RegisterEventCallback(ON_PRESS_EVENT_ID, eh, 0);
             }
             if(flags & UPDATE_COLOR) made->SetFilterColor(&col);
@@ -148,8 +153,8 @@ int updateValues(Widget *made, widgetData widget, int flags)
         {
             if(flags & UPDATE_EVENT)
             {
-                eh->pUserData = sce_paf_private_malloc(sizeof(widgetData));
-                sce_paf_private_memcpy(eh->pUserData, &widget, sizeof(widgetData));
+                eh->pUserData = sce_paf_malloc(sizeof(widgetData));
+                sce_paf_memcpy(eh->pUserData, &widget, sizeof(widgetData));
                 made->RegisterEventCallback(ON_PRESS_EVENT_ID, eh, 0);
             }
             if(flags & UPDATE_COLOR) made->SetFilterColor(&col);

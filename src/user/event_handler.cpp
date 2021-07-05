@@ -9,9 +9,9 @@ public:
         eventHandler = onGet;
     }
 
-    static void onGet(SceInt32 eventId, Widget *self, SceInt32, ScePVoid pUserData)
+    static void onGet(SceInt32 , Widget *self, SceInt32, ScePVoid puserData)
     {
-        widgetData *widget = (widgetData *)pUserData;
+        widgetData *widget = (widgetData *)puserData;
         switch (widget->type)
         {
             case button:
