@@ -1,11 +1,8 @@
-cmake_minimum_required(VERSION 2.8.12)
+cmake_minimum_required(VERSION 3.12)
 
-include($ENV{VITASDK}/common.cmake)
-#User Plugin
+set(CMAKE_TOOLCHAIN_FILE "$ENV{SCE_PSP2_SDK_DIR}/host_tools/build/cmake/psp2-snc-toolchain.cmake")
+
 project(QuickMenuReborn)
-
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -nostdlib")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fno-rtti -fno-exceptions -nostdlib -Wno-write-strings")
 
 file(GLOB pafStubs
     "${CMAKE_SOURCE_DIR}/paf_stubs/build/*.a"
@@ -31,12 +28,33 @@ file(GLOB qm_reborn_includes
     "${CMAKE_SOURCE_DIR}/src/quickmenureborn/*.h"
 )
 
+add_compile_options(
+  -Xdiag=2 -Xquit=2
+)
 
-add_executable(${PROJECT_NAME}
+add_link_options(
+  --strip-duplicates
+  --strip-unused-data
+  --prx-no-runtime-support
+)
+
+link_directories(
+  ${VDSUITE_LIBRARY_DIRECTORIES}
+)
+
+include_directories(${PROJECT_NAME}
+  ${CMAKE_SOURCE_DIR}
+  ${PSP2_SNC_STANDARD_INCLUDE_DIRECTORIES}
+  ${VDSUITE_USER_INCLUDE_DIRECTORIES}
+  ${VDSUITE_STANDARD_INCLUDE_DIRECTORIES}
+)
+
+add_library(${PROJECT_NAME}
     ${user_cppfiles}
     ${user_cfiles}
     ${qm_reborn_includes}
     ${user_hfiles}
+    exports.emd
 )
 
 target_link_libraries(${PROJECT_NAME}
@@ -49,8 +67,7 @@ target_link_libraries(${PROJECT_NAME}
     SceKernelThreadMgr_stub
 )
 
-vita_create_self(${PROJECT_NAME}.suprx ${PROJECT_NAME} CONFIG exports.yml UNSAFE)
-vita_create_stubs(user_stubs ${PROJECT_NAME} exports.yml)
+
 
 install(DIRECTORY ${CMAKE_BINARY_DIR}/user_stubs/
   DESTINATION lib

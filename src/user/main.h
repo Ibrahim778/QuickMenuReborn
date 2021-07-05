@@ -1,13 +1,15 @@
 
 #ifndef MAIN_H_QM_REBORN
 #define MAIN_H_QM_REBORN
-#include <vitasdk.h>
+#include <kernel.h>
+#include <appmgr.h>
+#include <kernel/libkernel.h>
+#include <kernel/threadmgr.h>
 #include <paf.h>
 
 using namespace paf;
 using namespace widget;
 
-#pragma region EasyDefs
 #define Seconds * 1000 * 1000
 
 #ifdef DEBUG
@@ -27,6 +29,5 @@ using namespace widget;
 #define FAILTHREAD_IF(con) if (con) { return sceKernelExitDeleteThread(0); }
 #define NULL_ERROR_FAIL(con) if (con < 0 || con == NULL) { return -1; }
 #endif
-#pragma endregion EasyDefs
 
 #endif

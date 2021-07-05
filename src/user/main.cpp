@@ -8,6 +8,13 @@ SceUID mainThreadID = -1;
 
 int dispalyed = 0;
 
+SceVoid leakTestTask(void)
+{
+    Allocator *glAlloc = Allocator::GetGlobalAllocator();
+    SceInt32 sz = glAlloc->GetFreeSize();
+    sceClibPrintf("[EMPVA_DEBUG] Free heap memory: %u\n", sz);
+}
+
 int impose_thread(SceSize args, void *argp)
 {
     qm_reborn_eztext("mytext", NULL, makeWidgetVector4(300,75,0,0), makeWidgetVector4(0,0,0,0), makeWidgetColor(1,1,1,1), "Hi", 1);
@@ -25,6 +32,9 @@ int impose_thread(SceSize args, void *argp)
 
                 //Delay a little to make sure it displays at the end
                 sceKernelDelayThread(1000);
+
+                leakTestTask();
+
                 displayWidgets();
                 dispalyed = 1;
             }

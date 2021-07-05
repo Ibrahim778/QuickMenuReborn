@@ -3,7 +3,7 @@
 
 #include "main.h"
 
-#include "quickmenureborn/c_types.h"
+#include "../quickmenureborn/c_types.h"
 
 
 WString makeWString(const char *string);
