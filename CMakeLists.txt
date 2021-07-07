@@ -1,45 +1,42 @@
 cmake_minimum_required(VERSION 3.12)
-
 set(CMAKE_TOOLCHAIN_FILE "$ENV{SCE_PSP2_SDK_DIR}/host_tools/build/cmake/psp2-snc-toolchain.cmake")
-
 project(QuickMenuReborn)
-
 file(GLOB pafStubs
-    "${CMAKE_SOURCE_DIR}/paf_stubs/build/*.a"
+    "${CMAKE_SOURCE_DIR}/vdsuite_paf_stub/*_weak.a"
 )
-
-file(GLOB appMgrStubs
-    "${CMAKE_SOURCE_DIR}/appmgr_stubs/build/*.a"
-)
-
 file(GLOB user_cppfiles
     "${CMAKE_SOURCE_DIR}/src/user/*.cpp"
 )
-
 file(GLOB user_cfiles
     "${CMAKE_SOURCE_DIR}/src/user/*.c"
 )
-
+file(GLOB export_cfiles
+    "${CMAKE_SOURCE_DIR}/src/export_handler/*.c"
+)
 file(GLOB user_hfiles
     "${CMAKE_SOURCE_DIR}/src/user/*.h"
 )
-
 file(GLOB qm_reborn_includes
     "${CMAKE_SOURCE_DIR}/src/quickmenureborn/*.h"
 )
+
 include(VitaDevelopmentSuite)
 
 set(CMAKE_C_STANDARD 99)
-
 enable_language(EMD)
-
 
 add_compile_options(
   -Xdiag=2 -Xquit=2
 )
-
 add_link_options(
   --prx-no-runtime-support
+)
+
+# Main Plugin
+include_directories(${PROJECT_NAME}
+    ${CMAKE_SOURCE_DIR}
+    ${VDSUITE_USER_INCLUDE_DIRECTORIES}
+    ${VDSUITE_STANDARD_INCLUDE_DIRECTORIES}
 )
 
 link_directories(
@@ -51,30 +48,52 @@ add_library(${PROJECT_NAME} MODULE
     ${user_cfiles}
     ${qm_reborn_includes}
     ${user_hfiles}
-    exports.emd
-)
-
-include_directories(${PROJECT_NAME} 
-    ${CMAKE_SOURCE_DIR}
-    ${VDSUITE_USER_INCLUDE_DIRECTORIES}
-    ${VDSUITE_STANDARD_INCLUDE_DIRECTORIES}
+    QuickMenuReborn.emd
 )
 
 target_link_libraries(${PROJECT_NAME}
-    SceAppMgrUser_stub
     SceKernel_stub
+    SceThreadmgr_stub
+    SceDbg_stub
+    SceAppMgrUser_stub
     ${pafStubs}
-    ${appMgrStubs}
 )
 
+VDSuiteSignElf(${PROJECT_NAME}.suprx ${PROJECT_NAME})
 
+#Export Handler
 
-install(DIRECTORY ${CMAKE_BINARY_DIR}/user_stubs/
-  DESTINATION lib
-  FILES_MATCHING PATTERN "*.a"
+add_library(QuickMenuRebornExports MODULE
+  ${export_cfiles}
+  ExportHandler.emd
 )
 
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/src/quickmenureborn/
-  DESTINATION include/quickmenureborn
-  FILES_MATCHING PATTERN "*.h"
+target_link_libraries(QuickMenuRebornExports
+  SceKernel_stub
+  SceDbg_stub
+)
+
+VDSuiteSignElf(QuickMenuRebornExports.suprx QuickMenuRebornExports)
+
+VDSuiteCreateStubs(stubs ExportHandler.emd
+  LIBRARIES
+    quickMenuRebornExports_stub
+)
+#Sample App
+add_executable(samples
+  ${qm_reborn_includes}
+  src/sample_app/main.c
+)
+
+target_link_libraries(samples
+  quickMenuRebornExports_stub
+  SceDbg_stub
+)
+
+VDSuiteCreateSfo(samples-param.sfo param.yml)
+
+VDSuitePackage(samples.vpk
+  FILES
+    $<TARGET_FILE:samples> eboot.bin
+    samples-param.sfo sce_sys/param.sfo
 )

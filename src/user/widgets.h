@@ -2,7 +2,6 @@
 #define WIDGETS_H_QM_REBORN
 
 #include "main.h"
-#include "../quickmenureborn/qm_reborn.h"
 #include "types.h"
 
 #define SCROLL_VIEW_BOX_ID 0x0EE0C8AF
@@ -17,5 +16,8 @@ Widget *findWidgetByHash(SceUInt32 hash);
 int initWidgets();
 Widget *makeWidget(char *refId, char *idType, char *type, Widget *parent);
 int displayWidgets();
-
+int editWidget(widgetData data, int flags);
+const char *registerWidget(widgetData data);
+int unregisterWidget(const char *refId);
+int updateWidget(widgetData data, int flags);
 #endif

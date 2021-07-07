@@ -1,7 +1,5 @@
-/SceAppMgr.yml
 /ScePaf.yml
-/appmgr_stubs
 /build
-/paf_stubs
+/vdsuite_paf_stub
 /run.sh
 /out.txt

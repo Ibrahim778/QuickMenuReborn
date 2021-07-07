@@ -3,55 +3,158 @@
 
 #include "c_types.h"
 
+#define EXPORT extern 
+
+#ifndef QM_REBORN_INTERNAL
+#undef EXPORT
+#define EXPORT
+#endif
+
+EXPORT
+int addWidget(widgetData data);
+
+EXPORT
+int updateWidget(widgetData data, int flags);
+
+EXPORT
+int removeWidget(const char *refID);
+
+EXPORT
 widgetColor makeWidgetColor(float r, float g, float b, float a);
+EXPORT
 vector4 makeWidgetVector4(float x, float y, float z, float w);
 
-#define NOT_UPDATE (void*)0
+#define COLOR_WHITE makeWidgetColor(1.0f, 1.0f, 1.0f, 1.0f)
+#define COLOR_RED makeWidgetColor(1.0f, 0.0f, 0.0f, 1.0f)
+#define COLOR_GREEN makeWidgetColor(0.0f, 1.0f, 0.0f, 1.0f)
+#define COLOR_BLUE makeWidgetColor(0.0f, 0.0f, 1.0f, 1.0f)
+#define COLOR_YELLOW makeWidgetColor(1.0f, 1.0f, 0.0f, 1.0f)
+#define COLOR_LIGHT_BLUE makeWidgetColor(0.0f, 1.0f, 1.0f, 1.0f)
+#define COLOR_PINK makeWidgetColor(1.0f, 0, 1.0f, 1.0f)
+#define COLOR_YELLOW makeWidgetColor(1.0f, 1.0f, 0.0f, 1.0f)
+#define COLOR_GRAY makeWidgetColor(0.5f, 0.5f, 0.5f, 0.5f)
 
-//#ifdef __cplusplus
+#define makeCommonWidgetColor(common) makeWidgetColor(common, common, common, common)
+#define makeCommonWidgetVector4(common) makeWidgetVector4(common, common, common, common)
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#define makeWidgetVector4Int(x,y,z,w) makeWidgetVector4(x##.0f, y##.0f, z##.0f, w##.0f)
+#define makeWidgetColorInt(r,g,b,a) makeWidgetColor(r##.0f, g##.0f, b##.0f, a##.0f)
 
-const char *registerWidget(widgetData data);
-int updateWidget(widgetData data, int flags);
-int editWidget(widgetData data, int flags);
-int unregisterWidget(char *refId);
+#define makeCommonWidgetVector4Int(common) makeWidgetVector4(common##.0f, common##.0f, common##.0f, common##.0f)
+#define makeCommonWidgetColorInt(common) makeWidgetColor(common##.0f, common##.0f, common##.0f, common##.0f)
 
-int qm_reborn_ezcheckbox(char *refID, char *parentRefID, vector4 Size, vector4 Position, widgetColor Color, void (*onToggle)(int state));
-int qm_reborn_eztext(const char *refID, char *parentRefID, vector4 Size, vector4 Position, widgetColor Color, char *Text, int isBold);
-int qm_reborn_ezbutton(char *refID,  char *parentRefID, vector4 Size, vector4 Position, widgetColor Color, char *Text, void (*onPress)(void));
-int qm_reborn_ezseparator(char *refID);
-int qm_reborn_ezseparator2(char *refID);
-int qm_reborn_ezplane(char *refID, char *parentRefID, vector4 Size, vector4 Position, widgetColor Color);
 
-int qm_reborn_ezupdate_text(char *refId, vector4 Size, vector4 Position, widgetColor Color, char *Text, int isBold, int flags);
-int qm_reborn_ezupdate_checkbox(char *refID, vector4 Size, vector4 Position, widgetColor Color, void (*onToggle)(int state), int flags);
-int qm_reborn_ezupdate_plane(char *refID, vector4 Size, vector4 Position, widgetColor Color, int flags);
-int qm_reborn_ezupdate_button(char *refID, vector4 Size, vector4 Position, widgetColor Color, char *Text, void (*OnPress)(void), int flags);
-
-#ifdef __cplusplus
+#define QuickMenuRebornButton(refID, parentRefID, Size, Position, Color, _Text, OnPress) \
+{\
+    widgetData data;\
+    data.col = Color;\
+    data.parentRefId = parentRefID;\
+    data.pos = Position;\
+    data.size = Size;\
+    data.type = button;\
+    data.data.ButtonData.onPress = OnPress;\
+    data.refId = refID;\
+    data.data.ButtonData.label = _Text;\
+    addWidget(data);\
 }
-#endif
 
-/*
-#else
-char *_Z14registerWidget10widgetData(widgetData data);
-__attribute__((used))
-int _Z16unregisterWidgetPc(char *refId);
-int _Z20qm_reborn_ezcheckboxPcS_7vector4S0_11widgetColorPFviE(char *refID, char *parentRefID, vector4 Size, vector4 Position, widgetColor Color, void (*onToggle)(int state));
-int _Z18qm_reborn_ezbuttonPcS_7vector4S0_11widgetColorS_PFvvE(char *refID, char *parentRefID, vector4 Size, vector4 Position, widgetColor Color, char *Text, void(*onPress)(void));
-int _Z16qm_reborn_eztextPcS_7vector4S0_11widgetColorS_(char *refID,  char *parentRefID, vector4 Size, vector4 Position, widgetColor Color, char *Text);
+#define QuickMenuRebornText(refID, parentRefID, Size, Position, Color, _Text) \
+{\
+    widgetData data;\
+    data.col = Color;\
+    data.parentRefId = parentRefID;\
+    data.pos = Position;\
+    data.size = Size;\
+    data.type = text;\
+    data.refId = refID;\
+    data.data.ButtonData.label = _Text;\
+    addWidget(data);\
+}
 
-#define unregisterWidget _Z16unregisterWidgetPc
-#define registerWidget _Z14registerWidget10widgetData
-#define qm_reborn_ezcheckbox _Z20qm_reborn_ezcheckboxPcS_7vector4S0_11widgetColorPFviE
-#define qm_reborn_eztext _Z16qm_reborn_eztextPcS_7vector4S0_11widgetColorS_
-#define qm_reborn_ezbutton _Z18qm_reborn_ezbuttonPcS_7vector4S0_11widgetColorS_PFvvE
-#define qm_reborn_ezseparator 
-#define qm_reborn_ezplane 
+#define QuickMenuRebornCheckBox(refID, parentRefID, Size, Position, Color, onToggle) \
+{\
+    widgetData data;\
+    data.col = Color;\
+    data.parentRefId = parentRefID;\
+    data.pos = Position;\
+    data.size = Size;\
+    data.type = check_box;\
+    data.data.CheckBoxData.OnToggle = onToggle;\
+    data.refId = refID;\
+    addWidget(data);\
+}
 
-#endif
-*/
+#define QuickMenuRebornPlane(refID, parentRefID, Size, Position, Color)\
+{\
+    widgetData data;\
+    data.refId = refID;\
+    data.parentRefId = parentRefID;\
+    data.pos = Position;\
+    data.size = Size;\
+    data.col = Color;\
+    data.type = plane;\
+    addWidget(data);\
+}
+
+
+#define QuickMenuRebornUpdateButton(refID, Size, Position, Color, _Text, OnPress, flags) \
+{\
+    widgetData data;\
+    data.col = Color;\
+    data.pos = Position;\
+    data.size = Size;\
+    data.type = button;\
+    data.data.ButtonData.onPress = OnPress;\
+    data.refId = refID;\
+    data.data.ButtonData.label = _Text;\
+    updateWidget(data, flags);\
+}
+
+#define QuickMenuRebornUpdateCheckBox(refID, Size, Position, Color, onToggle, flags) \
+{\
+    widgetData data;\
+    data.col = Color;\
+    data.pos = Position;\
+    data.size = Size;\
+    data.type = check_box;\
+    data.data.CheckBoxData.OnToggle = onToggle;\
+    data.refId = refID;\
+    updateWidget(data, flags);\
+}
+
+#define QuickMenuRebornUpdateText(refID, Size, Position, Color, _Text, flags) \
+{\
+    widgetData data;\
+    data.col = Color;\
+    data.pos = Position;\
+    data.size = Size;\
+    data.type = text;\
+    data.data.TextData.label = _Text;\
+    data.refId = refID;\
+    updateWidget(data, flags);\
+}
+
+#define QuickMenuRebornUpdatePlane(refID, Size, Position, Color, flags) \
+{\
+    widgetData data;\
+    data.col = Color;\
+    data.pos = Position;\
+    data.size = Size;\
+    data.type = plane;\
+    data.refId = refID;\
+    updateWidget(data, flags);\
+}
+
+#define QuickMenuRebornSeparator(refID)\
+{\
+    widgetData data;\
+    data.refId = "qm_reborn_" refID "_line";\
+    data.parentRefId = NULL;\
+    data.pos = makeWidgetVector4(0,0,0,0);\
+    data.size = makeWidgetVector4(825.0f,2.0f,0.0f,0.0f);\
+    data.col = makeWidgetColor(.75f,.75f,.75f,.75f);\
+    data.type = plane;\
+    addWidget(data);\
+}
+
 #endif

@@ -1,5 +1,10 @@
 #ifndef C_TYPES_H_QM_REBORN
 #define C_TYPES_H_QM_REBORN
+
+#ifdef QM_REBORN_INTERNAL
+#define EXPORT_PIPE "quickmenureborn_exports_pipe"
+#endif
+
 #ifdef __cplusplus
 
 extern "C" {
@@ -17,8 +22,7 @@ typedef enum
 typedef struct 
 {
     //Text to be displayed
-    char *label;
-    float fontSize;
+    const char *label;
     int isbold;
 } textData;
 
@@ -26,7 +30,7 @@ typedef struct
 {
     void (*onPress)(void);
     //Text to be displayed
-    char *label;
+    const char *label;
 } buttonData;
 
 typedef struct 
@@ -68,6 +72,26 @@ typedef struct
     } data;
     
 } widgetData;
+
+typedef enum packet_type
+{
+    register_widget,
+    unregister_widget,
+    update_widget
+
+} packetType;
+
+typedef struct 
+{
+    //Function to pass to
+    packetType type;
+    //Data to be passed to the functions
+    widgetData data;
+    //Only check if type == update_widget
+    int updateFlags;
+    //Only used for unreigistering widget, otherwise not set
+    const char *refId;
+} exportPacket;
 
 widgetColor makeWidgetColor(float r, float g, float b, float a);
 vector4 makeWidgetVector4(float x, float y, float z, float w);

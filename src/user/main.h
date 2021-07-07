@@ -1,16 +1,16 @@
 
 #ifndef MAIN_H_QM_REBORN
 #define MAIN_H_QM_REBORN
+#include <libdbg.h>
 #include <kernel.h>
 #include <appmgr.h>
 #include <kernel/libkernel.h>
-//#include <kernel/threadmgr.h>
 #include <paf.h>
 
 using namespace paf;
 using namespace widget;
 
-#define Seconds * 1000 * 1000
+#define QM_REBORN_INTERNAL
 
 #ifdef DEBUG
 

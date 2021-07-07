@@ -32,33 +32,6 @@ Widget::Color makeSceColor(widgetColor col)
     return color;
 }
 
-extern "C"
-{
-    widgetColor makeWidgetColor(float r, float g, float b, float a)
-    {
-        widgetColor col;
-        col.a = a;
-        col.r = r;
-        col.g = g;
-        col.b = b;
-        return col;
-    }
-
-    vector4 makeWidgetVector4(float x, float y, float z, float w)
-    {
-        vector4 toReturn;
-        toReturn.x = x;
-        toReturn.y = y;
-        toReturn.z = z;
-        toReturn.w = w;
-        
-
-        return toReturn;
-    }
-
-}
-
-
 SceFVector4 makeSceVector4(float x, float y, float z, float w)
 {
     SceFVector4 toReturn;

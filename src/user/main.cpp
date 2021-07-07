@@ -5,25 +5,78 @@
 #include "event_handler.cpp"
 
 SceUID mainThreadID = -1;
+SceUID exportThreadID = -1;
+
+bool exportEnd = false;
+bool mainEnd = false;
 
 int dispalyed = 0;
 
-/*
+#ifdef DEBUG
 SceVoid leakTestTask(void)
 {
     Allocator *glAlloc = Allocator::GetGlobalAllocator();
     SceInt32 sz = glAlloc->GetFreeSize();
     
-    sceClibPrintf("[EMPVA_DEBUG] Free heap memory: %u\n", sz);
+    SCE_DBG_LOG_INFO("Free heap memory: %d\n", sz);
 }
-*/
+#endif
+
+int export_thread(SceSize, void *)
+{
+    SceUID pipeID = sceKernelCreateMsgPipe("quickmenureborn_exports_pipe", SCE_KERNEL_MSG_PIPE_TYPE_USER_MAIN, SCE_KERNEL_ATTR_OPENABLE, 4096, NULL);
+    if(pipeID < 0)
+    {
+        exportThreadID = -1;
+        sceKernelExitDeleteThread(0);
+    }
+    while (1)
+    {
+        if(exportEnd) sceKernelExitDeleteThread(0);
+
+        exportPacket data;
+        SceSize size = 0;
+
+        int recRes = sceKernelReceiveMsgPipe(pipeID, &data, sizeof(data), SCE_KERNEL_MSG_PIPE_MODE_WAIT | SCE_KERNEL_MSG_PIPE_MODE_FULL, &size, NULL);
+        if(recRes != SCE_OK) SCE_DBG_LOG_INFO("Error function returned error code : 0x%X\n", recRes);
+        else if(size > 0) 
+        {
+            SCE_DBG_LOG_INFO("Got call\n");
+            switch (data.type)
+            {
+                case update_widget:
+                {
+                    SCE_DBG_LOG_INFO("Updating widget\n");
+                    updateWidget(data.data, data.updateFlags);
+                    break;
+                }
+                case register_widget:
+                {
+                    SCE_DBG_LOG_INFO("adding widget\n");
+                    registerWidget(data.data);
+                    break;
+                }
+                case unregister_widget:
+                {
+                    unregisterWidget(data.refId);
+                    break;
+                }
+                default:
+                    break;
+            }
+        }
+    }
+}
 
 int impose_thread(SceSize, void *)
 {
-    qm_reborn_eztext("mytext", NULL, makeWidgetVector4(300.0f,75.0f,0.0f,0.0f), makeWidgetVector4(0.0f,0.0f,0.0f,0.0f), makeWidgetColor(1.0f,1.0f,1.0f,1.0f), (char *)"Hi", 1);
+    sceKernelDelayThread(4 * 1000 * 1000);
     SceAppMgrAppState state;
     while (1)
     {
+
+        if(mainEnd) sceKernelExitDeleteThread(0);
+
         sceAppMgrGetAppState(&state);
         if(state.isSystemUiOverlaid)
         {
@@ -35,9 +88,9 @@ int impose_thread(SceSize, void *)
 
                 //Delay a little to make sure it displays at the end
                 sceKernelDelayThread(1000);
-
-                //leakTestTask();
-
+#ifdef DEBUG
+                leakTestTask();
+#endif
                 displayWidgets();
                 dispalyed = 1;
             }
@@ -45,25 +98,35 @@ int impose_thread(SceSize, void *)
         else dispalyed = 0;
         //Prevent stalling thread
         sceKernelDelayThread(10 * 1000);
-    }
-    
-    //return sceKernelExitDeleteThread(0);
+    }    
 }
 
 extern "C"
 {
     int module_start(SceSize, void *)
     {
-        QMEventHandler eh;
         mainThreadID = sceKernelCreateThread("quickmenureborn", impose_thread, 250, 0x10000, 0, 0, NULL);
-        sceKernelStartThread(mainThreadID, 0, NULL);
+        if(sceKernelStartThread(mainThreadID, 0, NULL) < 0) return SCE_KERNEL_START_NO_RESIDENT;
+        
+        exportThreadID = sceKernelCreateThread("quickmenureborn_export_thread", export_thread, 251, 0x10000, 0, 0, NULL);
+        if(sceKernelStartThread(exportThreadID, 0, NULL) < 0) return SCE_KERNEL_START_NO_RESIDENT;
+        
         return SCE_KERNEL_START_SUCCESS;
     }
 
     int module_stop()
     {
         if(mainThreadID > 0)
-            sceKernelDeleteThread(mainThreadID);
+        {
+            mainEnd = true;
+            sceKernelWaitThreadEnd(mainThreadID, NULL, NULL);
+        }
+        if(exportThreadID)
+        {
+            exportEnd = true;
+            sceKernelWaitThreadEnd(exportThreadID, NULL, NULL);
+        }    
+
         return SCE_KERNEL_STOP_SUCCESS;
     }
 } 

@@ -45,7 +45,6 @@ int initWidgets()
     //Get power manage plugin object
     imposePlugin = Plugin::GetByName("power_manage_plugin");
     NULL_ERROR_FAIL(imposePlugin);
-
     //Power manage plugin -> power manage root
     powerRoot = imposePlugin->GetWidgetByNum(1);
     NULL_ERROR_FAIL(powerRoot);
@@ -53,7 +52,6 @@ int initWidgets()
     //Power manage root -> impose root (some virtual function)
     getImposeRoot = (widget::Widget *(*)()) *(int *)((int)powerRoot + 0x54);
     NULL_ERROR_FAIL(getImposeRoot);
-
     main_plane = findWidgetByHash(SCROLL_VIEW_BOX_ID);
     NULL_ERROR_FAIL(main_plane);
     return 0;
@@ -90,21 +88,23 @@ Widget *makeWidget(const char *refId, const char *idType, const char *type, Widg
     FAIL_IF(newWidget == NULL || newWidget < 0);
     return newWidget;
 }
-//__attribute__((used))
+
 int unregisterWidget(const char *refId)
 {
+    if(sce_paf_strcmp(refId, "") == 0) return 0;
     currentWidgets.remove_node(refId);
     return 0;
 }
 
 const char *registerWidget(widgetData data)
 {
+    SCE_DBG_LOG_INFO("Internal add call\n");
     //This is just a wrapper, it'll add the widgets to a linked list, widgets are made on demand when impose menu loads via another thread
     currentWidgets.add_node(data);
     return data.refId;
 }
 
-int setText(char *text, Widget *widget)
+int setText(const char *text, Widget *widget)
 {
     WString wstr = makeWString((const char *)text);
     return widget->SetLabel(&wstr);
@@ -167,7 +167,7 @@ int updateValues(Widget *made, widgetData widget, int flags)
             if(flags & UPDATE_COLOR) made->SetFilterColor(&col);
             if(flags & UPDATE_TEXT)
             {
-                TRY(made->SetOption(Widget::Option::Text_Bold, 0,0,widget.data.TextData.isbold));
+                //made->SetOption(Widget::Option::Text_Bold, 0,0,widget.data.TextData.isbold);
                 setText(widget.data.TextData.label, made);
             }
             break;
@@ -192,10 +192,8 @@ int updateValues(Widget *made, widgetData widget, int flags)
 
 int editWidget(widgetData data, int flags)
 {
-    sceClibPrintf("Editing widget %s, with flags 0x%X\n", data.refId, flags);
     
     Widget *toEdit = findWidgetByHash(getHashByID(data.refId));
-    sceClibPrintf("%s widget\n", toEdit ? "Found" : "Could not find");
     updateValues(toEdit, data, flags);
     return 0;
 }
@@ -220,6 +218,7 @@ int displayWidgets()
     node *current = currentWidgets.head;
     while(current != NULL)
     {
+        SCE_DBG_LOG_INFO("displaying widget %s\n", current->widget.refId);
         spawn(current, UPDATE_ALL);
         current = current->next;
     }
