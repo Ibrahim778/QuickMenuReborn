@@ -3,53 +3,53 @@
 #include <kernel.h>
 #include <libdbg.h>
 
+static SceUID msgPipeUid = SCE_UID_INVALID_UID;
+
 int module_start()
 {
+	msgPipeUid = sceKernelOpenMsgPipe(EXPORT_PIPE);
+	if (msgPipeUid < 0) {
+		SCE_DBG_LOG_INFO("sceKernelOpenMsgPipe() failed\n");
+		return SCE_KERNEL_START_NO_RESIDENT;
+	}
+
     SCE_DBG_LOG_INFO("Exporter Loaded!\n");
     return SCE_KERNEL_START_SUCCESS;
 }
 
 int module_stop()
 {
+	if (msgPipeUid > 0)
+		sceKernelCloseMsgPipe(msgPipeUid);
+
     return SCE_KERNEL_STOP_SUCCESS;
 }
 
-int updateWidget(widgetData data, int flags)
+int updateWidget(widgetData *data, int flags)
 {
-    SceUID pipe = sceKernelOpenMsgPipe(EXPORT_PIPE);
-    
     exportPacket packet;
-    packet.data = data;
+	sceClibMemcpy(&packet.data, data, sizeof(widgetData));
     packet.type = update_widget;
     packet.updateFlags = flags;
     
     SceSize sent = 0;
-    if(sceKernelSendMsgPipe(pipe, &packet, sizeof(packet), SCE_KERNEL_MSG_PIPE_MODE_WAIT | SCE_KERNEL_MSG_PIPE_MODE_FULL, &sent, NULL) != SCE_OK)
-    {
-        sceKernelCloseMsgPipe(pipe);
+    if(sceKernelSendMsgPipe(msgPipeUid, &packet, sizeof(packet), SCE_KERNEL_MSG_PIPE_MODE_DONT_WAIT | SCE_KERNEL_MSG_PIPE_MODE_FULL, &sent, NULL) != SCE_OK)
         return -2;
-    }
 #ifdef DEBUG
     if(sent != sizeof(packet)) SCE_DBG_LOG_ERROR("Error couldn't send all the data!\n");
 #endif
     return 0;
 }
 
-int addWidget(widgetData data)
+int addWidget(widgetData *data)
 {
-    SCE_DBG_LOG_INFO("Adding export\n");
-    SceUID pipe = sceKernelOpenMsgPipe(EXPORT_PIPE);
-    
     exportPacket packet;
-    packet.data = data;
+	sceClibMemcpy(&packet.data, data, sizeof(widgetData));
     packet.type = register_widget;
     
     SceSize sent = 0;
-    if(sceKernelSendMsgPipe(pipe, &packet, sizeof(packet), SCE_KERNEL_MSG_PIPE_MODE_WAIT | SCE_KERNEL_MSG_PIPE_MODE_FULL, &sent, NULL) != SCE_OK)
-    {
-        sceKernelCloseMsgPipe(pipe);
+    if(sceKernelSendMsgPipe(msgPipeUid, &packet, sizeof(packet), SCE_KERNEL_MSG_PIPE_MODE_DONT_WAIT | SCE_KERNEL_MSG_PIPE_MODE_FULL, &sent, NULL) != SCE_OK)
         return -2;
-    }
 #ifdef DEBUG
     if(sent != sizeof(packet)) SCE_DBG_LOG_ERROR("Error couldn't send all the data!\n");
 #endif
@@ -58,18 +58,13 @@ int addWidget(widgetData data)
 
 int removeWidget(const char *refID)
 {
-    SceUID pipe = sceKernelOpenMsgPipe(EXPORT_PIPE);
-    
     exportPacket packet;
-    packet.refId = refID;
+	sceClibStrncpy(packet.refId, refID, sizeof(packet.refId));
     packet.type = unregister_widget;
     
     SceSize sent = 0;
-    if(sceKernelSendMsgPipe(pipe, &packet, sizeof(packet), SCE_KERNEL_MSG_PIPE_MODE_WAIT | SCE_KERNEL_MSG_PIPE_MODE_FULL, &sent, NULL) != SCE_OK)
-    {
-        sceKernelCloseMsgPipe(pipe);
+    if(sceKernelSendMsgPipe(msgPipeUid, &packet, sizeof(packet), SCE_KERNEL_MSG_PIPE_MODE_DONT_WAIT | SCE_KERNEL_MSG_PIPE_MODE_FULL, &sent, NULL) != SCE_OK)
         return -2;
-    }
 #ifdef DEBUG
     if(sent != sizeof(packet)) SCE_DBG_LOG_ERROR("Error couldn't send all the data!\n");
 #endif

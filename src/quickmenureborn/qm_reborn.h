@@ -11,10 +11,10 @@
 #endif
 
 EXPORT
-int addWidget(widgetData data);
+int addWidget(widgetData *data);
 
 EXPORT
-int updateWidget(widgetData data, int flags);
+int updateWidget(widgetData *data, int flags);
 
 EXPORT
 int removeWidget(const char *refID);

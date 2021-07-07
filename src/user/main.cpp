@@ -4,8 +4,8 @@
 #include "../quickmenureborn/qm_reborn.h"
 #include "event_handler.cpp"
 
-SceUID mainThreadID = -1;
-SceUID exportThreadID = -1;
+SceUID mainThreadID = SCE_UID_INVALID_UID;
+SceUID exportThreadID = SCE_UID_INVALID_UID;
 
 bool exportEnd = false;
 bool mainEnd = false;
@@ -24,10 +24,10 @@ SceVoid leakTestTask(void)
 
 int export_thread(SceSize, void *)
 {
-    SceUID pipeID = sceKernelCreateMsgPipe("quickmenureborn_exports_pipe", SCE_KERNEL_MSG_PIPE_TYPE_USER_MAIN, SCE_KERNEL_ATTR_OPENABLE, 4096, NULL);
+    SceUID pipeID = sceKernelCreateMsgPipe("quickmenureborn_exports_pipe", SCE_KERNEL_MSG_PIPE_TYPE_USER_MAIN, SCE_KERNEL_ATTR_OPENABLE, SCE_KERNEL_4KiB, NULL);
     if(pipeID < 0)
     {
-        exportThreadID = -1;
+        exportThreadID = SCE_UID_INVALID_UID;
         sceKernelExitDeleteThread(0);
     }
     while (1)
@@ -105,10 +105,10 @@ extern "C"
 {
     int module_start(SceSize, void *)
     {
-        mainThreadID = sceKernelCreateThread("quickmenureborn", impose_thread, 250, 0x10000, 0, 0, NULL);
+        mainThreadID = sceKernelCreateThread("quickmenureborn", impose_thread, 250, SCE_KERNEL_4KiB, 0, 0, NULL);
         if(sceKernelStartThread(mainThreadID, 0, NULL) < 0) return SCE_KERNEL_START_NO_RESIDENT;
         
-        exportThreadID = sceKernelCreateThread("quickmenureborn_export_thread", export_thread, 251, 0x10000, 0, 0, NULL);
+        exportThreadID = sceKernelCreateThread("quickmenureborn_export_thread", export_thread, 251, SCE_KERNEL_4KiB, 0, 0, NULL);
         if(sceKernelStartThread(exportThreadID, 0, NULL) < 0) return SCE_KERNEL_START_NO_RESIDENT;
         
         return SCE_KERNEL_START_SUCCESS;

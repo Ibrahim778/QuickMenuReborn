@@ -11,7 +11,7 @@ int main()
 
     widgetData dat;
     dat.refId = "mytext";
-    addWidget(dat);
+    addWidget(&dat);
 
     sceKernelDelayThread(10 * 1000 * 1000);
     removeWidget("mytext");
