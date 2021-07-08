@@ -32,16 +32,17 @@ add_link_options(
   --prx-no-runtime-support
 )
 
-# Main Plugin
 include_directories(${PROJECT_NAME}
-    ${CMAKE_SOURCE_DIR}
-    ${VDSUITE_USER_INCLUDE_DIRECTORIES}
-    ${VDSUITE_STANDARD_INCLUDE_DIRECTORIES}
+  ${CMAKE_SOURCE_DIR}
+  ${VDSUITE_USER_INCLUDE_DIRECTORIES}
+  ${VDSUITE_STANDARD_INCLUDE_DIRECTORIES}
 )
 
 link_directories(
   ${VDSUITE_LIBRARY_DIRECTORIES}
 )
+  
+# Main Plugin
 
 add_library(${PROJECT_NAME} MODULE
     ${user_cppfiles}
@@ -81,21 +82,17 @@ VDSuiteCreateStubs(stubs ExportHandler.emd
     quickMenuRebornExports_stub
 )
 #Sample App
-add_executable(samples
+add_library(samples MODULE
   ${qm_reborn_includes}
   src/sample_app/main.c
+  QuickMenuRebornSample.emd
 )
 
 target_link_libraries(samples
   quickMenuRebornExports_stub
   ScePafStdc_stub
+  SceKernel_stub
   SceDbg_stub
 )
 
-VDSuiteCreateSfo(samples-param.sfo param.yml)
-
-VDSuitePackage(samples.vpk
-  FILES
-    $<TARGET_FILE:samples> eboot.bin
-    samples-param.sfo sce_sys/param.sfo
-)
+VDSuiteSignElf(QuickMenuRebornSample.suprx samples)

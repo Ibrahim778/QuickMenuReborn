@@ -94,6 +94,7 @@ int unregisterWidget(const char *refId)
 {
     if(sce_paf_strcmp(refId, "") == 0) return 0;
     currentWidgets.remove_node(refId);
+    currentWidgets.print();
     return 0;
 }
 
@@ -102,6 +103,7 @@ int registerWidget(widgetData *data)
     SCE_DBG_LOG_INFO("Internal add call\n");
     //This is just a wrapper, it'll add the widgets to a linked list, widgets are made on demand when impose menu loads via another thread
     currentWidgets.add_node(data);
+    currentWidgets.print();
     return 0;
 }
 
@@ -206,8 +208,8 @@ int spawn(node *node, int flags)
     makeWidget(node->widget->refId, 
     (char *)idTypes[node->widget->type], 
     (char *)widgetTypes[node->widget->type], 
-    ((sce_paf_strncmp(node->widget->parentRefId, "NULL", sizeof(node->widget->parentRefId)) == 0) ? main_plane : findWidgetByHash(getHashByID(node->widget->parentRefId))));
-
+    ((sce_paf_strlen(node->widget->parentRefId) == 0) ? main_plane : findWidgetByHash(getHashByID(node->widget->parentRefId))));
+    sceClibPrintf("Adding widget with settings:\n refId: %s\nparentRefID: %s\n", node->widget->refId, node->widget->parentRefId);
     NULL_ERROR_FAIL(made);
 
     updateValues(made, node->widget, flags);
@@ -219,6 +221,7 @@ int displayWidgets()
     node *current = currentWidgets.head;
     while(current != NULL)
     {
+        SCE_DBG_LOG_INFO("Spawning widget:  %s\n", current->widget->refId);
         spawn(current, UPDATE_ALL);
         current = current->next;
     }

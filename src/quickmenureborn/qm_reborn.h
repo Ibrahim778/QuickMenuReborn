@@ -27,7 +27,7 @@ EXPORT
 int updateWidget(widgetData *data, int flags);
 
 EXPORT
-int removeWidget(widgetData *data);
+void removeWidget(const char *data);
 
 EXPORT
 widgetColor makeWidgetColor(float r, float g, float b, float a);

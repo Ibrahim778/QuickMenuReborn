@@ -15,6 +15,18 @@ public:
         head = NULL;
     }
 
+    void print()
+    {
+        SCE_DBG_LOG_INFO("W:\n");
+        node *tmp = head;
+        while(tmp != NULL)
+        {
+            SCE_DBG_LOG_INFO("%s, ", tmp->widget->refId);
+            tmp = tmp->next;
+        }
+        SCE_DBG_LOG_INFO("\n");
+    }
+
     void update_node(widgetData *widget)
     {
         node *tmp = head;
@@ -34,7 +46,6 @@ public:
 
     void add_node(widgetData *widget)
     {
-        SCE_DBG_LOG_INFO("Adding %s to list\n", widget->refId);
         node *tmp = new node;
         tmp->widget = widget;
         tmp->next = NULL;
@@ -88,7 +99,7 @@ public:
         while (current != NULL)
         {
 
-            if(sce_paf_strcmp(refId, current->widget.refId) == 0)
+            if(sce_paf_strcmp(refId, current->widget->refId) == 0)
             {
                 break;
             }
@@ -110,4 +121,5 @@ public:
 
         delete current;
     }
-*/};
+    */
+};

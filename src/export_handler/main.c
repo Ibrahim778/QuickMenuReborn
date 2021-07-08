@@ -57,20 +57,22 @@ int addWidget(widgetData *data)
     return 0;
 }
 
-//Remove a previously added widget. It only reads the refID of the widget
-int removeWidget(widgetData *data)
+void removeWidget(const char *refID)
 {
     exportPacket packet;
-	sceClibMemcpy(&packet.data, data, sizeof(data));
+
+    sceClibMemset(&packet, 0, sizeof(packet));
+    sceClibStrncpy((char *)&packet.data.refId, refID, sizeof(packet.data.refId));
+
     packet.type = unregister_widget;
     
     SceSize sent = 0;
     if(sceKernelSendMsgPipe(msgPipeUid, &packet, sizeof(packet), SCE_KERNEL_MSG_PIPE_MODE_DONT_WAIT | SCE_KERNEL_MSG_PIPE_MODE_FULL, &sent, NULL) != SCE_OK)
-        return -2;
+        return;
 #ifdef DEBUG
     if(sent != sizeof(packet)) SCE_DBG_LOG_ERROR("Error couldn't send all the data!\n");
 #endif
-    return 0;
+    return;
 }
 
 vector4 makeWidgetVector4(float x, float y, float z, float w)
@@ -96,36 +98,33 @@ widgetColor makeWidgetColor(float r, float g, float b, float a)
 int QuickMenuRebornButton(const char *refID, const char *parentRefID, vector4 Size, vector4 Position, widgetColor Color, const char *Text, void(*OnPress)(void))
 {
     widgetData widget;
-    sce_paf_memset(widget.refId, 0, sizeof(widget.refId));
+    sceClibMemset(widget.refId, 0, sizeof(widget.refId));
     sceClibStrncpy(widget.refId, refID, sizeof(widget.refId));
 
-    SCE_DBG_LOG_INFO("Set ref id to %s, original (from *) was %s\n", widget.refId, refID);
-
-    sce_paf_memset(widget.parentRefId, 0, sizeof(widget.parentRefId));
-    sceClibStrncpy(widget.parentRefId, parentRefID, sizeof(widget.parentRefId));
+    sceClibMemset(widget.parentRefId, 0, sizeof(widget.parentRefId));
+    if(parentRefID != NULL) sceClibStrncpy(widget.parentRefId, parentRefID, sizeof(widget.parentRefId));
 
     widget.size = Size;
     widget.pos = Position;
     widget.type = button;
     widget.col = Color;
 
-    sce_paf_memset(widget.data.ButtonData.label, 0, sizeof(widget.data.ButtonData.label));
+    sceClibMemset(widget.data.ButtonData.label, 0, sizeof(widget.data.ButtonData.label));
     sceClibStrncpy(widget.data.ButtonData.label, Text, sizeof(widget.data.ButtonData.label));
 
     widget.data.ButtonData.onPress = OnPress;
 
-    addWidget(&widget);
-    return 0;
+    return addWidget(&widget);
 }
 
 int QuickMenuRebornCheckBox(const char *refID, const char *parentRefID, vector4 Size, vector4 Position, widgetColor Color, void(*OnToggle)(int state))
 {
     widgetData widget;
     
-    sce_paf_memset(widget.refId, 0, sizeof(widget.refId));
+    sceClibMemset(widget.refId, 0, sizeof(widget.refId));
     sceClibStrncpy(widget.refId, refID, sizeof(widget.refId));
 
-    sce_paf_memset(widget.parentRefId, 0, sizeof(widget.parentRefId));
+    sceClibMemset(widget.parentRefId, 0, sizeof(widget.parentRefId));
     sceClibStrncpy(widget.parentRefId, parentRefID, sizeof(widget.parentRefId));
 
     widget.size = Size;
@@ -135,18 +134,18 @@ int QuickMenuRebornCheckBox(const char *refID, const char *parentRefID, vector4 
 
     widget.data.CheckBoxData.OnToggle = OnToggle;
 
-    addWidget(&widget);
-    return 0;
+    return addWidget(&widget);
+
 }
 
 int QuickMenuRebornText(const char *refID, const char *parentRefID, vector4 Size, vector4 Position, widgetColor Color, const char *Text)
 {
     widgetData widget;
     
-    sce_paf_memset(widget.refId, 0, sizeof(widget.refId));
+    sceClibMemset(widget.refId, 0, sizeof(widget.refId));
     sceClibStrncpy(widget.refId, refID, sizeof(widget.refId));
 
-    sce_paf_memset(widget.parentRefId, 0, sizeof(widget.parentRefId));
+    sceClibMemset(widget.parentRefId, 0, sizeof(widget.parentRefId));
     sceClibStrncpy(widget.parentRefId, parentRefID, sizeof(widget.parentRefId));
 
     widget.size = Size;
@@ -154,21 +153,21 @@ int QuickMenuRebornText(const char *refID, const char *parentRefID, vector4 Size
     widget.col = Color;
     widget.type = text;
 
-    sce_paf_memset(widget.data.ButtonData.label, 0, sizeof(widget.data.ButtonData.label));
+    sceClibMemset(widget.data.ButtonData.label, 0, sizeof(widget.data.ButtonData.label));
     sceClibStrncpy(widget.data.ButtonData.label, Text, sizeof(widget.data.ButtonData.label));
 
-    addWidget(&widget);
-    return 0;
+    return addWidget(&widget);
+
 }
 
 int QuickMenuRebornPlane(const char *refID, const char *parentRefID, vector4 Size, vector4 Position, widgetColor Color)
 {
     widgetData widget;
     
-    sce_paf_memset(widget.refId, 0, sizeof(widget.refId));
+    sceClibMemset(widget.refId, 0, sizeof(widget.refId));
     sceClibStrncpy(widget.refId, refID, sizeof(widget.refId));
 
-    sce_paf_memset(widget.parentRefId, 0, sizeof(widget.parentRefId));
+    sceClibMemset(widget.parentRefId, 0, sizeof(widget.parentRefId));
     sceClibStrncpy(widget.parentRefId, parentRefID, sizeof(widget.parentRefId));
 
     widget.size = Size;
@@ -176,8 +175,8 @@ int QuickMenuRebornPlane(const char *refID, const char *parentRefID, vector4 Siz
     widget.col = Color;
     widget.type = plane;
 
-    addWidget(&widget);
-    return 0;
+    return addWidget(&widget);
+
 }
 
 int QuickMenuRebornSeparator(const char *refID)
@@ -194,7 +193,7 @@ int QuickMenuRebornUpdateButton(const char *refID, vector4 Size, vector4 Positio
 {
     widgetData widget;
     
-    sce_paf_memset(widget.refId, 0, sizeof(widget.refId));
+    sceClibMemset(widget.refId, 0, sizeof(widget.refId));
     sceClibStrncpy(widget.refId, refID, sizeof(widget.refId));
 
     widget.size = Size;
@@ -202,20 +201,19 @@ int QuickMenuRebornUpdateButton(const char *refID, vector4 Size, vector4 Positio
     widget.type = button;
     widget.col = Color;
 
-    sce_paf_memset(widget.data.ButtonData.label, 0, sizeof(widget.data.ButtonData.label));
+    sceClibMemset(widget.data.ButtonData.label, 0, sizeof(widget.data.ButtonData.label));
     sceClibStrncpy(widget.data.ButtonData.label, Text, sizeof(widget.data.ButtonData.label));
 
     widget.data.ButtonData.onPress = OnPress;
 
-    updateWidget(&widget, flags);
-    return 0;
+    return updateWidget(&widget, flags);
 }
 
 int QuickMenuRebornUpdateCheckBox(const char *refID, vector4 Size, vector4 Position, widgetColor Color, void(*OnToggle)(int state), int flags)
 {
     widgetData widget;
     
-    sce_paf_memset(widget.refId, 0, sizeof(widget.refId));
+    sceClibMemset(widget.refId, 0, sizeof(widget.refId));
     sceClibStrncpy(widget.refId, refID, sizeof(widget.refId));
 
 
@@ -226,15 +224,14 @@ int QuickMenuRebornUpdateCheckBox(const char *refID, vector4 Size, vector4 Posit
 
     widget.data.CheckBoxData.OnToggle = OnToggle;
 
-    updateWidget(&widget, flags);
-    return 0;
+    return updateWidget(&widget, flags);
 }
 
 int QuickMenuRebornUpdateText(const char *refID, vector4 Size, vector4 Position, widgetColor Color, const char *Text, int flags)
 {
     widgetData widget;
     
-    sce_paf_memset(widget.refId, 0, sizeof(widget.refId));
+    sceClibMemset(widget.refId, 0, sizeof(widget.refId));
     sceClibStrncpy(widget.refId, refID, sizeof(widget.refId));
 
     widget.size = Size;
@@ -242,18 +239,18 @@ int QuickMenuRebornUpdateText(const char *refID, vector4 Size, vector4 Position,
     widget.col = Color;
     widget.type = text;
 
-    sce_paf_memset(widget.data.ButtonData.label, 0, sizeof(widget.data.ButtonData.label));
+    sceClibMemset(widget.data.ButtonData.label, 0, sizeof(widget.data.ButtonData.label));
     sceClibStrncpy(widget.data.ButtonData.label, Text, sizeof(widget.data.ButtonData.label));
 
-    updateWidget(&widget, flags);
-    return 0;
+    return updateWidget(&widget, flags);
+
 }
 
 int QuickMenuRebornUpdatePlane(const char *refID, vector4 Size, vector4 Position, widgetColor Color, int flags)
 {
     widgetData widget;
     
-    sce_paf_memset(widget.refId, 0, sizeof(widget.refId));
+    sceClibMemset(widget.refId, 0, sizeof(widget.refId));
     sceClibStrncpy(widget.refId, refID, sizeof(widget.refId));
 
     widget.size = Size;
@@ -261,6 +258,6 @@ int QuickMenuRebornUpdatePlane(const char *refID, vector4 Size, vector4 Position
     widget.col = Color;
     widget.type = plane;
 
-    updateWidget(&widget, flags);
-    return 0;
+    return updateWidget(&widget, flags);
+
 }

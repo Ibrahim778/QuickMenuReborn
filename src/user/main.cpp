@@ -27,6 +27,7 @@ int export_thread(SceSize, void *)
     SceUID pipeID = sceKernelCreateMsgPipe("quickmenureborn_exports_pipe", SCE_KERNEL_MSG_PIPE_TYPE_USER_MAIN, SCE_KERNEL_ATTR_OPENABLE, SCE_KERNEL_4KiB, NULL);
     if(pipeID < 0)
     {
+        SCE_DBG_LOG_INFO("PIPE DED, 0x%X", pipeID);
         exportThreadID = SCE_UID_INVALID_UID;
         sceKernelExitDeleteThread(0);
     }
@@ -57,7 +58,7 @@ int export_thread(SceSize, void *)
                 }
                 case unregister_widget:
                 {
-                    unregisterWidget((char *)&data.data.refId);
+                    unregisterWidget(data.data.refId);
                     break;
                 }
                 default:
