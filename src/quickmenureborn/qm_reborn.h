@@ -55,7 +55,7 @@ vector4 makeWidgetVector4(float x, float y, float z, float w);
     data.data.ButtonData.onPress = OnPress;\
     data.refId = refID;\
     data.data.ButtonData.label = _Text;\
-    addWidget(data);\
+    addWidget(&data);\
 }
 
 #define QuickMenuRebornText(refID, parentRefID, Size, Position, Color, _Text) \
@@ -68,7 +68,7 @@ vector4 makeWidgetVector4(float x, float y, float z, float w);
     data.type = text;\
     data.refId = refID;\
     data.data.ButtonData.label = _Text;\
-    addWidget(data);\
+    addWidget(&data);\
 }
 
 #define QuickMenuRebornCheckBox(refID, parentRefID, Size, Position, Color, onToggle) \
@@ -81,7 +81,7 @@ vector4 makeWidgetVector4(float x, float y, float z, float w);
     data.type = check_box;\
     data.data.CheckBoxData.OnToggle = onToggle;\
     data.refId = refID;\
-    addWidget(data);\
+    addWidget(&data);\
 }
 
 #define QuickMenuRebornPlane(refID, parentRefID, Size, Position, Color)\
@@ -93,7 +93,7 @@ vector4 makeWidgetVector4(float x, float y, float z, float w);
     data.size = Size;\
     data.col = Color;\
     data.type = plane;\
-    addWidget(data);\
+    addWidget(&data);\
 }
 
 
@@ -154,7 +154,7 @@ vector4 makeWidgetVector4(float x, float y, float z, float w);
     data.size = makeWidgetVector4(825.0f,2.0f,0.0f,0.0f);\
     data.col = makeWidgetColor(.75f,.75f,.75f,.75f);\
     data.type = plane;\
-    addWidget(data);\
+    addWidget(&data);\
 }
 
 #endif

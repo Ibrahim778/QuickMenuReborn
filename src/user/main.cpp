@@ -52,7 +52,7 @@ int export_thread(SceSize, void *)
                 }
                 case register_widget:
                 {
-                    SCE_DBG_LOG_INFO("adding widget\n");
+                    SCE_DBG_LOG_INFO("adding widget with refID %s\n", data.data.refId);
                     registerWidget(data.data);
                     break;
                 }

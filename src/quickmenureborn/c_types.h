@@ -90,7 +90,7 @@ typedef struct
     //Only check if type == update_widget
     int updateFlags;
     //Only used for unreigistering widget, otherwise not set
-    const char refId[256];
+    char refId[256];
 } exportPacket;
 
 widgetColor makeWidgetColor(float r, float g, float b, float a);

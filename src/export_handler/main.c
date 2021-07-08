@@ -44,7 +44,8 @@ int updateWidget(widgetData *data, int flags)
 int addWidget(widgetData *data)
 {
     exportPacket packet;
-	sceClibMemcpy(&packet.data, data, sizeof(widgetData));
+	sceClibMemcpy(&packet.data, data, sizeof(widgetData)); 
+    sceClibStrncpy((char *)&packet.refId, data->refId, sceClibStrnlen(data->refId, 256));
     packet.type = register_widget;
     
     SceSize sent = 0;
@@ -59,7 +60,7 @@ int addWidget(widgetData *data)
 int removeWidget(const char *refID)
 {
     exportPacket packet;
-	sceClibStrncpy(packet.refId, refID, sizeof(packet.refId));
+	sceClibStrncpy((char *)packet.refId, refID, sizeof(packet.refId));
     packet.type = unregister_widget;
     
     SceSize sent = 0;
