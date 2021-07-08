@@ -70,6 +70,7 @@ add_library(QuickMenuRebornExports MODULE
 
 target_link_libraries(QuickMenuRebornExports
   SceKernel_stub
+  ${pafStubs}
   SceDbg_stub
 )
 
@@ -87,6 +88,7 @@ add_executable(samples
 
 target_link_libraries(samples
   quickMenuRebornExports_stub
+  ScePafStdc_stub
   SceDbg_stub
 )
 

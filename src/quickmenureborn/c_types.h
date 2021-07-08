@@ -2,13 +2,12 @@
 #define C_TYPES_H_QM_REBORN
 
 #ifdef QM_REBORN_INTERNAL
+#include <kernel/types.h>
 #define EXPORT_PIPE "quickmenureborn_exports_pipe"
 #endif
 
 #ifdef __cplusplus
-
 extern "C" {
-
 #endif
 
 typedef enum
@@ -22,7 +21,7 @@ typedef enum
 typedef struct 
 {
     //Text to be displayed
-    const char *label;
+    char label[0x100];
     int isbold;
 } textData;
 
@@ -30,7 +29,7 @@ typedef struct
 {
     void (*onPress)(void);
     //Text to be displayed
-    const char *label;
+    char label[0x100];
 } buttonData;
 
 typedef struct 
@@ -57,8 +56,8 @@ typedef struct
 
 typedef struct
 {
-    const char *refId;
-    const char *parentRefId;
+    char refId[256];
+    char parentRefId[256];
     widget_type type;
 
     vector4 pos;
@@ -90,7 +89,7 @@ typedef struct
     //Only check if type == update_widget
     int updateFlags;
     //Only used for unreigistering widget, otherwise not set
-    char refId[256];
+    //char refId[256];
 } exportPacket;
 
 widgetColor makeWidgetColor(float r, float g, float b, float a);

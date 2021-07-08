@@ -2,7 +2,7 @@
 
 struct node
 {
-    widgetData widget;
+    widgetData *widget;
     node *next;
 };
 
@@ -15,12 +15,12 @@ public:
         head = NULL;
     }
 
-    void update_node(widgetData widget)
+    void update_node(widgetData *widget)
     {
         node *tmp = head;
         while (tmp != NULL)
         {
-            if(sce_paf_strcmp(tmp->widget.refId, widget.refId) == 0)
+            if(sce_paf_strcmp(tmp->widget->refId, widget->refId) == 0)
                 break;
             tmp = tmp->next;
         }
@@ -32,9 +32,9 @@ public:
         tmp->widget = widget;
     }
 
-    void add_node(widgetData widget)
+    void add_node(widgetData *widget)
     {
-        SCE_DBG_LOG_INFO("Adding %s to list\n", widget.refId);
+        SCE_DBG_LOG_INFO("Adding %s to list\n", widget->refId);
         node *tmp = new node;
         tmp->widget = widget;
         tmp->next = NULL;
@@ -52,7 +52,7 @@ public:
             return;
         
         //First, handle the case where we free the head
-        if (sce_paf_strcmp(head->widget.refId, tag) == 0) {
+        if (sce_paf_strcmp(head->widget->refId, tag) == 0) {
             node* nodeToDelete = head;
             head = head->next;
             sce_paf_free(nodeToDelete);
@@ -66,7 +66,7 @@ public:
         //Else, try to locate node we're asked to remove
         node** pCurrentNodeNext = &head;   //This points to the current node's `next` field (or to pHead)
         while (1) {
-            if (sce_paf_strcmp((*pCurrentNodeNext)->widget.refId, tag) == 0) //pCurrentNodeNext points to the pointer that points to the node we need to delete
+            if (sce_paf_strcmp((*pCurrentNodeNext)->widget->refId, tag) == 0) //pCurrentNodeNext points to the pointer that points to the node we need to delete
                 break;
 
             //If the next node's next is NULL, we reached the end of the list. Bail out.

@@ -3,7 +3,7 @@ sceModuleInfo_type: 6
 module_function: module_start localname: module_start
 module_function: module_stop localname: module_stop
 
-Library: quickMenuRebornExports version: 3
+Library: quickMenuRebornExports version: 4
 Library: quickMenuRebornExports nidsuffix: ""
 Library: quickMenuRebornExports attr: auto_export
 
@@ -13,3 +13,14 @@ Library: quickMenuRebornExports function: updateWidget
 
 Library: quickMenuRebornExports function: makeWidgetColor
 Library: quickMenuRebornExports function: makeWidgetVector4
+
+Library: quickMenuRebornExports function: QuickMenuRebornButton
+Library: quickMenuRebornExports function: QuickMenuRebornCheckBox
+Library: quickMenuRebornExports function: QuickMenuRebornText
+Library: quickMenuRebornExports function: QuickMenuRebornPlane
+Library: quickMenuRebornExports function: QuickMenuRebornSeparator
+
+Library: quickMenuRebornExports function: QuickMenuRebornUpdateButton
+Library: quickMenuRebornExports function: QuickMenuRebornUpdateCheckBox
+Library: quickMenuRebornExports function: QuickMenuRebornUpdateText
+Library: quickMenuRebornExports function: QuickMenuRebornUpdatePlane

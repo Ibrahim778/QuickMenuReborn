@@ -46,19 +46,18 @@ int export_thread(SceSize, void *)
             {
                 case update_widget:
                 {
-                    SCE_DBG_LOG_INFO("Updating widget\n");
-                    updateWidget(data.data, data.updateFlags);
+                    updateWidget(&data.data, data.updateFlags);
                     break;
                 }
                 case register_widget:
                 {
                     SCE_DBG_LOG_INFO("adding widget with refID %s\n", data.data.refId);
-                    registerWidget(data.data);
+                    registerWidget(&data.data);
                     break;
                 }
                 case unregister_widget:
                 {
-                    unregisterWidget(data.refId);
+                    unregisterWidget((char *)&data.data.refId);
                     break;
                 }
                 default:
@@ -84,15 +83,16 @@ int impose_thread(SceSize, void *)
             {
                 int ret;
                 ret = initWidgets();
-                FAILTHREAD_IF(ret < 0);
-
-                //Delay a little to make sure it displays at the end
-                sceKernelDelayThread(1000);
+                if(ret >= 0)
+                {
+                    //Delay a little to make sure it displays at the end
+                    sceKernelDelayThread(1000);
 #ifdef DEBUG
-                leakTestTask();
+                    leakTestTask();
 #endif
-                displayWidgets();
-                dispalyed = 1;
+                    displayWidgets();
+                    dispalyed = 1;
+                }
             }
         }
         else dispalyed = 0;

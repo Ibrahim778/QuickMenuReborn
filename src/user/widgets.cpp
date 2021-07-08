@@ -74,6 +74,7 @@ Widget *makeWidget(const char *refId, const char *idType, const char *type, Widg
     paf::Resource::Element winfo;
     //SearchInfo
     paf::Resource::Element sinfo;
+    //Search Request
     paf::Resource::Element searchRequest;
 
     searchRequest.id.Set(refId);
@@ -96,12 +97,12 @@ int unregisterWidget(const char *refId)
     return 0;
 }
 
-const char *registerWidget(widgetData data)
+int registerWidget(widgetData *data)
 {
     SCE_DBG_LOG_INFO("Internal add call\n");
     //This is just a wrapper, it'll add the widgets to a linked list, widgets are made on demand when impose menu loads via another thread
     currentWidgets.add_node(data);
-    return data.refId;
+    return 0;
 }
 
 int setText(const char *text, Widget *widget)
@@ -110,7 +111,7 @@ int setText(const char *text, Widget *widget)
     return widget->SetLabel(&wstr);
 }
 
-int updateWidget(widgetData data, int flags)
+int updateWidget(widgetData *data, int flags)
 {
     //Update the widget in the linked list for when it needs to be redrawn
     currentWidgets.update_node(data);
@@ -124,17 +125,17 @@ int updateWidget(widgetData data, int flags)
     return 0;
 }
 
-int updateValues(Widget *made, widgetData widget, int flags)
+int updateValues(Widget *made, widgetData *widget, int flags)
 {
-    SceFVector4 pos = makeSceVector4(widget.pos);
-    SceFVector4 size = makeSceVector4(widget.size);
-    Widget::Color col = makeSceColor(widget.col);
+    SceFVector4 pos = makeSceVector4(widget->pos);
+    SceFVector4 size = makeSceVector4(widget->size);
+    Widget::Color col = makeSceColor(widget->col);
     
     if(flags & UPDATE_POSITION) made->SetPosition(&pos);
     if(flags & UPDATE_SIZE) made->SetSize(&size);
 
     QMEventHandler *eh = new QMEventHandler();
-    switch (widget.type)
+    switch (widget->type)
     {
         case button:
         {
@@ -145,7 +146,7 @@ int updateValues(Widget *made, widgetData widget, int flags)
                 made->RegisterEventCallback(ON_PRESS_EVENT_ID, eh, 0);
             }
             if(flags & UPDATE_COLOR) made->SetFilterColor(&col);
-            if(flags & UPDATE_TEXT) setText(widget.data.ButtonData.label, made);
+            if(flags & UPDATE_TEXT) setText(widget->data.ButtonData.label, made);
             break;
         }
 
@@ -168,7 +169,7 @@ int updateValues(Widget *made, widgetData widget, int flags)
             if(flags & UPDATE_TEXT)
             {
                 //made->SetOption(Widget::Option::Text_Bold, 0,0,widget.data.TextData.isbold);
-                setText(widget.data.TextData.label, made);
+                setText(widget->data.TextData.label, made);
             }
             break;
         }
@@ -190,10 +191,10 @@ int updateValues(Widget *made, widgetData widget, int flags)
     return 0;
 }
 
-int editWidget(widgetData data, int flags)
+int editWidget(widgetData *data, int flags)
 {
     
-    Widget *toEdit = findWidgetByHash(getHashByID(data.refId));
+    Widget *toEdit = findWidgetByHash(getHashByID(data->refId));
     updateValues(toEdit, data, flags);
     return 0;
 }
@@ -202,10 +203,10 @@ int spawn(node *node, int flags)
 {
     Widget *made;
     made = 
-    makeWidget(node->widget.refId, 
-    (char *)idTypes[node->widget.type], 
-    (char *)widgetTypes[node->widget.type], 
-    (node->widget.parentRefId == NULL ? main_plane : findWidgetByHash(getHashByID(node->widget.parentRefId))));
+    makeWidget(node->widget->refId, 
+    (char *)idTypes[node->widget->type], 
+    (char *)widgetTypes[node->widget->type], 
+    ((sce_paf_strncmp(node->widget->parentRefId, "NULL", sizeof(node->widget->parentRefId)) == 0) ? main_plane : findWidgetByHash(getHashByID(node->widget->parentRefId))));
 
     NULL_ERROR_FAIL(made);
 
@@ -218,7 +219,6 @@ int displayWidgets()
     node *current = currentWidgets.head;
     while(current != NULL)
     {
-        SCE_DBG_LOG_INFO("displaying widget %s\n", current->widget.refId);
         spawn(current, UPDATE_ALL);
         current = current->next;
     }

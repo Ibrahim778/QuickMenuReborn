@@ -3,12 +3,22 @@
 
 #include "c_types.h"
 
+void *sce_paf_memset(void *ptr, int value, SceSize num);
+char *sceClibStrncpy(char *dst, const char *src, SceSize len);
+int sceClibSnprintf(char *dst, SceSize dst_max_size, const char *fmt, ...);
+
 #define EXPORT extern 
 
 #ifndef QM_REBORN_INTERNAL
 #undef EXPORT
 #define EXPORT
 #endif
+
+#define CHECKBOX_HANDLER(name) void name(int checked)
+#define BUTTON_HANDLER(name) void name()
+#define NULL_PARENT "NULL"
+
+#define NULL_SET(str, src) do { sce_paf_memset(&str, 0, sizeof(str)); sceClibStrncpy((char *)&str, src, sizeof(str)); }while(0)
 
 EXPORT
 int addWidget(widgetData *data);
@@ -17,7 +27,7 @@ EXPORT
 int updateWidget(widgetData *data, int flags);
 
 EXPORT
-int removeWidget(const char *refID);
+int removeWidget(widgetData *data);
 
 EXPORT
 widgetColor makeWidgetColor(float r, float g, float b, float a);
@@ -33,6 +43,7 @@ vector4 makeWidgetVector4(float x, float y, float z, float w);
 #define COLOR_PINK makeWidgetColor(1.0f, 0, 1.0f, 1.0f)
 #define COLOR_YELLOW makeWidgetColor(1.0f, 1.0f, 0.0f, 1.0f)
 #define COLOR_GRAY makeWidgetColor(0.5f, 0.5f, 0.5f, 0.5f)
+#define COLOR_TRANSPARENT makeWidgetColor(1.0f, 1.0f, 1.0f, 0.0f)
 
 #define makeCommonWidgetColor(common) makeWidgetColor(common, common, common, common)
 #define makeCommonWidgetVector4(common) makeWidgetVector4(common, common, common, common)
@@ -43,118 +54,15 @@ vector4 makeWidgetVector4(float x, float y, float z, float w);
 #define makeCommonWidgetVector4Int(common) makeWidgetVector4(common##.0f, common##.0f, common##.0f, common##.0f)
 #define makeCommonWidgetColorInt(common) makeWidgetColor(common##.0f, common##.0f, common##.0f, common##.0f)
 
+int QuickMenuRebornButton(const char *refID, const char *parentRefID, vector4 Size, vector4 Position, widgetColor Color, const char *Text, void(*OnPress)(void));
+int QuickMenuRebornCheckBox(const char *refID, const char *parentRefID, vector4 Size, vector4 Position, widgetColor Color, void(*OnToggle)(int state));
+int QuickMenuRebornText(const char *refID, const char *parentRefID, vector4 Size, vector4 Position, widgetColor Color, const char *Text);
+int QuickMenuRebornPlane(const char *refID, const char *parentRefID, vector4 Size, vector4 Position, widgetColor Color);
+int QuickMenuRebornSeparator(const char *refID);
 
-#define QuickMenuRebornButton(refID, parentRefID, Size, Position, Color, _Text, OnPress) \
-{\
-    widgetData data;\
-    data.col = Color;\
-    data.parentRefId = parentRefID;\
-    data.pos = Position;\
-    data.size = Size;\
-    data.type = button;\
-    data.data.ButtonData.onPress = OnPress;\
-    data.refId = refID;\
-    data.data.ButtonData.label = _Text;\
-    addWidget(&data);\
-}
-
-#define QuickMenuRebornText(refID, parentRefID, Size, Position, Color, _Text) \
-{\
-    widgetData data;\
-    data.col = Color;\
-    data.parentRefId = parentRefID;\
-    data.pos = Position;\
-    data.size = Size;\
-    data.type = text;\
-    data.refId = refID;\
-    data.data.ButtonData.label = _Text;\
-    addWidget(&data);\
-}
-
-#define QuickMenuRebornCheckBox(refID, parentRefID, Size, Position, Color, onToggle) \
-{\
-    widgetData data;\
-    data.col = Color;\
-    data.parentRefId = parentRefID;\
-    data.pos = Position;\
-    data.size = Size;\
-    data.type = check_box;\
-    data.data.CheckBoxData.OnToggle = onToggle;\
-    data.refId = refID;\
-    addWidget(&data);\
-}
-
-#define QuickMenuRebornPlane(refID, parentRefID, Size, Position, Color)\
-{\
-    widgetData data;\
-    data.refId = refID;\
-    data.parentRefId = parentRefID;\
-    data.pos = Position;\
-    data.size = Size;\
-    data.col = Color;\
-    data.type = plane;\
-    addWidget(&data);\
-}
-
-
-#define QuickMenuRebornUpdateButton(refID, Size, Position, Color, _Text, OnPress, flags) \
-{\
-    widgetData data;\
-    data.col = Color;\
-    data.pos = Position;\
-    data.size = Size;\
-    data.type = button;\
-    data.data.ButtonData.onPress = OnPress;\
-    data.refId = refID;\
-    data.data.ButtonData.label = _Text;\
-    updateWidget(data, flags);\
-}
-
-#define QuickMenuRebornUpdateCheckBox(refID, Size, Position, Color, onToggle, flags) \
-{\
-    widgetData data;\
-    data.col = Color;\
-    data.pos = Position;\
-    data.size = Size;\
-    data.type = check_box;\
-    data.data.CheckBoxData.OnToggle = onToggle;\
-    data.refId = refID;\
-    updateWidget(data, flags);\
-}
-
-#define QuickMenuRebornUpdateText(refID, Size, Position, Color, _Text, flags) \
-{\
-    widgetData data;\
-    data.col = Color;\
-    data.pos = Position;\
-    data.size = Size;\
-    data.type = text;\
-    data.data.TextData.label = _Text;\
-    data.refId = refID;\
-    updateWidget(data, flags);\
-}
-
-#define QuickMenuRebornUpdatePlane(refID, Size, Position, Color, flags) \
-{\
-    widgetData data;\
-    data.col = Color;\
-    data.pos = Position;\
-    data.size = Size;\
-    data.type = plane;\
-    data.refId = refID;\
-    updateWidget(data, flags);\
-}
-
-#define QuickMenuRebornSeparator(refID)\
-{\
-    widgetData data;\
-    data.refId = "qm_reborn_" refID "_line";\
-    data.parentRefId = NULL;\
-    data.pos = makeWidgetVector4(0,0,0,0);\
-    data.size = makeWidgetVector4(825.0f,2.0f,0.0f,0.0f);\
-    data.col = makeWidgetColor(.75f,.75f,.75f,.75f);\
-    data.type = plane;\
-    addWidget(&data);\
-}
+int QuickMenuRebornUpdateButton(const char *refID, vector4 Size, vector4 Position, widgetColor Color, const char *Text, void(*OnPress)(void), int flags);
+int QuickMenuRebornUpdateCheckBox(const char *refID, vector4 Size, vector4 Position, widgetColor Color, void(*OnToggle)(int state), int flags);
+int QuickMenuRebornUpdateText(const char *refID, vector4 Size, vector4 Position, widgetColor Color, const char *Text, int flags);
+int QuickMenuRebornUpdatePlane(const char *refID, vector4 Size, vector4 Position, widgetColor Color, int flags);
 
 #endif

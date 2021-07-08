@@ -19,6 +19,7 @@
         "misc.h": "c",
         "stdc.h": "c",
         "kernel.h": "c",
-        "cdefs.h": "c"
+        "cdefs.h": "c",
+        "libdbg.h": "c"
     }
 }

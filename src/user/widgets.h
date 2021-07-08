@@ -7,17 +7,12 @@
 #define SCROLL_VIEW_BOX_ID 0x0EE0C8AF
 #define ON_PRESS_EVENT_ID 0x10000008
 
-#define CHECKBOX_HANDLER(name) void name(int checked)
-#define BUTTON_HANDLER(name) void name()
-
-
-
 Widget *findWidgetByHash(SceUInt32 hash);
 int initWidgets();
-Widget *makeWidget(char *refId, char *idType, char *type, Widget *parent);
+Widget *makeWidget(const char *refId, const char *idType, const char *type, Widget *parent);
 int displayWidgets();
-int editWidget(widgetData data, int flags);
-const char *registerWidget(widgetData data);
+int editWidget(widgetData *data, int flags);
+int registerWidget(widgetData *data);
 int unregisterWidget(const char *refId);
-int updateWidget(widgetData data, int flags);
+int updateWidget(widgetData *data, int flags);
 #endif

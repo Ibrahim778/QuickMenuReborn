@@ -10,8 +10,9 @@
 using namespace paf;
 using namespace widget;
 
-#define QM_REBORN_INTERNAL
+int sceClibPrintf(const char * fmt, ...);
 
+#define QM_REBORN_INTERNAL
 #ifdef DEBUG
 
 #define TRY(method) do { sceClibPrintf("Trying " #method "\n"); void *ret = (void *)method; sceClibPrintf("Got ret = 0x%X\n", ret); } while(0);
