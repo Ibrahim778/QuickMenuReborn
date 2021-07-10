@@ -2,7 +2,7 @@
 
 struct node
 {
-    widgetData *widget;
+    widgetData widget;
     node *next;
 };
 
@@ -17,22 +17,24 @@ public:
 
     void print()
     {
+    #ifdef DEBUG
         SCE_DBG_LOG_INFO("W:\n");
         node *tmp = head;
         while(tmp != NULL)
         {
-            SCE_DBG_LOG_INFO("%s, ", tmp->widget->refId);
+            SCE_DBG_LOG_INFO("%s, ", tmp->widget.refId);
             tmp = tmp->next;
         }
         SCE_DBG_LOG_INFO("\n");
+    #endif
     }
 
-    void update_node(widgetData *widget)
+    void update_node(widgetData *widget, int flags)
     {
         node *tmp = head;
         while (tmp != NULL)
         {
-            if(sce_paf_strcmp(tmp->widget->refId, widget->refId) == 0)
+            if(sce_paf_strcmp(tmp->widget.refId, widget->refId) == 0)
                 break;
             tmp = tmp->next;
         }
@@ -41,13 +43,56 @@ public:
             return;
         }
 
-        tmp->widget = widget;
+        if(flags & UPDATE_COLOR)
+            tmp->widget.col = widget->col;
+        if(flags & UPDATE_SIZE)
+            tmp->widget.size = widget->size;
+        if(flags & UPDATE_POSITION)
+            tmp->widget.pos = widget->pos;
+        if(flags & UPDATE_TEXT)
+        {
+            switch (widget->type)
+            {
+            case button:
+            {
+                sce_paf_strncpy(tmp->widget.data.ButtonData.label, widget->data.ButtonData.label, 0x100);
+                break;
+            }
+            case text:
+            {
+                sce_paf_strncpy(tmp->widget.data.TextData.label, widget->data.ButtonData.label, 0x100);
+                break;
+            }
+            default:
+                break;
+            }
+        }
+        if(flags & UPDATE_EVENT)
+        {
+            switch (widget->type)
+            {
+            case button:
+            {
+                tmp->widget.data.ButtonData.onPress = widget->data.ButtonData.onPress;
+                break;
+            }
+            
+            case check_box:
+            {
+                tmp->widget.data.CheckBoxData.OnToggle = widget->data.CheckBoxData.OnToggle;
+                break;
+            }
+
+            default:
+                break;
+            }
+        }
     }
 
     void add_node(widgetData *widget)
     {
         node *tmp = new node;
-        tmp->widget = widget;
+        sce_paf_memcpy(&tmp->widget, widget, sizeof(widgetData));
         tmp->next = NULL;
 
         if(head == NULL)
@@ -63,7 +108,7 @@ public:
             return;
         
         //First, handle the case where we free the head
-        if (sce_paf_strcmp(head->widget->refId, tag) == 0) {
+        if (sce_paf_strcmp(head->widget.refId, tag) == 0) {
             node* nodeToDelete = head;
             head = head->next;
             sce_paf_free(nodeToDelete);
@@ -77,7 +122,7 @@ public:
         //Else, try to locate node we're asked to remove
         node** pCurrentNodeNext = &head;   //This points to the current node's `next` field (or to pHead)
         while (1) {
-            if (sce_paf_strcmp((*pCurrentNodeNext)->widget->refId, tag) == 0) //pCurrentNodeNext points to the pointer that points to the node we need to delete
+            if (sce_paf_strcmp((*pCurrentNodeNext)->widget.refId, tag) == 0) //pCurrentNodeNext points to the pointer that points to the node we need to delete
                 break;
 
             //If the next node's next is NULL, we reached the end of the list. Bail out.

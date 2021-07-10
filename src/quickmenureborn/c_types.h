@@ -57,13 +57,19 @@ typedef struct
 typedef struct
 {
     char refId[256];
+
     char parentRefId[256];
+    int hasParent;
+    
     widget_type type;
 
     vector4 pos;
     widgetColor col;
     vector4 size;
-    union
+    
+    void (*OnLoad)(void);
+
+    union extraData
     {
         toggleData CheckBoxData;
         buttonData ButtonData;
@@ -76,7 +82,8 @@ typedef enum packet_type
 {
     register_widget,
     unregister_widget,
-    update_widget
+    update_widget,
+    open_quickmenu
 
 } packetType;
 

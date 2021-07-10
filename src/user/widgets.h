@@ -11,8 +11,10 @@ Widget *findWidgetByHash(SceUInt32 hash);
 int initWidgets();
 Widget *makeWidget(const char *refId, const char *idType, const char *type, Widget *parent);
 int displayWidgets();
+int openQuickMenu();
 int editWidget(widgetData *data, int flags);
 int registerWidget(widgetData *data);
 int unregisterWidget(const char *refId);
 int updateWidget(widgetData *data, int flags);
+int spawn(widgetData *widget, int flags);
 #endif

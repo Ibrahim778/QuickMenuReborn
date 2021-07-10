@@ -27,7 +27,6 @@ int export_thread(SceSize, void *)
     SceUID pipeID = sceKernelCreateMsgPipe("quickmenureborn_exports_pipe", SCE_KERNEL_MSG_PIPE_TYPE_USER_MAIN, SCE_KERNEL_ATTR_OPENABLE, SCE_KERNEL_4KiB, NULL);
     if(pipeID < 0)
     {
-        SCE_DBG_LOG_INFO("PIPE DED, 0x%X", pipeID);
         exportThreadID = SCE_UID_INVALID_UID;
         sceKernelExitDeleteThread(0);
     }
@@ -39,10 +38,13 @@ int export_thread(SceSize, void *)
         SceSize size = 0;
 
         int recRes = sceKernelReceiveMsgPipe(pipeID, &data, sizeof(data), SCE_KERNEL_MSG_PIPE_MODE_WAIT | SCE_KERNEL_MSG_PIPE_MODE_FULL, &size, NULL);
-        if(recRes != SCE_OK) SCE_DBG_LOG_INFO("Error function returned error code : 0x%X\n", recRes);
+        if(recRes != SCE_OK) 
+            SCE_DBG_LOG_INFO("Error function returned error code : 0x%X\n", recRes);
         else if(size > 0) 
         {
+            #ifdef DEBUG
             SCE_DBG_LOG_INFO("Got call\n");
+            #endif
             switch (data.type)
             {
                 case update_widget:
@@ -52,13 +54,20 @@ int export_thread(SceSize, void *)
                 }
                 case register_widget:
                 {
+                    #ifdef DEBUG
                     SCE_DBG_LOG_INFO("adding widget with refID %s\n", data.data.refId);
+                    #endif
                     registerWidget(&data.data);
                     break;
                 }
                 case unregister_widget:
                 {
                     unregisterWidget(data.data.refId);
+                    break;
+                }
+                case open_quickmenu:
+                {
+                    openQuickMenu();
                     break;
                 }
                 default:

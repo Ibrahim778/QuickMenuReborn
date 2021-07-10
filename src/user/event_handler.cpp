@@ -1,6 +1,8 @@
 #include "main.h"
 #include "widgets.h"
 
+extern "C" void handleButton(void(*button)(void));
+
 class QMEventHandler : public Widget::EventCallback
 {
 public:

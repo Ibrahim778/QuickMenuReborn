@@ -41,6 +41,26 @@ include_directories(${PROJECT_NAME}
 link_directories(
   ${VDSUITE_LIBRARY_DIRECTORIES}
 )
+
+#Export Handler
+
+add_library(QuickMenuRebornExports MODULE
+  ${export_cfiles}
+  ExportHandler.emd
+)
+
+target_link_libraries(QuickMenuRebornExports
+  SceKernel_stub
+  ${pafStubs}
+  SceDbg_stub
+)
+
+VDSuiteSignElf(QuickMenuRebornExports.suprx QuickMenuRebornExports)
+
+VDSuiteCreateStubs(stubs ExportHandler.emd
+  LIBRARIES
+    quickMenuRebornExports_stub
+)
   
 # Main Plugin
 
@@ -62,25 +82,6 @@ target_link_libraries(${PROJECT_NAME}
 
 VDSuiteSignElf(${PROJECT_NAME}.suprx ${PROJECT_NAME})
 
-#Export Handler
-
-add_library(QuickMenuRebornExports MODULE
-  ${export_cfiles}
-  ExportHandler.emd
-)
-
-target_link_libraries(QuickMenuRebornExports
-  SceKernel_stub
-  ${pafStubs}
-  SceDbg_stub
-)
-
-VDSuiteSignElf(QuickMenuRebornExports.suprx QuickMenuRebornExports)
-
-VDSuiteCreateStubs(stubs ExportHandler.emd
-  LIBRARIES
-    quickMenuRebornExports_stub
-)
 #Sample App
 add_library(samples MODULE
   ${qm_reborn_includes}
@@ -90,7 +91,6 @@ add_library(samples MODULE
 
 target_link_libraries(samples
   quickMenuRebornExports_stub
-  ScePafStdc_stub
   SceKernel_stub
   SceDbg_stub
 )

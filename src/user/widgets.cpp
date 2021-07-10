@@ -11,6 +11,9 @@ static widget::Widget *(*getImposeRoot)();
 static Plugin *imposePlugin;
 static widget::Widget *powerRoot;
 static Widget *main_plane;
+//Actual Impose_plugin
+static Plugin *impose_plugin;
+static Widget *impose_pluginFirstWidget;
 
 const char *idTypes[] = 
 {
@@ -92,18 +95,49 @@ Widget *makeWidget(const char *refId, const char *idType, const char *type, Widg
 
 int unregisterWidget(const char *refId)
 {
+    #ifdef DEBUG
+    SCE_DBG_LOG_INFO("Called unregister widget, refId: %s\n", refId);
+    #endif
+    //If refID not given, bail out
     if(sce_paf_strcmp(refId, "") == 0) return 0;
+    
+    //Remove widget from list
     currentWidgets.remove_node(refId);
     currentWidgets.print();
+
+    //Make widget impossible to press to avoid triggering dead callbacks
+    SceAppMgrAppState state;
+    sceAppMgrGetAppState(&state);
+    if(state.isSystemUiOverlaid)
+    {
+        widgetData dat;
+        sce_paf_memset(dat.refId, 0, 0x100);
+        sce_paf_strncpy(dat.refId, refId, 0x100);
+
+        dat.size.x = 0;
+        dat.size.y = 0;
+
+        updateWidget(&dat, UPDATE_SIZE);
+    }
     return 0;
 }
 
 int registerWidget(widgetData *data)
 {
+    #ifdef DEBUG
     SCE_DBG_LOG_INFO("Internal add call\n");
+    #endif
     //This is just a wrapper, it'll add the widgets to a linked list, widgets are made on demand when impose menu loads via another thread
     currentWidgets.add_node(data);
+    #ifdef DEBUG
     currentWidgets.print();
+    #endif
+
+    SceAppMgrAppState state;
+    sceAppMgrGetAppState(&state);
+    if(state.isSystemUiOverlaid)
+        spawn(data, UPDATE_ALL);
+
     return 0;
 }
 
@@ -116,7 +150,7 @@ int setText(const char *text, Widget *widget)
 int updateWidget(widgetData *data, int flags)
 {
     //Update the widget in the linked list for when it needs to be redrawn
-    currentWidgets.update_node(data);
+    currentWidgets.update_node(data, flags);
 
     SceAppMgrAppState state;
     sceAppMgrGetAppState(&state);
@@ -144,7 +178,7 @@ int updateValues(Widget *made, widgetData *widget, int flags)
             if(flags & UPDATE_EVENT)
             {
                 eh->pUserData = sce_paf_malloc(sizeof(widgetData));
-                sce_paf_memcpy(eh->pUserData, &widget, sizeof(widgetData));
+                sce_paf_memcpy(eh->pUserData, widget, sizeof(widgetData));
                 made->RegisterEventCallback(ON_PRESS_EVENT_ID, eh, 0);
             }
             if(flags & UPDATE_COLOR) made->SetFilterColor(&col);
@@ -170,7 +204,7 @@ int updateValues(Widget *made, widgetData *widget, int flags)
             if(flags & UPDATE_COLOR) made->SetFilterColor(&col);
             if(flags & UPDATE_TEXT)
             {
-                //made->SetOption(Widget::Option::Text_Bold, 0,0,widget.data.TextData.isbold);
+                made->SetOption((paf::widget::Widget::Option)7, 0,0,widget->data.TextData.isbold ? SCE_TRUE : SCE_FALSE);
                 setText(widget->data.TextData.label, made);
             }
             break;
@@ -201,18 +235,42 @@ int editWidget(widgetData *data, int flags)
     return 0;
 }
 
-int spawn(node *node, int flags)
+int spawn(widgetData *widget, int flags)
 {
     Widget *made;
     made = 
-    makeWidget(node->widget->refId, 
-    (char *)idTypes[node->widget->type], 
-    (char *)widgetTypes[node->widget->type], 
-    ((sce_paf_strlen(node->widget->parentRefId) == 0) ? main_plane : findWidgetByHash(getHashByID(node->widget->parentRefId))));
-    sceClibPrintf("Adding widget with settings:\n refId: %s\nparentRefID: %s\n", node->widget->refId, node->widget->parentRefId);
+    makeWidget(widget->refId, 
+    idTypes[widget->type], 
+    widgetTypes[widget->type], 
+    (widget->hasParent == 0) ? main_plane : findWidgetByHash(getHashByID(widget->parentRefId)));
+
+
+#ifdef DEBUG
+    sceClibPrintf("Adding widget with settings:\nrefId: %s\nparentRefID: %s\nhasParent: %s", widget.refId, widget.parentRefId, widget.hasParent ? "True" : "False");
+#endif
+
     NULL_ERROR_FAIL(made);
 
-    updateValues(made, node->widget, flags);
+    updateValues(made, widget, flags);
+    return 0;
+}
+
+int openQuickMenu()
+{
+    SCE_DBG_LOG_INFO("REACHED INTERNAL FUNCTION");
+    if(impose_plugin == NULL)
+    {
+        impose_plugin = Plugin::GetByName("impose_plugin");
+        NULL_ERROR_FAIL(impose_plugin);
+    }
+    if(impose_pluginFirstWidget == NULL)
+    {
+        impose_pluginFirstWidget = impose_plugin->GetWidgetByNum(1);
+        NULL_ERROR_FAIL(impose_pluginFirstWidget);
+    }
+    int (*openQM)();
+    openQM = (int(*)()) *(int *)((int)impose_pluginFirstWidget + 0xc);
+    openQM();
     return 0;
 }
 
@@ -221,8 +279,10 @@ int displayWidgets()
     node *current = currentWidgets.head;
     while(current != NULL)
     {
-        SCE_DBG_LOG_INFO("Spawning widget:  %s\n", current->widget->refId);
-        spawn(current, UPDATE_ALL);
+        #ifdef DEBUG
+        SCE_DBG_LOG_INFO("Spawning widget:  %s\n", current->widget.refId);
+        #endif
+        spawn(&current->widget, UPDATE_ALL);
         current = current->next;
     }
     

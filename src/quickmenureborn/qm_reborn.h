@@ -16,7 +16,6 @@ int sceClibSnprintf(char *dst, SceSize dst_max_size, const char *fmt, ...);
 
 #define CHECKBOX_HANDLER(name) void name(int checked)
 #define BUTTON_HANDLER(name) void name()
-#define NULL_PARENT "NULL"
 
 #define NULL_SET(str, src) do { sce_paf_memset(&str, 0, sizeof(str)); sceClibStrncpy((char *)&str, src, sizeof(str)); }while(0)
 
@@ -27,7 +26,10 @@ EXPORT
 int updateWidget(widgetData *data, int flags);
 
 EXPORT
-void removeWidget(const char *data);
+int removeWidget(const char *data);
+
+EXPORT
+int openQuickMenu();
 
 EXPORT
 widgetColor makeWidgetColor(float r, float g, float b, float a);
@@ -54,15 +56,15 @@ vector4 makeWidgetVector4(float x, float y, float z, float w);
 #define makeCommonWidgetVector4Int(common) makeWidgetVector4(common##.0f, common##.0f, common##.0f, common##.0f)
 #define makeCommonWidgetColorInt(common) makeWidgetColor(common##.0f, common##.0f, common##.0f, common##.0f)
 
-int QuickMenuRebornButton(const char *refID, const char *parentRefID, vector4 Size, vector4 Position, widgetColor Color, const char *Text, void(*OnPress)(void));
-int QuickMenuRebornCheckBox(const char *refID, const char *parentRefID, vector4 Size, vector4 Position, widgetColor Color, void(*OnToggle)(int state));
-int QuickMenuRebornText(const char *refID, const char *parentRefID, vector4 Size, vector4 Position, widgetColor Color, const char *Text);
-int QuickMenuRebornPlane(const char *refID, const char *parentRefID, vector4 Size, vector4 Position, widgetColor Color);
+int QuickMenuRebornButton(const char *refID, const char *parentRefID, vector4 *Size, vector4 *Position, widgetColor *Color, const char *Text, void(*OnPress)(void));
+int QuickMenuRebornCheckBox(const char *refID, const char *parentRefID, vector4 *Size, vector4 *Position, widgetColor *Color, void(*OnToggle)(int state));
+int QuickMenuRebornText(const char *refID, const char *parentRefID, vector4 *Size, vector4 *Position, widgetColor *Color, const char *Text);
+int QuickMenuRebornPlane(const char *refID, const char *parentRefID, vector4 *Size, vector4 *Position, widgetColor *Color);
 int QuickMenuRebornSeparator(const char *refID);
 
-int QuickMenuRebornUpdateButton(const char *refID, vector4 Size, vector4 Position, widgetColor Color, const char *Text, void(*OnPress)(void), int flags);
-int QuickMenuRebornUpdateCheckBox(const char *refID, vector4 Size, vector4 Position, widgetColor Color, void(*OnToggle)(int state), int flags);
-int QuickMenuRebornUpdateText(const char *refID, vector4 Size, vector4 Position, widgetColor Color, const char *Text, int flags);
-int QuickMenuRebornUpdatePlane(const char *refID, vector4 Size, vector4 Position, widgetColor Color, int flags);
+int QuickMenuRebornUpdateButton(const char *refID, vector4 *Size, vector4 *Position, widgetColor *Color, const char *Text, void(*OnPress)(void), int flags);
+int QuickMenuRebornUpdateCheckBox(const char *refID, vector4 *Size, vector4 *Position, widgetColor *Color, void(*OnToggle)(int state), int flags);
+int QuickMenuRebornUpdateText(const char *refID, vector4 *Size, vector4 *Position, widgetColor *Color, const char *Text, int flags);
+int QuickMenuRebornUpdatePlane(const char *refID, vector4 *Size, vector4 *Position, widgetColor *Color, int flags);
 
 #endif
