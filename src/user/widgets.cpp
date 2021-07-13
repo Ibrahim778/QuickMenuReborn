@@ -5,6 +5,7 @@
 #include "widgets.h"
 #include "linkedList.cpp"
 #include <kernel/libkernel.h>
+#include <registrymgr.h>
 #include "event_handler.cpp"
 
 static widget::Widget *(*getImposeRoot)();
@@ -169,6 +170,7 @@ int updateValues(Widget *made, widgetData *widget, int flags)
     
     if(flags & UPDATE_POSITION) made->SetPosition(&pos);
     if(flags & UPDATE_SIZE) made->SetSize(&size);
+    if(flags & UPDATE_COLOR) made->SetFilterColor(&col);
 
     QMEventHandler *eh = new QMEventHandler();
     switch (widget->type)
@@ -177,12 +179,16 @@ int updateValues(Widget *made, widgetData *widget, int flags)
         {
             if(flags & UPDATE_EVENT)
             {
+                sceClibPrintf("Updating event...\n");
                 eh->pUserData = sce_paf_malloc(sizeof(widgetData));
                 sce_paf_memcpy(eh->pUserData, widget, sizeof(widgetData));
                 made->RegisterEventCallback(ON_PRESS_EVENT_ID, eh, 0);
             }
-            if(flags & UPDATE_COLOR) made->SetFilterColor(&col);
-            if(flags & UPDATE_TEXT) setText(widget->data.ButtonData.label, made);
+            if(flags & UPDATE_TEXT) 
+            {
+                setText(widget->data.ButtonData.label, made);
+            }
+
             break;
         }
 
@@ -190,30 +196,23 @@ int updateValues(Widget *made, widgetData *widget, int flags)
         {
             if(flags & UPDATE_EVENT)
             {
+                sceClibPrintf("Updating event....\n");
                 eh->pUserData = sce_paf_malloc(sizeof(widgetData));
                 sce_paf_memcpy(eh->pUserData, &widget, sizeof(widgetData));
-                made->RegisterEventCallback(ON_PRESS_EVENT_ID, eh, 0);
+                int ret = made->RegisterEventCallback(ON_PRESS_EVENT_ID, eh, 0);
+                sceClibPrintf("RET = 0x%X\n", ret);
             }
-            if(flags & UPDATE_COLOR) made->SetFilterColor(&col);
             break;
         }
         
         case text:
         {
             delete eh;
-            if(flags & UPDATE_COLOR) made->SetFilterColor(&col);
             if(flags & UPDATE_TEXT)
             {
                 made->SetOption((paf::widget::Widget::Option)7, 0,0,widget->data.TextData.isbold ? SCE_TRUE : SCE_FALSE);
                 setText(widget->data.TextData.label, made);
             }
-            break;
-        }
-        
-        case plane:
-        {
-            delete eh;
-            if(flags & UPDATE_COLOR) made->SetFilterColor(&col);
             break;
         }
 
@@ -223,7 +222,6 @@ int updateValues(Widget *made, widgetData *widget, int flags)
             break;
         }
     }
-
     return 0;
 }
 
@@ -235,23 +233,42 @@ int editWidget(widgetData *data, int flags)
     return 0;
 }
 
+int setupValues(Widget *widget, widgetData *dat)
+{
+    switch (dat->type)
+    {
+    case check_box:
+    {
+            int state = 0;
+            sceRegMgrGetKeyInt(REG_CONFIG_DIR, dat->refId, &state);
+            ((CheckBox *)widget)->SetChecked(0, state, 0);
+            break;
+    }
+    
+    default:
+        break;
+    }
+    return 0;
+}
+
 int spawn(widgetData *widget, int flags)
 {
     Widget *made;
     made = 
     makeWidget(widget->refId, 
-    idTypes[widget->type], 
-    widgetTypes[widget->type], 
+    widget->isAdvanced ? widget->adata.idType : idTypes[widget->type], 
+    widget->isAdvanced ? widget->adata.type : widgetTypes[widget->type], 
     (widget->hasParent == 0) ? main_plane : findWidgetByHash(getHashByID(widget->parentRefId)));
 
 
 #ifdef DEBUG
-    sceClibPrintf("Adding widget with settings:\nrefId: %s\nparentRefID: %s\nhasParent: %s", widget.refId, widget.parentRefId, widget.hasParent ? "True" : "False");
+    sceClibPrintf("Adding widget with settings:\nrefId: %s\nparentRefID: %s\nhasParent: %s\nisAdvanced: %s", widget->refId, widget->parentRefId, widget->hasParent ? "True" : "False", widget->isAdvanced ? "True" : "False");
 #endif
 
     NULL_ERROR_FAIL(made);
-
-    updateValues(made, widget, flags);
+    updateValues(made, widget, widget->isAdvanced ? UPDATE_COLOR | UPDATE_POSITION | UPDATE_SIZE : flags);
+    setupValues(made, widget);
+    if(widget->OnLoad != NULL) widget->OnLoad();
     return 0;
 }
 
@@ -279,14 +296,10 @@ int displayWidgets()
     node *current = currentWidgets.head;
     while(current != NULL)
     {
-        #ifdef DEBUG
-        SCE_DBG_LOG_INFO("Spawning widget:  %s\n", current->widget.refId);
-        #endif
         spawn(&current->widget, UPDATE_ALL);
         current = current->next;
     }
     
     return 0;
 }
-
 #endif

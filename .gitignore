@@ -3,3 +3,6 @@
 /vdsuite_paf_stub
 /run.sh
 /out.txt
+/release
+/package.bat
+/build.bat

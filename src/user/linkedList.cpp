@@ -9,23 +9,24 @@ struct node
 class linked_list
 {
 public:
-    node *head;
+    node *head, *tail;
     linked_list()
     {
         head = NULL;
+        tail = NULL;
     }
 
     void print()
     {
     #ifdef DEBUG
-        SCE_DBG_LOG_INFO("W:\n");
+        sceClibPrintf("W:\n");
         node *tmp = head;
         while(tmp != NULL)
         {
-            SCE_DBG_LOG_INFO("%s, ", tmp->widget.refId);
+            sceClibPrintf("%s, ", tmp->widget.refId);
             tmp = tmp->next;
         }
-        SCE_DBG_LOG_INFO("\n");
+        sceClibPrintf("\n");
     #endif
     }
 
@@ -98,6 +99,12 @@ public:
         if(head == NULL)
         {
             head = tmp;
+            tail = tmp;
+        }
+        else
+        {
+            tail->next = tmp;
+            tail = tail->next;
         }
     }
     

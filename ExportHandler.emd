@@ -24,3 +24,5 @@ Library: quickMenuRebornExports function: QuickMenuRebornUpdateButton
 Library: quickMenuRebornExports function: QuickMenuRebornUpdateCheckBox
 Library: quickMenuRebornExports function: QuickMenuRebornUpdateText
 Library: quickMenuRebornExports function: QuickMenuRebornUpdatePlane
+
+Library: quickMenuRebornExports function: QuickMenuRebornAddAdvancedWidget

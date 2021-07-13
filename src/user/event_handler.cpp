@@ -1,7 +1,7 @@
 #include "main.h"
 #include "widgets.h"
 
-extern "C" void handleButton(void(*button)(void));
+extern "C" int sceRegMgrSetKeyInt(const char *category, const char *name, int value);
 
 class QMEventHandler : public Widget::EventCallback
 {
@@ -24,6 +24,8 @@ public:
             
             case check_box:
             {
+                int ret = sceRegMgrSetKeyInt(REG_CONFIG_DIR, widget->refId, ((CheckBox *)self)->checked);
+                sceClibPrintf("Set reg res: 0x%X\n", ret);
                 if(widget->data.CheckBoxData.OnToggle != NULL) widget->data.CheckBoxData.OnToggle(((CheckBox *)self)->checked);    
                 break;
             }

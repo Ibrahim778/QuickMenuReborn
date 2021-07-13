@@ -13,6 +13,7 @@ using namespace widget;
 int sceClibPrintf(const char * fmt, ...);
 
 #define QM_REBORN_INTERNAL
+#define DEBUG
 #ifdef DEBUG
 
 #define TRY(method) do { sceClibPrintf("Trying " #method "\n"); void *ret = (void *)method; sceClibPrintf("Got ret = 0x%X\n", ret); } while(0);
@@ -30,5 +31,7 @@ int sceClibPrintf(const char * fmt, ...);
 #define FAILTHREAD_IF(con) if (con) { return sceKernelExitDeleteThread(0); }
 #define NULL_ERROR_FAIL(con) if (con < 0 || con == NULL) { return -1; }
 #endif
+
+#define REG_CONFIG_DIR "/REGISTRY/QMREBORN/"
 
 #endif

@@ -32,7 +32,7 @@ add_link_options(
   --prx-no-runtime-support
 )
 
-include_directories(${PROJECT_NAME}
+include_directories(
   ${CMAKE_SOURCE_DIR}
   ${VDSUITE_USER_INCLUDE_DIRECTORIES}
   ${VDSUITE_STANDARD_INCLUDE_DIRECTORIES}
@@ -77,6 +77,7 @@ target_link_libraries(${PROJECT_NAME}
     SceThreadmgr_stub
     SceDbg_stub
     SceAppMgrUser_stub
+    SceRegMgr_stub 
     ${pafStubs}
 )
 
@@ -96,3 +97,8 @@ target_link_libraries(samples
 )
 
 VDSuiteSignElf(QuickMenuRebornSample.suprx samples)
+
+# Generate VitaSDK stubs
+add_custom_command(TARGET QuickMenuRebornExports POST_BUILD
+  COMMAND $ENV{SCE_PSP2_SDK_DIR}/host_tools/build/bin/vdsuite-libgen.exe ${CMAKE_SOURCE_DIR}/ExportHandler.yml ${CMAKE_BINARY_DIR}/vitasdk_stubs --output-kind VitasdkStub
+)
