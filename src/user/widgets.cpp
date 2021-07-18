@@ -2,11 +2,13 @@
 #ifndef WIDGETS_CPP_QM_REBORN
 #define WIDGETS_CPP_QM_REBORN
 
+#include "main.h"
+#include "linkedList.hpp"
+#include "types.h"
 #include "widgets.h"
-#include "linkedList.cpp"
+#include "event_handler.hpp"
 #include <kernel/libkernel.h>
 #include <registrymgr.h>
-#include "event_handler.cpp"
 
 static widget::Widget *(*getImposeRoot)();
 static Plugin *imposePlugin;
@@ -15,6 +17,9 @@ static Widget *main_plane;
 //Actual Impose_plugin
 static Plugin *impose_plugin;
 static Widget *impose_pluginFirstWidget;
+
+
+linked_list currentWidgets;
 
 const char *idTypes[] = 
 {
@@ -31,8 +36,6 @@ const char *widgetTypes[] =
     "text",
     "plane"
 };
-
-linked_list currentWidgets;
 
 Widget *findWidgetByHash(SceUInt32 hash)
 {
@@ -104,7 +107,7 @@ int unregisterWidget(const char *refId)
     
     //Remove widget from list
     currentWidgets.remove_node(refId);
-    currentWidgets.print();
+    currentWidgets.printall();
 
     //Make widget impossible to press to avoid triggering dead callbacks
     SceAppMgrAppState state;
@@ -137,7 +140,10 @@ int registerWidget(widgetData *data)
     SceAppMgrAppState state;
     sceAppMgrGetAppState(&state);
     if(state.isSystemUiOverlaid)
+    {
         spawn(data, UPDATE_ALL);
+        if(data->OnLoad != NULL) data->OnLoad();
+    }
 
     return 0;
 }
@@ -150,16 +156,29 @@ int setText(const char *text, Widget *widget)
 
 int updateWidget(widgetData *data, int flags)
 {
+    print("UPDATING NODE\n");
+    
     //Update the widget in the linked list for when it needs to be redrawn
     currentWidgets.update_node(data, flags);
+
+    print("DONE!!!\n");
 
     SceAppMgrAppState state;
     sceAppMgrGetAppState(&state);
     //If quickMenu is being displayed, update the current widget
     if(state.isSystemUiOverlaid)
+    {
+        print("EDITING WIDGET\n");
         editWidget(data, flags);
+        print("DONE\n");
+    }
     
     return 0;
+}
+
+void dummyprint(const char *fmt, ...)
+{
+    if(fmt != fmt) return;
 }
 
 int updateValues(Widget *made, widgetData *widget, int flags)
@@ -179,10 +198,13 @@ int updateValues(Widget *made, widgetData *widget, int flags)
         {
             if(flags & UPDATE_EVENT)
             {
-                sceClibPrintf("Updating event...\n");
+                print("Updating event...\n");
                 eh->pUserData = sce_paf_malloc(sizeof(widgetData));
+                print("Done malloc();\n");
                 sce_paf_memcpy(eh->pUserData, widget, sizeof(widgetData));
-                made->RegisterEventCallback(ON_PRESS_EVENT_ID, eh, 0);
+                print("Done memcpy();\n");
+                int ret = made->RegisterEventCallback(ON_PRESS_EVENT_ID, eh, 0);
+                sceClibPrintf("RET = 0x%X\n", ret);
             }
             if(flags & UPDATE_TEXT) 
             {
@@ -196,9 +218,11 @@ int updateValues(Widget *made, widgetData *widget, int flags)
         {
             if(flags & UPDATE_EVENT)
             {
-                sceClibPrintf("Updating event....\n");
+                print("Updating checkbox event....\n");
                 eh->pUserData = sce_paf_malloc(sizeof(widgetData));
-                sce_paf_memcpy(eh->pUserData, &widget, sizeof(widgetData));
+                print("Done malloc();\n");
+                sce_paf_memcpy(eh->pUserData, widget, sizeof(widgetData));
+                print("Done memcpy();\n");
                 int ret = made->RegisterEventCallback(ON_PRESS_EVENT_ID, eh, 0);
                 sceClibPrintf("RET = 0x%X\n", ret);
             }
@@ -239,10 +263,10 @@ int setupValues(Widget *widget, widgetData *dat)
     {
     case check_box:
     {
-            int state = 0;
-            sceRegMgrGetKeyInt(REG_CONFIG_DIR, dat->refId, &state);
-            ((CheckBox *)widget)->SetChecked(0, state, 0);
-            break;
+        print("Got state %d\n", dat->data.CheckBoxData.state);
+        ((CheckBox *)widget)->SetChecked(0, dat->data.CheckBoxData.state, 0);
+        print("DONE SET CHECKED\n");
+        break;
     }
     
     default:
@@ -262,13 +286,16 @@ int spawn(widgetData *widget, int flags)
 
 
 #ifdef DEBUG
-    sceClibPrintf("Adding widget with settings:\nrefId: %s\nparentRefID: %s\nhasParent: %s\nisAdvanced: %s", widget->refId, widget->parentRefId, widget->hasParent ? "True" : "False", widget->isAdvanced ? "True" : "False");
+    print("Adding widget with settings:\nrefId: %s\nparentRefID: %s\nhasParent: %s\nisAdvanced: %s", widget->refId, widget->parentRefId, widget->hasParent ? "True" : "False", widget->isAdvanced ? "True" : "False");
 #endif
 
     NULL_ERROR_FAIL(made);
     updateValues(made, widget, widget->isAdvanced ? UPDATE_COLOR | UPDATE_POSITION | UPDATE_SIZE : flags);
+    print("DONE\n");
+    print("OnLoad %s NULL\n", widget->OnLoad == NULL ? "==" : "!=");
+    print("Setting up values, %s\n", widget->refId);
     setupValues(made, widget);
-    if(widget->OnLoad != NULL) widget->OnLoad();
+    print("DONE ALL\n");
     return 0;
 }
 
@@ -297,6 +324,7 @@ int displayWidgets()
     while(current != NULL)
     {
         spawn(&current->widget, UPDATE_ALL);
+        if(current->widget.OnLoad != NULL) current->widget.OnLoad();
         current = current->next;
     }
     

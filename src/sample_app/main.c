@@ -22,7 +22,7 @@ int count = 0;
 //Declare our boolean
 bool resetOnExit = false;
 
-//Declare our function that will act as the callback for whwn our burron is pressed, Format: BUTTON_HANDLER(name of function)
+//Declare our function that will act as the callback for when our burron is pressed, Format: BUTTON_HANDLER(name of function)
 BUTTON_HANDLER(onPress)
 {
     //Increment the count
@@ -48,12 +48,16 @@ BUTTON_HANDLER(onPress)
 
 ONLOAD_HANDLER(OnButtonLoad)
 {
+    sceClibPrintf("Called OnButtonLoad");
+    
     if(resetOnExit)
     {
         //Make our size variable
-        vector4 size = makeWidgetVector4Int(200, 75, 0, 0);
+        //vector4 size = makeWidgetVector4Int(200, 75, 0, 0);
         //Update our widget
-        QuickMenuRebornUpdateButton(BUTTON_REF_ID, &size, NULL, NULL, "Press Me!", NULL, NULL, UPDATE_TEXT | UPDATE_SIZE);
+        sceClibPrintf("ABOUT TO DO IT\n");
+
+        QuickMenuRebornUpdateButton(BUTTON_REF_ID, NULL, NULL, NULL, NULL, NULL, NULL, 0);
     }
 }
 

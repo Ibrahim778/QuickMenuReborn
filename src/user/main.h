@@ -1,6 +1,7 @@
 
 #ifndef MAIN_H_QM_REBORN
 #define MAIN_H_QM_REBORN
+
 #include <libdbg.h>
 #include <kernel.h>
 #include <appmgr.h>
@@ -11,11 +12,9 @@ using namespace paf;
 using namespace widget;
 
 int sceClibPrintf(const char * fmt, ...);
-
 #define QM_REBORN_INTERNAL
-#define DEBUG
 #ifdef DEBUG
-
+#define print sceClibPrintf
 #define TRY(method) do { sceClibPrintf("Trying " #method "\n"); void *ret = (void *)method; sceClibPrintf("Got ret = 0x%X\n", ret); } while(0);
 #define TRY_RET(method, toSet, type) do { sceClibPrintf("Trying " #method "\n"); type ret = (type)method; sceClibPrintf("Got ret = 0x%X\n", ret); toSet = ret;  } while(0)
 #define DO(method) sceClibPrintf("Doing "#method "\n");
@@ -24,6 +23,7 @@ int sceClibPrintf(const char * fmt, ...);
 #define NULL_ERROR_FAIL(con) if (con < 0 || con == NULL) { sceClibPrintf("Error occoured! (%s)\n", #con); sceKernelDelayThread(3 * 1000000); return -1; } else sceClibPrintf("Check PASSED (%s not null or error)\n", #con);
 
 #else
+#define print dummyprint
 #define TRY(method) method;
 #define TRY_RET(method, toSet, type) do { void *ret = (void *)method; toSet = (type)ret;  } while(0)
 #define DO(method)
@@ -31,7 +31,5 @@ int sceClibPrintf(const char * fmt, ...);
 #define FAILTHREAD_IF(con) if (con) { return sceKernelExitDeleteThread(0); }
 #define NULL_ERROR_FAIL(con) if (con < 0 || con == NULL) { return -1; }
 #endif
-
-#define REG_CONFIG_DIR "/REGISTRY/QMREBORN/"
 
 #endif

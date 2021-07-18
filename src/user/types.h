@@ -1,10 +1,12 @@
 #ifndef TYPES_H_QM_REBORN
 #define TYPES_H_QM_REBORN
-
+#include <libdbg.h>
+#include <kernel.h>
+#include <appmgr.h>
+#include <kernel/libkernel.h>
+#include <paf.h>
 #include "main.h"
-
-#include "../quickmenureborn/c_types.h"
-
+#include "../quickmenureborn/qm_reborn.h"
 
 WString makeWString(const char *string);
 Widget::Color makeSceColor(float r, float g, float b, float a);

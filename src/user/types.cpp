@@ -1,6 +1,4 @@
-#ifndef TYPES_CPP_QM_REBORN
-#define TYPES_CPP_QM_REBORN
-
+#include "main.h"
 #include "types.h"
 
 WString makeWString(const char *string)
@@ -66,5 +64,3 @@ SceFVector4 makeSceVector4(vector4 vect)
 
     return toret;
 }
-
-#endif

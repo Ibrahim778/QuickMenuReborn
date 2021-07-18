@@ -1,8 +1,9 @@
-#include "main.h"
+
 #include "types.h"
 #include "widgets.h"
+
 #include "../quickmenureborn/qm_reborn.h"
-#include "event_handler.cpp"
+#include "main.h"
 
 SceUID mainThreadID = SCE_UID_INVALID_UID;
 SceUID exportThreadID = SCE_UID_INVALID_UID;

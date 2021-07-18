@@ -91,9 +91,9 @@ add_library(samples MODULE
 )
 
 target_link_libraries(samples
-  quickMenuRebornExports_stub
   SceKernel_stub
   SceDbg_stub
+  quickMenuRebornExports_stub
 )
 
 VDSuiteSignElf(QuickMenuRebornSample.suprx samples)

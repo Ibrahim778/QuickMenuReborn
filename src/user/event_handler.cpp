@@ -1,17 +1,13 @@
-#include "main.h"
-#include "widgets.h"
+#include "event_handler.hpp"
 
-extern "C" int sceRegMgrSetKeyInt(const char *category, const char *name, int value);
+    extern linked_list currentWidgets;
 
-class QMEventHandler : public Widget::EventCallback
-{
-public:
-    QMEventHandler()
+    QMEventHandler::QMEventHandler()
     {
         eventHandler = onGet;
     }
 
-    static void onGet(SceInt32 , Widget *self, SceInt32, ScePVoid puserData)
+    void QMEventHandler::onGet(SceInt32 , Widget *self, SceInt32, ScePVoid puserData)
     {
         widgetData *widget = (widgetData *)puserData;
         switch (widget->type)
@@ -24,8 +20,8 @@ public:
             
             case check_box:
             {
-                int ret = sceRegMgrSetKeyInt(REG_CONFIG_DIR, widget->refId, ((CheckBox *)self)->checked);
-                sceClibPrintf("Set reg res: 0x%X\n", ret);
+                sceClibPrintf("Setting checkbox state to %d\n", ((CheckBox *)self)->checked);
+                currentWidgets.update_checkbox_status(widget->refId, ((CheckBox *)self)->checked);
                 if(widget->data.CheckBoxData.OnToggle != NULL) widget->data.CheckBoxData.OnToggle(((CheckBox *)self)->checked);    
                 break;
             }
@@ -36,4 +32,3 @@ public:
             }
         }
     }
-};

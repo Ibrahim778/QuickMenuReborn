@@ -36,6 +36,8 @@ typedef struct
 {
     //Function called when toggled
     void (*OnToggle)(int state);
+    //Current State
+    int state;
 } toggleData;
 
 typedef struct

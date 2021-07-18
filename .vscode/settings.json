@@ -20,6 +20,9 @@
         "stdc.h": "c",
         "kernel.h": "c",
         "cdefs.h": "c",
-        "libdbg.h": "c"
+        "libdbg.h": "c",
+        "linkedlist.cpp": "c",
+        "linkedlist.hpp": "c",
+        "appmgr.h": "c"
     }
 }

@@ -1,6 +1,9 @@
 #ifndef QM_REBORN_H
 #define QM_REBORN_H
 
+#define QM_REBORN_INTERNAL
+
+#include <scetypes.h>
 #include "c_types.h"
 
 void *sce_paf_memset(void *ptr, int value, SceSize num);
@@ -75,9 +78,9 @@ EXPORT
 int QuickMenuRebornSeparator(const char *refID);
 
 EXPORT
-int QuickMenuRebornUpdateButton(const char *refID, vector4 *Size, vector4 *Position, widgetColor *Color, const char *Text, void (*OnLoad)(), void(*OnPress)(void), int flags);
+int QuickMenuRebornUpdateButton(const char *refID, vector4 *Size, vector4 *Position, widgetColor *Color, const char *Text, void(*OnPress)(void), void (*OnLoad)(), int flags);
 EXPORT
-int QuickMenuRebornUpdateCheckBox(const char *refID, vector4 *Size, vector4 *Position, widgetColor *Color, void (*OnLoad)(), void(*OnToggle)(int state), int flags);
+int QuickMenuRebornUpdateCheckBox(const char *refID, vector4 *Size, vector4 *Position, widgetColor *Color, void(*OnToggle)(int state), void (*OnLoad)(), int flags);
 EXPORT
 int QuickMenuRebornUpdateText(const char *refID, vector4 *Size, vector4 *Position, widgetColor *Color, const char *Text, void (*OnLoad)(), int flags);
 EXPORT

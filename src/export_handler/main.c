@@ -2,6 +2,9 @@
 #include "../quickmenureborn/qm_reborn.h"
 #include <kernel.h>
 #include <libdbg.h>
+#include "export_handler_internal.h"
+
+
 
 static SceUID msgPipeUid = SCE_UID_INVALID_UID;
 
@@ -114,10 +117,10 @@ widgetColor makeWidgetColor(float r, float g, float b, float a)
 int QuickMenuRebornButton(const char *refID, const char *parentRefID, vector4 *Size, vector4 *Position, widgetColor *Color, const char *Text, void (*OnLoad)(), void(*OnPress)(void))
 {
     widgetData widget;
-    sceClibMemset(widget.refId, 0, sizeof(widget.refId));
+    sceClibMemset(&widget, 0, sizeof(widget));
+
     sceClibStrncpy(widget.refId, refID, sizeof(widget.refId));
 
-    sceClibMemset(widget.parentRefId, 0, sizeof(widget.parentRefId));
     if(parentRefID != NULL) sceClibStrncpy(widget.parentRefId, parentRefID, sizeof(widget.parentRefId));
 
     widget.hasParent = parentRefID != NULL;
@@ -127,7 +130,6 @@ int QuickMenuRebornButton(const char *refID, const char *parentRefID, vector4 *S
     widget.type = button;
     widget.col = *Color;
 
-    sceClibMemset(widget.data.ButtonData.label, 0, sizeof(widget.data.ButtonData.label));
     sceClibStrncpy(widget.data.ButtonData.label, Text, sizeof(widget.data.ButtonData.label));
     
     widget.data.ButtonData.onPress = OnPress;
@@ -143,10 +145,9 @@ int QuickMenuRebornCheckBox(const char *refID, const char *parentRefID, vector4 
 {
     widgetData widget;
     
-    sceClibMemset(widget.refId, 0, sizeof(widget.refId));
+    sceClibMemset(&widget, 0, sizeof(widget));
     sceClibStrncpy(widget.refId, refID, sizeof(widget.refId));
 
-    sceClibMemset(widget.parentRefId, 0, sizeof(widget.parentRefId));
     if(parentRefID != NULL) sceClibStrncpy(widget.parentRefId, parentRefID, sizeof(widget.parentRefId));
 
     widget.hasParent = parentRefID != NULL;
@@ -231,25 +232,33 @@ int QuickMenuRebornSeparator(const char *refID)
 
 int QuickMenuRebornUpdateButton(const char *refID, vector4 *Size, vector4 *Position, widgetColor *Color, const char *Text, void(*OnPress)(void), void (*OnLoad)(), int flags)
 {
+    print("Updating button with refID: %s\n", refID);
     widgetData widget;
-    
-    sceClibMemset(widget.refId, 0, sizeof(widget.refId));
+    sceClibMemset(&widget, 0, sizeof(widget));
+
+    print("Made and set widget\n");
+
     sceClibStrncpy(widget.refId, refID, sizeof(widget.refId));
 
+    print("Copied refID\n");
+
     if(Size != NULL) widget.size = *Size;
+    print("Set size\n");
     if(Position != NULL) widget.pos = *Position;
+    print("Set Pos\n");
     widget.type = button;
+    print("Set Type\n");
     if(Color != NULL) widget.col = *Color;
+    print("Set Col\n");
     if(Text != NULL)
-    {
-        sceClibMemset(widget.data.ButtonData.label, 0, sizeof(widget.data.ButtonData.label));
         sceClibStrncpy(widget.data.ButtonData.label, Text, sizeof(widget.data.ButtonData.label));
-    }
-
-    widget.data.ButtonData.onPress = OnPress;
-    widget.OnLoad = OnLoad;
-
-    widget.isAdvanced = 0;
+    print("Copied Text\n");
+    if(flags & UPDATE_EVENT)
+        widget.data.ButtonData.onPress = OnPress;
+    print("Set Event\n");
+    if(flags & UPDATE_LOAD)
+        widget.OnLoad = OnLoad;
+    print("Set LoadEvent\n");
 
     return updateWidget(&widget, flags);
 }
