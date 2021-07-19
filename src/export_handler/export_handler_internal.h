@@ -4,10 +4,9 @@
 #define print sceClibPrintf
 #else
 #define print dummy
-#endif
-
 void dummy(const char *fmt, ...)
 {
     if(fmt != fmt) return;
 }
+#endif
 #endif

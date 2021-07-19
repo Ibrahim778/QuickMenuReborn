@@ -232,6 +232,7 @@ int QuickMenuRebornSeparator(const char *refID)
 
 int QuickMenuRebornUpdateButton(const char *refID, vector4 *Size, vector4 *Position, widgetColor *Color, const char *Text, void(*OnPress)(void), void (*OnLoad)(), int flags)
 {
+    sceKernelDelayThread(1000);
     print("Updating button with refID: %s\n", refID);
     widgetData widget;
     sceClibMemset(&widget, 0, sizeof(widget));

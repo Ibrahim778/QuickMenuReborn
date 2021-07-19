@@ -45,6 +45,7 @@
         }
         if(tmp == NULL)
         {
+            print("WARNING TMP == NULL CANNOT UPDATE\n");
             return;
         }
 
@@ -60,12 +61,13 @@
             {
             case button:
             {
-                sce_paf_strncpy(tmp->widget.data.ButtonData.label, widget->data.ButtonData.label, 0x100);
+                sce_paf_memcpy(tmp->widget.data.ButtonData.label, widget->data.ButtonData.label, sizeof(tmp->widget.data.ButtonData.label));
+                print("After copying text %s\n", tmp->widget.data.ButtonData.label);
                 break;
             }
             case text:
             {
-                sce_paf_strncpy(tmp->widget.data.TextData.label, widget->data.ButtonData.label, 0x100);
+                sce_paf_strncpy(tmp->widget.data.TextData.label, widget->data.ButtonData.label, sizeof(tmp->widget.data.ButtonData.label));
                 break;
             }
             default:

@@ -23,6 +23,7 @@
         "libdbg.h": "c",
         "linkedlist.cpp": "c",
         "linkedlist.hpp": "c",
-        "appmgr.h": "c"
+        "appmgr.h": "c",
+        "export_handler_internal.h": "c"
     }
 }

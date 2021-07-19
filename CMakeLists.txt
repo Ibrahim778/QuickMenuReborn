@@ -26,7 +26,7 @@ set(CMAKE_C_STANDARD 99)
 enable_language(EMD)
 
 add_compile_options(
-  -Xdiag=2 -Xquit=2
+  -O0
 )
 add_link_options(
   --prx-no-runtime-support

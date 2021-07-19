@@ -109,20 +109,6 @@ int unregisterWidget(const char *refId)
     currentWidgets.remove_node(refId);
     currentWidgets.printall();
 
-    //Make widget impossible to press to avoid triggering dead callbacks
-    SceAppMgrAppState state;
-    sceAppMgrGetAppState(&state);
-    if(state.isSystemUiOverlaid)
-    {
-        widgetData dat;
-        sce_paf_memset(dat.refId, 0, 0x100);
-        sce_paf_strncpy(dat.refId, refId, 0x100);
-
-        dat.size.x = 0;
-        dat.size.y = 0;
-
-        updateWidget(&dat, UPDATE_SIZE);
-    }
     return 0;
 }
 
@@ -134,7 +120,7 @@ int registerWidget(widgetData *data)
     //This is just a wrapper, it'll add the widgets to a linked list, widgets are made on demand when impose menu loads via another thread
     currentWidgets.add_node(data);
     #ifdef DEBUG
-    currentWidgets.print();
+    currentWidgets.printall();
     #endif
 
     SceAppMgrAppState state;
