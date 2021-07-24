@@ -51,30 +51,25 @@ int addInitialSpacer()
 SceInt32 VblankCallback(SceUID notifyId, SceInt32 notifyCount, SceInt32 notifyArg, void* pCommon) 
 {
     SceAppMgrAppState state;
-    while (1)
+
+    sceAppMgrGetAppState(&state);
+    if(state.isSystemUiOverlaid)
     {
-
-        if(mainEnd) break;
-
-        sceAppMgrGetAppState(&state);
-        if(state.isSystemUiOverlaid)
+        if(!dispalyed)
         {
-            if(!dispalyed)
+            int ret;
+            ret = initWidgets();
+            if(ret >= 0)
             {
-                int ret;
-                ret = initWidgets();
-                if(ret >= 0)
-                {
 #ifdef DEBUG
-                    leakTestTask();
+                leakTestTask();
 #endif
-                    displayWidgets();
-                    dispalyed = 1;
-                }
+                displayWidgets();
+                dispalyed = 1;
+            
             }
         }
         else dispalyed = 0;
-
     }
     return 0;
 }
