@@ -10,55 +10,33 @@
 #define BUTTON_HANDLER(name) void name()
 #define ONLOAD_HANDLER(name) void name()
 
-#ifdef __cplusplus 
-extern "C" 
-#else 
-extern 
-#endif 
+#ifdef __cplusplus
+#define EXPORT extern "C"
+#else
+#define EXPORT extern
+#endif
+
+EXPORT
 int addWidget(widgetData *data);
 
-#ifdef __cplusplus 
-extern "C" 
-#else 
-extern 
-#endif 
+EXPORT
 int updateWidget(widgetData *data, int flags);
 
-#ifdef __cplusplus 
-extern "C" 
-#else 
-extern 
-#endif 
+EXPORT
 int removeWidget(const char *data);
 
-#ifdef __cplusplus 
-extern "C" 
-#else 
-extern 
-#endif 
+EXPORT
 int removeSeparator(const char *refID);
 
 
-#ifdef __cplusplus 
-extern "C" 
-#else 
-extern 
-#endif 
+EXPORT
 widgetColor makeWidgetColor(float r, float g, float b, float a);
 
-#ifdef __cplusplus 
-extern "C" 
-#else 
-extern 
-#endif 
+EXPORT
 vector4 makeWidgetVector4(float x, float y, float z, float w);
 
 
-#ifdef __cplusplus 
-extern "C" 
-#else 
-extern 
-#endif 
+EXPORT
 int QuickMenuRebornAddAdvancedWidget(const char *refID, const char *parentRefID, vector4 *Size, vector4 *Position, widgetColor *Color, const char *Type, const char *style, void (*OnLoad)());
 
 #define COLOR_WHITE makeWidgetColor(1.0f, 1.0f, 1.0f, 1.0f)
@@ -85,11 +63,7 @@ int QuickMenuRebornAddAdvancedWidget(const char *refID, const char *parentRefID,
 #define SCE_PLANE_WIDTH 825.0f
 
 
-#ifdef __cplusplus 
-extern "C" 
-#else 
-extern 
-#endif 
+EXPORT
 int QuickMenuRebornButton(const char *refID, const char *parentRefID, vector4 *Size, vector4 *Position, widgetColor *Color, const char *Text, void (*OnLoad)(), void(*OnPress)(void));
 
 /**
@@ -108,61 +82,29 @@ int QuickMenuRebornButton(const char *refID, const char *parentRefID, vector4 *S
  * @retval      0 on succes < 0 on error
  * 
 */
-#ifdef __cplusplus 
-extern "C" 
-#else 
-extern 
-#endif 
+EXPORT
 int QuickMenuRebornCheckBox(const char *refID, const char *parentRefID, vector4 *Size, vector4 *Position, widgetColor *Color, void (*OnLoad)(), void(*OnToggle)(int state), CheckBoxState state);
 
-#ifdef __cplusplus 
-extern "C" 
-#else 
-extern 
-#endif 
+EXPORT
 int QuickMenuRebornText(const char *refID, const char *parentRefID, vector4 *Size, vector4 *Position, widgetColor *Color, const char *Text, void (*OnLoad)());
 
-#ifdef __cplusplus 
-extern "C" 
-#else 
-extern 
-#endif 
+EXPORT
 int QuickMenuRebornPlane(const char *refID, const char *parentRefID, vector4 *Size, vector4 *Position, widgetColor *Color, void (*OnLoad)());
 
-#ifdef __cplusplus 
-extern "C" 
-#else 
-extern 
-#endif 
+EXPORT
 int QuickMenuRebornSeparator(const char *refID);
 
 
-#ifdef __cplusplus 
-extern "C" 
-#else 
-extern 
-#endif 
+EXPORT
 int QuickMenuRebornUpdateButton(const char *refID, vector4 *Size, vector4 *Position, widgetColor *Color, const char *Text, void(*OnPress)(void), void (*OnLoad)(), int flags);
 
-#ifdef __cplusplus 
-extern "C" 
-#else 
-extern 
-#endif 
+EXPORT
 int QuickMenuRebornUpdateCheckBox(const char *refID, vector4 *Size, vector4 *Position, widgetColor *Color, void(*OnToggle)(int state), void (*OnLoad)(), int flags);
 
-#ifdef __cplusplus 
-extern "C" 
-#else 
-extern 
-#endif 
+EXPORT
 int QuickMenuRebornUpdateText(const char *refID, vector4 *Size, vector4 *Position, widgetColor *Color, const char *Text, void (*OnLoad)(), int flags);
 
-#ifdef __cplusplus 
-extern "C" 
-#else 
-extern
-#endif 
+EXPORT
 int QuickMenuRebornUpdatePlane(const char *refID, vector4 *Size, vector4 *Position, widgetColor *Color, void (*OnLoad)(), int flags);
 
 #define QM_REBORN_SEMA_NAME "qm_reborn_semaphore"
