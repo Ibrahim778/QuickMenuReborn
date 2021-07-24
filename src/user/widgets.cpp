@@ -321,6 +321,7 @@ int openQuickMenu()
 
 int displayWidgets()
 {
+    sceKernelWaitSema(semaID, SCE_KERNEL_1KiB, NULL);
     node *current = currentWidgets.head;
     while(current != NULL)
     {
@@ -328,7 +329,7 @@ int displayWidgets()
         if(current->widget.OnLoad != NULL) current->widget.OnLoad();
         current = current->next;
     }
-    
+    sceKernelSignalSema(semaID, SCE_KERNEL_1KiB);
     return 0;
 }
 #endif

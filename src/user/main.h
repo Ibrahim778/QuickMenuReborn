@@ -8,6 +8,7 @@
 #include <kernel/libkernel.h>
 #include <paf.h>
 #include <taihen.h>
+#include <display.h>
 
 using namespace paf;
 using namespace widget;
@@ -39,5 +40,6 @@ int sceClibPrintf(const char * fmt, ...);
 #endif
 
 int sceAppMgrGetIdByName(SceUID *pid, const char *name);
+static SceUID semaID;
 
 #endif

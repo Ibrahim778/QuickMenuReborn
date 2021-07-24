@@ -72,9 +72,9 @@ int QuickMenuRebornButton(const char *refID, const char *parentRefID, vector4 *S
  * 
  * @param       refID       Refrence ID of the widget
  * @param       parentRefID Refrence ID of the parent widget (pass NULL if none)
- * @param       Size        Size of widget
- * @param       Position    Position of widget
- * @param       Color       Color of widget
+ * @param       Size        Pointer to size of widget
+ * @param       Position    Pointer to position of widget
+ * @param       Color       Pointer to color of widget
  * @param       OnLoad      Function to be called whenever widget is loaded in quickmenu
  * @param       OnToggle    Function to be called whenever the checkbox is pressed (access the current state with the variable state)
  * @param       state       Initial state of Check Box when spawned, ON = On, OFF = Off, PREV_STATE = previous saved state (saved on reboot / poweroff)
@@ -82,8 +82,7 @@ int QuickMenuRebornButton(const char *refID, const char *parentRefID, vector4 *S
  * @retval      0 on succes < 0 on error
  * 
 */
-EXPORT
-int QuickMenuRebornCheckBox(const char *refID, const char *parentRefID, vector4 *Size, vector4 *Position, widgetColor *Color, void (*OnLoad)(), void(*OnToggle)(int state), CheckBoxState state);
+EXPORT int QuickMenuRebornCheckBox(const char *refID, const char *parentRefID, vector4 *Size, vector4 *Position, widgetColor *Color, void (*OnLoad)(), void(*OnToggle)(int state), CheckBoxState state);
 
 EXPORT
 int QuickMenuRebornText(const char *refID, const char *parentRefID, vector4 *Size, vector4 *Position, widgetColor *Color, const char *Text, void (*OnLoad)());

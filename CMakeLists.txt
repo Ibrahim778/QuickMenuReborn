@@ -54,6 +54,7 @@ target_link_libraries(${PROJECT_NAME}
     SceDbg_stub
     SceAppMgrUser_stub
     SceRegMgr_stub
+    SceDisplay_stub
     taihenUnsafe_stub
     ${pafStubs}
 )
