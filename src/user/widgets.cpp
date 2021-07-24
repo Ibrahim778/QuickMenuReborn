@@ -166,7 +166,7 @@ int update_Widget(widgetData *data, int flags)
 void dummyprint(const char *fmt, ...)
 {
     //Just to let the snc compiler acually freaking compile!
-    if(fmt != fmt) return;
+    (void)fmt;
 }
 
 int updateValues(Widget *made, widgetData *widget, int flags)
