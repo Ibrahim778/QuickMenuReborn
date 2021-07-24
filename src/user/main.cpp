@@ -1,12 +1,11 @@
 
+#include "main.h"
 #include "types.h"
 #include "widgets.h"
-
 #include "../quickmenureborn/qm_reborn.h"
-#include "main.h"
+
 
 SceUID mainThreadID = SCE_UID_INVALID_UID;
-SceUID semaID = SCE_UID_INVALID_UID;
 
 bool mainEnd = false;
 
@@ -49,16 +48,8 @@ int addInitialSpacer()
     return registerWidget(&widget);
 }
 
-int impose_thread(SceSize, void *)
+SceInt32 VblankCallback(SceUID notifyId, SceInt32 notifyCount, SceInt32 notifyArg, void* pCommon) 
 {
-    //Delay to let shell load properly
-    sceKernelDelayThread(4 * 1000 * 1000);
-    
-    if(semaID = sceKernelCreateSema(QM_REBORN_SEMA_NAME, SCE_KERNEL_ATTR_OPENABLE, SCE_KERNEL_1KiB, SCE_KERNEL_4KiB, NULL), semaID < 0) return sceKernelExitDeleteThread(0);
-    else print("Make Sema success!\n");
-
-    addInitialSpacer();
-
     SceAppMgrAppState state;
     while (1)
     {
@@ -74,22 +65,49 @@ int impose_thread(SceSize, void *)
                 ret = initWidgets();
                 if(ret >= 0)
                 {
-                    //Delay a little to make sure it displays at the end
-                    sceKernelDelayThread(200);
 #ifdef DEBUG
                     leakTestTask();
 #endif
-                    sceKernelWaitSema(semaID, SCE_KERNEL_1KiB, NULL);
                     displayWidgets();
-                    sceKernelSignalSema(semaID, SCE_KERNEL_1KiB);
                     dispalyed = 1;
                 }
             }
         }
         else dispalyed = 0;
-        //Prevent stalling thread
-        sceKernelDelayThread(10 * 100);
+
     }
+    return 0;
+}
+
+int impose_thread(SceSize, void *)
+{
+    //Delay to let shell load properly
+    sceKernelDelayThread(4 * 1000 * 1000);
+    
+    if(semaID = sceKernelCreateSema(QM_REBORN_SEMA_NAME, SCE_KERNEL_ATTR_OPENABLE, SCE_KERNEL_1KiB, SCE_KERNEL_4KiB, NULL), semaID < 0) return sceKernelExitDeleteThread(0);
+    else print("Make Sema success!\n");
+
+    addInitialSpacer();
+
+    SceUID CallbackUID = sceKernelCreateCallback("QMR_VblankCB", 0, VblankCallback, NULL);
+    if (CallbackUID < 0)
+        sceKernelExitThread(CallbackUID);
+
+    SceInt32 ret = sceDisplayRegisterVblankStartCallback(CallbackUID);
+    if (ret < 0)
+        sceKernelExitThread(ret);
+
+    while(!mainEnd) {
+        sceKernelDelayThreadCB(0xFFFFFFFF);
+    }
+
+    ret = sceDisplayUnregisterVblankStartCallback(CallbackUID);
+    if (ret < 0)
+        sceKernelExitThread(ret);
+    
+    ret = sceKernelDeleteCallback(CallbackUID);
+    if (ret < 0)
+        sceKernelExitThread(ret);
 
     return sceKernelExitDeleteThread(0);
 }
