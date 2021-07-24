@@ -9,7 +9,7 @@ SceUID mainThreadID = SCE_UID_INVALID_UID;
 
 bool mainEnd = false;
 
-int dispalyed = 0;
+bool dispalyed = 0;
 
 #define INTERNAL_SPACER_ID "qm_reborn_internal_spacer"
 
@@ -57,20 +57,19 @@ SceInt32 VblankCallback(SceUID notifyId, SceInt32 notifyCount, SceInt32 notifyAr
     {
         if(!dispalyed)
         {
-            int ret;
-            ret = initWidgets();
-            if(ret >= 0)
+            if(initWidgets() >= 0)
             {
 #ifdef DEBUG
                 leakTestTask();
 #endif
                 displayWidgets();
-                dispalyed = 1;
+                dispalyed = true;
             
             }
         }
-        else dispalyed = 0;
     }
+    else dispalyed = false;
+
     return 0;
 }
 
