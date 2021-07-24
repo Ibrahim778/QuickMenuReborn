@@ -18,6 +18,17 @@ typedef enum
     plane
 } widget_type;
 
+typedef enum check_box_state
+{
+    //ON
+    CHECKBOX_ON,
+    //OFF
+    CHECKBOX_OFF,
+    //Previous saved state
+    CHECKBOX_PREV_STATE
+} CheckBoxState;
+
+
 typedef struct 
 {
     //Text to be displayed
@@ -37,7 +48,7 @@ typedef struct
     //Function called when toggled
     void (*OnToggle)(int state);
     //Current State
-    int state;
+    CheckBoxState state;
 } toggleData;
 
 typedef struct
@@ -100,18 +111,6 @@ typedef enum packet_type
     open_quickmenu
 
 } packetType;
-
-typedef struct 
-{
-    //Function to pass to
-    packetType type;
-    //Data to be passed to the functions
-    widgetData data;
-    //Only check if type == update_widget
-    int updateFlags;
-    //Only used for unreigistering widget, otherwise not set
-    //char refId[256];
-} exportPacket;
 
 widgetColor makeWidgetColor(float r, float g, float b, float a);
 vector4 makeWidgetVector4(float x, float y, float z, float w);

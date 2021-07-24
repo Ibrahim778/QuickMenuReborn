@@ -7,6 +7,7 @@
 #include "types.h"
 #include "widgets.h"
 #include "event_handler.hpp"
+#include "config_mgr.h"
 #include <kernel/libkernel.h>
 #include <registrymgr.h>
 
@@ -104,7 +105,7 @@ int unregisterWidget(const char *refId)
     #endif
     //If refID not given, bail out
     if(sce_paf_strcmp(refId, "") == 0) return 0;
-    
+
     //Remove widget from list
     currentWidgets.remove_node(refId);
     currentWidgets.printall();
@@ -140,7 +141,7 @@ int setText(const char *text, Widget *widget)
     return widget->SetLabel(&wstr);
 }
 
-int updateWidget(widgetData *data, int flags)
+int update_Widget(widgetData *data, int flags)
 {
     print("UPDATING NODE\n");
     
@@ -164,6 +165,7 @@ int updateWidget(widgetData *data, int flags)
 
 void dummyprint(const char *fmt, ...)
 {
+    //Just to let the snc compiler acually freaking compile!
     if(fmt != fmt) return;
 }
 
@@ -189,8 +191,7 @@ int updateValues(Widget *made, widgetData *widget, int flags)
                 print("Done malloc();\n");
                 sce_paf_memcpy(eh->pUserData, widget, sizeof(widgetData));
                 print("Done memcpy();\n");
-                int ret = made->RegisterEventCallback(ON_PRESS_EVENT_ID, eh, 0);
-                sceClibPrintf("RET = 0x%X\n", ret);
+                made->RegisterEventCallback(ON_PRESS_EVENT_ID, eh, 0);
             }
             if(flags & UPDATE_TEXT) 
             {
@@ -209,8 +210,7 @@ int updateValues(Widget *made, widgetData *widget, int flags)
                 print("Done malloc();\n");
                 sce_paf_memcpy(eh->pUserData, widget, sizeof(widgetData));
                 print("Done memcpy();\n");
-                int ret = made->RegisterEventCallback(ON_PRESS_EVENT_ID, eh, 0);
-                sceClibPrintf("RET = 0x%X\n", ret);
+                made->RegisterEventCallback(ON_PRESS_EVENT_ID, eh, 0);
             }
             break;
         }
@@ -250,7 +250,22 @@ int setupValues(Widget *widget, widgetData *dat)
     case check_box:
     {
         print("Got state %d\n", dat->data.CheckBoxData.state);
-        ((CheckBox *)widget)->SetChecked(0, dat->data.CheckBoxData.state, 0);
+        int toSet = 0;
+        switch (dat->data.CheckBoxData.state)
+        {
+        case CHECKBOX_ON:
+            toSet = 1;
+            break;
+        case CHECKBOX_PREV_STATE:
+            toSet = readCheckBoxState(dat->refId);
+            print("Got toSet = %d\n", toSet);
+            break;
+        case CHECKBOX_OFF:
+        default:
+            toSet = 0;
+            break;
+        }
+        ((CheckBox *)widget)->SetChecked(0, toSet, 0);
         print("DONE SET CHECKED\n");
         break;
     }

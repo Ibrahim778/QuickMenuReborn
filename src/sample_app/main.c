@@ -4,6 +4,7 @@
 
 #include <stdlib.h>
 #include <kernel.h>
+#include <kernel/libkernel.h>
 #include <libdbg.h>
 #include <ctrl.h>
 #include "../quickmenureborn/qm_reborn.h"
@@ -18,6 +19,8 @@
 
 //Set our current count
 int count = 0;
+
+SceUID sema = SCE_UID_INVALID_UID;
 
 //Declare our boolean
 bool resetOnExit = false;
@@ -47,23 +50,16 @@ BUTTON_HANDLER(onPress)
 }
 
 ONLOAD_HANDLER(OnButtonLoad)
-{
-    sceClibPrintf("Called OnButtonLoad");
-    
+{    
     if(resetOnExit)
     {
         //Reset our count
         count = 0;
-        //Update our widget manually, (Dont use the QuickMenuReborn functions in here)
-        widgetData widget;
-        sceClibMemset(&widget, 0, sizeof(widget));
-
-        sceClibStrncpy(widget.refId, BUTTON_REF_ID, sizeof(widget.refId));
-        sceClibStrncpy(widget.data.ButtonData.label, "Press Me!", sizeof(widget.data.ButtonData.label));
-
-        widget.type = button;
-        widget.size = makeWidgetVector4Int(200, 75, 0, 0);
-        updateWidget(&widget, UPDATE_SIZE | UPDATE_TEXT);
+        sceKernelWaitSema(sema, SCE_KERNEL_1KiB, NULL);
+        //Update our widget manually (dont use QuickMenuReborn functions here)
+        vector4 size = makeWidgetVector4(400, 75, 0, 0);
+        QuickMenuRebornUpdateButton(BUTTON_REF_ID, &size, NULL, NULL, "Press Me!", NULL, NULL, UPDATE_TEXT | UPDATE_SIZE);
+        sceKernelSignalSema(sema, SCE_KERNEL_1KiB);
     }
 }
 
@@ -74,6 +70,8 @@ CHECKBOX_HANDLER(OnToggleCheckBox)
 
 int module_start()
 {
+    sema = sceKernelOpenSema(QM_REBORN_SEMA_NAME);
+    sceKernelWaitSema(sema, SCE_KERNEL_1KiB, NULL);
     //Make a separator for our widgets, this is just for looks (adds some spacing and a white line at the top, this ensures the accessability menu isn't ruined and other plugins get thier share of space)
     QuickMenuRebornSeparator(SEPARATOR_ID);
     //First Widget we make, the text
@@ -99,7 +97,7 @@ int module_start()
     pos = makeWidgetVector4Int(350, 0, 0, 0);
 
     //Make our checkbox as a child of the plane, so we can put the text besides it
-    QuickMenuRebornCheckBox(CHECKBOX_REF_ID, PLANE_ID, &size, &pos, &col, NULL, OnToggleCheckBox);
+    QuickMenuRebornCheckBox(CHECKBOX_REF_ID, PLANE_ID, &size, &pos, &col, NULL, NULL, CHECKBOX_PREV_STATE);
 
     //Fourth widget the checkbox text
     size = makeWidgetVector4Int(500, 75, 0, 0);
@@ -115,6 +113,8 @@ int module_start()
 
     QuickMenuRebornButton(BUTTON_REF_ID, NULL, &size, &pos, &col, "Press Me!", OnButtonLoad, onPress);
 
+    sceKernelSignalSema(sema, SCE_KERNEL_1KiB);
+
     return SCE_KERNEL_START_SUCCESS;
 }
 
@@ -126,5 +126,7 @@ int module_stop()
     removeWidget(TEXT_ID);
     removeWidget(CHECKBOX_TEXT_ID);
     removeWidget(PLANE_ID);
+    //Don't forget this!
+    removeSeparator(SEPARATOR_ID);
     return SCE_KERNEL_STOP_SUCCESS;
 }

@@ -10,9 +10,6 @@ file(GLOB user_cppfiles
 file(GLOB user_cfiles
     "${CMAKE_SOURCE_DIR}/src/user/*.c"
 )
-file(GLOB export_cfiles
-    "${CMAKE_SOURCE_DIR}/src/export_handler/*.c"
-)
 file(GLOB user_hfiles
     "${CMAKE_SOURCE_DIR}/src/user/*.h"
 )
@@ -26,7 +23,7 @@ set(CMAKE_C_STANDARD 99)
 enable_language(EMD)
 
 add_compile_options(
-  -O0
+  -O3
 )
 add_link_options(
   --prx-no-runtime-support
@@ -42,31 +39,10 @@ link_directories(
   ${VDSUITE_LIBRARY_DIRECTORIES}
 )
 
-#Export Handler
-
-add_library(QuickMenuRebornExports MODULE
-  ${export_cfiles}
-  ExportHandler.emd
-)
-
-target_link_libraries(QuickMenuRebornExports
-  SceKernel_stub
-  ${pafStubs}
-  SceDbg_stub
-)
-
-VDSuiteSignElf(QuickMenuRebornExports.suprx QuickMenuRebornExports)
-
-VDSuiteCreateStubs(stubs ExportHandler.emd
-  LIBRARIES
-    quickMenuRebornExports_stub
-)
-  
 # Main Plugin
 
 add_library(${PROJECT_NAME} MODULE
     ${user_cppfiles}
-    ${user_cfiles}
     ${qm_reborn_includes}
     ${user_hfiles}
     QuickMenuReborn.emd
@@ -77,11 +53,17 @@ target_link_libraries(${PROJECT_NAME}
     SceThreadmgr_stub
     SceDbg_stub
     SceAppMgrUser_stub
-    SceRegMgr_stub 
+    SceRegMgr_stub
+    taihenUnsafe_stub
     ${pafStubs}
 )
 
 VDSuiteSignElf(${PROJECT_NAME}.suprx ${PROJECT_NAME})
+
+VDSuiteCreateStubs(stubs ${PROJECT_NAME}.emd
+  LIBRARIES
+    quickMenuRebornExports_stub
+)
 
 #Sample App
 add_library(samples MODULE
@@ -99,6 +81,6 @@ target_link_libraries(samples
 VDSuiteSignElf(QuickMenuRebornSample.suprx samples)
 
 # Generate VitaSDK stubs
-add_custom_command(TARGET QuickMenuRebornExports POST_BUILD
+add_custom_command(TARGET QuickMenuReborn POST_BUILD
   COMMAND $ENV{SCE_PSP2_SDK_DIR}/host_tools/build/bin/vdsuite-libgen.exe ${CMAKE_SOURCE_DIR}/ExportHandler.yml ${CMAKE_BINARY_DIR}/vitasdk_stubs --output-kind VitasdkStub
 )

@@ -6,14 +6,14 @@
 #include "main.h"
 
 SceUID mainThreadID = SCE_UID_INVALID_UID;
-SceUID exportThreadID = SCE_UID_INVALID_UID;
+SceUID semaID = SCE_UID_INVALID_UID;
 
-bool exportEnd = false;
 bool mainEnd = false;
 
 int dispalyed = 0;
 
 #define INTERNAL_SPACER_ID "qm_reborn_internal_spacer"
+
 
 #ifdef DEBUG
 SceVoid leakTestTask(void)
@@ -49,68 +49,14 @@ int addInitialSpacer()
     return registerWidget(&widget);
 }
 
-int export_thread(SceSize, void *)
-{
-    SceUID pipeID = sceKernelCreateMsgPipe("quickmenureborn_exports_pipe", SCE_KERNEL_MSG_PIPE_TYPE_USER_MAIN, SCE_KERNEL_ATTR_OPENABLE, SCE_KERNEL_4KiB, NULL);
-    if(pipeID < 0)
-    {
-        exportThreadID = SCE_UID_INVALID_UID;
-        return sceKernelExitDeleteThread(0);
-    }
-    while (1)
-    {
-        if(exportEnd) break;
-
-        exportPacket data;
-        SceSize size = 0;
-
-        int recRes = sceKernelReceiveMsgPipe(pipeID, &data, sizeof(data), SCE_KERNEL_MSG_PIPE_MODE_WAIT | SCE_KERNEL_MSG_PIPE_MODE_FULL, &size, NULL);
-        if(recRes != SCE_OK) 
-            SCE_DBG_LOG_INFO("Error pipe recieve function returned error code : 0x%X\n", recRes);
-        else if(size > 0) 
-        {
-            #ifdef DEBUG
-            SCE_DBG_LOG_INFO("Got call\n");
-            #endif
-            switch (data.type)
-            {
-                case update_widget:
-                {
-                    updateWidget(&data.data, data.updateFlags);
-                    break;
-                }
-                case register_widget:
-                {
-                    #ifdef DEBUG
-                    SCE_DBG_LOG_INFO("adding widget with refID %s\n", data.data.refId);
-                    #endif
-                    registerWidget(&data.data);
-                    break;
-                }
-                case unregister_widget:
-                {
-                    unregisterWidget(data.data.refId);
-                    break;
-                }
-                case open_quickmenu:
-                {
-                    openQuickMenu();
-                    break;
-                }
-                default:
-                    break;
-            }
-        }
-    }
-
-    return sceKernelExitDeleteThread(0);
-}
-
 int impose_thread(SceSize, void *)
 {
     //Delay to let shell load properly
     sceKernelDelayThread(4 * 1000 * 1000);
     
+    if(semaID = sceKernelCreateSema(QM_REBORN_SEMA_NAME, SCE_KERNEL_ATTR_OPENABLE, SCE_KERNEL_1KiB, SCE_KERNEL_4KiB, NULL), semaID < 0) return sceKernelExitDeleteThread(0);
+    else print("Make Sema success!\n");
+
     addInitialSpacer();
 
     SceAppMgrAppState state;
@@ -129,20 +75,78 @@ int impose_thread(SceSize, void *)
                 if(ret >= 0)
                 {
                     //Delay a little to make sure it displays at the end
-                    sceKernelDelayThread(1000);
+                    sceKernelDelayThread(200);
 #ifdef DEBUG
                     leakTestTask();
 #endif
+                    sceKernelWaitSema(semaID, SCE_KERNEL_1KiB, NULL);
                     displayWidgets();
+                    sceKernelSignalSema(semaID, SCE_KERNEL_1KiB);
                     dispalyed = 1;
                 }
             }
         }
         else dispalyed = 0;
         //Prevent stalling thread
-        sceKernelDelayThread(10 * 1000);
+        sceKernelDelayThread(10 * 100);
     }
 
+    return sceKernelExitDeleteThread(0);
+}
+
+int checkDirExist(const char *path);
+
+ SceUID taiLoadStartModuleForPid(SceUID pid, const char *path, int args, void *argp, int flags) {
+  tai_module_args_t argg;
+  argg.size = sizeof(argg);
+  argg.pid = pid;
+  argg.args = args;
+  argg.argp = argp;
+  argg.flags = flags;
+  return taiLoadStartModuleForPidForUser(path, &argg);
+}
+
+int load_thread(SceSize, void*)
+{
+    //Delay a bit, to let everything load
+    sceKernelDelayThread(5 * 1000000);
+
+    char dir[20] = {0};
+    
+    if(checkDirExist(PLUGINS_DIR))
+        sce_paf_snprintf(dir, 20, PLUGINS_DIR);
+    else if(checkDirExist(PLUGINS_DIR2))
+        sce_paf_snprintf(dir, 20, PLUGINS_DIR2);
+    else if(checkDirExist("ux0:"))
+    {
+        sceIoMkdir(PLUGINS_DIR, 0777);
+        sce_paf_snprintf(dir, 20, PLUGINS_DIR);
+    }
+    else if(checkDirExist("ur0:"))
+    {
+        sceIoMkdir(PLUGINS_DIR2, 0777);
+        sce_paf_snprintf(dir, 20, PLUGINS_DIR2);
+    }
+
+    SceUID id = -1;
+
+    sceAppMgrGetIdByName(&id, "NPXS19999");
+
+    SceIoDirent de;
+    SceUID d = sceIoDopen(dir);
+    int entries = 1;
+    do 
+    {
+        entries = sceIoDread(d, &de);
+        if(!SCE_STM_ISDIR(de.d_stat.st_mode))
+        {
+            char buff[0x400] = {0};
+            sce_paf_snprintf(buff, 0x400, "%s/%s", dir, de.d_name);
+            taiLoadStartModuleForPid(id, buff, 0, NULL, 0);
+            print("Loading module at %s\n", buff);
+        }
+    }while(entries > 0);
+    sceIoDclose(d);
     return sceKernelExitDeleteThread(0);
 }
 
@@ -150,12 +154,13 @@ extern "C"
 {
     int module_start(SceSize, void *)
     {
-        mainThreadID = sceKernelCreateThread("quickmenureborn", impose_thread, 250, SCE_KERNEL_4KiB, 0, 0, NULL);
+        sceClibPrintf("QuickMenuReborn, by Ibrahim\n");
+        mainThreadID = sceKernelCreateThread("quickmenureborn", impose_thread, 248, SCE_KERNEL_4KiB, 0, 0, NULL);
         if(sceKernelStartThread(mainThreadID, 0, NULL) < 0) return SCE_KERNEL_START_NO_RESIDENT;
         
-        exportThreadID = sceKernelCreateThread("quickmenureborn_export_thread", export_thread, 251, SCE_KERNEL_4KiB, 0, 0, NULL);
-        if(sceKernelStartThread(exportThreadID, 0, NULL) < 0) return SCE_KERNEL_START_NO_RESIDENT;
-        
+        SceUID load_thread_id = sceKernelCreateThread("quickmenureborn_plugins", load_thread, 250, SCE_KERNEL_4KiB, 0, 0, NULL);
+        if(load_thread_id < 0) return SCE_KERNEL_START_NO_RESIDENT;
+        if(sceKernelStartThread(load_thread_id, 0, NULL) < 0) return SCE_KERNEL_START_NO_RESIDENT;
         return SCE_KERNEL_START_SUCCESS;
     }
 
@@ -166,11 +171,8 @@ extern "C"
             mainEnd = true;
             sceKernelWaitThreadEnd(mainThreadID, NULL, NULL);
         }
-        if(exportThreadID)
-        {
-            exportEnd = true;
-            sceKernelWaitThreadEnd(exportThreadID, NULL, NULL);
-        }    
+        if(semaID > 0)
+            sceKernelDeleteSema(semaID);
 
         return SCE_KERNEL_STOP_SUCCESS;
     }

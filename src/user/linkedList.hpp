@@ -15,7 +15,7 @@ public:
     linked_list();
     void printall();
     void update_node(widgetData *widget, int flags);
-    void update_checkbox_status(const char *refID, int state);
+    void update_checkbox_status(const char *refID, CheckBoxState state);
 
     void add_node(widgetData *widget);
     void remove_node(const char *tag);

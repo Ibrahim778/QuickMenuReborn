@@ -12,7 +12,7 @@ int openQuickMenu();
 int editWidget(widgetData *data, int flags);
 int registerWidget(widgetData *data);
 int unregisterWidget(const char *refId);
-int updateWidget(widgetData *data, int flags);
+int update_Widget(widgetData *data, int flags);
 int spawn(widgetData *widget, int flags);
 void dummyprint(const char *fmt, ...);
 #endif

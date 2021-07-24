@@ -2,96 +2,24 @@
 #include "../quickmenureborn/qm_reborn.h"
 #include <kernel.h>
 #include <libdbg.h>
-#include "export_handler_internal.h"
+#define DEBUG
+#include "main.h"
+#include "widgets.h"
 
-
-
-static SceUID msgPipeUid = SCE_UID_INVALID_UID;
-
-int module_start()
-{
-	msgPipeUid = sceKernelOpenMsgPipe(EXPORT_PIPE);
-	if (msgPipeUid < 0) {
-		SCE_DBG_LOG_INFO("sceKernelOpenMsgPipe() failed\n");
-		return SCE_KERNEL_START_NO_RESIDENT;
-	}
-#ifdef DEBUG
-    SCE_DBG_LOG_INFO("Exporter Loaded!\n");
-#endif
-    return SCE_KERNEL_START_SUCCESS;
-}
-
-int module_stop()
-{
-	if (msgPipeUid > 0)
-		sceKernelCloseMsgPipe(msgPipeUid);
-
-    return SCE_KERNEL_STOP_SUCCESS;
-}
 
 int updateWidget(widgetData *data, int flags)
 {
-    exportPacket packet;
-	sceClibMemcpy(&packet.data, data, sizeof(widgetData));
-    packet.type = update_widget;
-    packet.updateFlags = flags;
-    
-    SceSize sent = 0;
-    if(sceKernelSendMsgPipe(msgPipeUid, &packet, sizeof(packet), SCE_KERNEL_MSG_PIPE_MODE_WAIT | SCE_KERNEL_MSG_PIPE_MODE_FULL, &sent, NULL) != SCE_OK)
-        return -2;
-#ifdef DEBUG
-    if(sent != sizeof(packet)) SCE_DBG_LOG_ERROR("Error couldn't send all the data!\n");
-#endif
-    return 0;
+    return update_Widget(data, flags);
 }
 
 int addWidget(widgetData *data)
 {
-    exportPacket packet;
-	sceClibMemcpy(&packet.data, data, sizeof(widgetData)); 
-    packet.type = register_widget;
-    
-    SceSize sent = 0;
-    if(sceKernelSendMsgPipe(msgPipeUid, &packet, sizeof(packet), SCE_KERNEL_MSG_PIPE_MODE_WAIT | SCE_KERNEL_MSG_PIPE_MODE_FULL, &sent, NULL) != SCE_OK)
-        return -2;
-#ifdef DEBUG
-    if(sent != sizeof(packet)) SCE_DBG_LOG_ERROR("Error couldn't send all the data!\n");
-#endif
-    return 0;
-}
-//Doesn't work, I swear I tried it before and it did
-int openQuickMenu()
-{
-    exportPacket packet;
-    packet.type = open_quickmenu;
-
-    SceSize sent = 0;
-
-    if(sceKernelSendMsgPipe(msgPipeUid, &packet, sizeof(packet), SCE_KERNEL_MSG_PIPE_MODE_WAIT | SCE_KERNEL_MSG_PIPE_MODE_FULL, &sent, NULL) != SCE_OK)
-        return -2;
-    
-#ifdef DEBUG
-    if(sent != sizeof(packet)) SCE_DBG_LOG_ERROR("Error couldn't send all the data!");
-#endif
-
-    return 0;
+    return registerWidget(data);
 }
 
 int removeWidget(const char *refID)
 {
-    exportPacket packet;
-
-    sceClibStrncpy((char *)&packet.data.refId, refID, sizeof(packet.data.refId));
-
-    packet.type = unregister_widget;
-    
-    SceSize sent = 0;
-    if(sceKernelSendMsgPipe(msgPipeUid, &packet, sizeof(packet), SCE_KERNEL_MSG_PIPE_MODE_WAIT | SCE_KERNEL_MSG_PIPE_MODE_FULL, &sent, NULL) != SCE_OK)
-        return -2;
-#ifdef DEBUG
-    if(sent != sizeof(packet)) SCE_DBG_LOG_ERROR("Error couldn't send all the data!\n");
-#endif
-    return 0;
+    return unregisterWidget(refID);
 }
 
 vector4 makeWidgetVector4(float x, float y, float z, float w)
@@ -114,14 +42,22 @@ widgetColor makeWidgetColor(float r, float g, float b, float a)
     return c;
 }
 
+int removeSeparator(const char *refID)
+{
+    char id[0x100];
+    sce_paf_snprintf(id, sizeof(id), "qm_reborn_%s_separator", refID);
+
+    return unregisterWidget(id);
+}
+
 int QuickMenuRebornButton(const char *refID, const char *parentRefID, vector4 *Size, vector4 *Position, widgetColor *Color, const char *Text, void (*OnLoad)(), void(*OnPress)(void))
 {
     widgetData widget;
     sceClibMemset(&widget, 0, sizeof(widget));
 
-    sceClibStrncpy(widget.refId, refID, sizeof(widget.refId));
+    sce_paf_strncpy(widget.refId, refID, sizeof(widget.refId));
 
-    if(parentRefID != NULL) sceClibStrncpy(widget.parentRefId, parentRefID, sizeof(widget.parentRefId));
+    if(parentRefID != NULL) sce_paf_strncpy(widget.parentRefId, parentRefID, sizeof(widget.parentRefId));
 
     widget.hasParent = parentRefID != NULL;
 
@@ -130,7 +66,7 @@ int QuickMenuRebornButton(const char *refID, const char *parentRefID, vector4 *S
     widget.type = button;
     widget.col = *Color;
 
-    sceClibStrncpy(widget.data.ButtonData.label, Text, sizeof(widget.data.ButtonData.label));
+    sce_paf_strncpy(widget.data.ButtonData.label, Text, sizeof(widget.data.ButtonData.label));
     
     widget.data.ButtonData.onPress = OnPress;
 
@@ -138,17 +74,17 @@ int QuickMenuRebornButton(const char *refID, const char *parentRefID, vector4 *S
 
     widget.OnLoad = OnLoad;
 
-    return addWidget(&widget);
+    return registerWidget(&widget);
 }
 
-int QuickMenuRebornCheckBox(const char *refID, const char *parentRefID, vector4 *Size, vector4 *Position, widgetColor *Color, void (*OnLoad)(), void(*OnToggle)(int state))
+int QuickMenuRebornCheckBox(const char *refID, const char *parentRefID, vector4 *Size, vector4 *Position, widgetColor *Color, void (*OnLoad)(), void(*OnToggle)(int state), CheckBoxState state)
 {
     widgetData widget;
     
     sceClibMemset(&widget, 0, sizeof(widget));
-    sceClibStrncpy(widget.refId, refID, sizeof(widget.refId));
+    sce_paf_strncpy(widget.refId, refID, sizeof(widget.refId));
 
-    if(parentRefID != NULL) sceClibStrncpy(widget.parentRefId, parentRefID, sizeof(widget.parentRefId));
+    if(parentRefID != NULL) sce_paf_strncpy(widget.parentRefId, parentRefID, sizeof(widget.parentRefId));
 
     widget.hasParent = parentRefID != NULL;
     widget.size = *Size;
@@ -159,9 +95,11 @@ int QuickMenuRebornCheckBox(const char *refID, const char *parentRefID, vector4 
     widget.data.CheckBoxData.OnToggle = OnToggle;
     widget.OnLoad = OnLoad;
     
+    widget.data.CheckBoxData.state = state;
+
     widget.isAdvanced = 0;
 
-    return addWidget(&widget);
+return registerWidget(&widget);
 
 }
 
@@ -170,10 +108,10 @@ int QuickMenuRebornText(const char *refID, const char *parentRefID, vector4 *Siz
     widgetData widget;
     
     sceClibMemset(widget.refId, 0, sizeof(widget.refId));
-    sceClibStrncpy(widget.refId, refID, sizeof(widget.refId));
+    sce_paf_strncpy(widget.refId, refID, sizeof(widget.refId));
 
     sceClibMemset(widget.parentRefId, 0, sizeof(widget.parentRefId));
-    if(parentRefID != NULL) sceClibStrncpy(widget.parentRefId, parentRefID, sizeof(widget.parentRefId));
+    if(parentRefID != NULL) sce_paf_strncpy(widget.parentRefId, parentRefID, sizeof(widget.parentRefId));
 
     widget.hasParent = parentRefID != NULL;
 
@@ -183,13 +121,13 @@ int QuickMenuRebornText(const char *refID, const char *parentRefID, vector4 *Siz
     widget.type = text;
 
     sceClibMemset(widget.data.TextData.label, 0, sizeof(widget.data.TextData.label));
-    sceClibStrncpy(widget.data.TextData.label, Text, sizeof(widget.data.TextData.label));
+    sce_paf_strncpy(widget.data.TextData.label, Text, sizeof(widget.data.TextData.label));
 
     widget.OnLoad = OnLoad;
 
     widget.isAdvanced = 0;
 
-    return addWidget(&widget);
+    return registerWidget(&widget);
 
 }
 
@@ -198,10 +136,10 @@ int QuickMenuRebornPlane(const char *refID, const char *parentRefID, vector4 *Si
     widgetData widget;
     
     sceClibMemset(widget.refId, 0, sizeof(widget.refId));
-    sceClibStrncpy(widget.refId, refID, sizeof(widget.refId));
+    sce_paf_strncpy(widget.refId, refID, sizeof(widget.refId));
 
     sceClibMemset(widget.parentRefId, 0, sizeof(widget.parentRefId));
-    if(parentRefID != NULL) sceClibStrncpy(widget.parentRefId, parentRefID, sizeof(widget.parentRefId));
+    if(parentRefID != NULL) sce_paf_strncpy(widget.parentRefId, parentRefID, sizeof(widget.parentRefId));
 
     widget.hasParent = parentRefID != NULL;
 
@@ -214,14 +152,14 @@ int QuickMenuRebornPlane(const char *refID, const char *parentRefID, vector4 *Si
 
     widget.isAdvanced = 0;
 
-    return addWidget(&widget);
+    return registerWidget(&widget);
 
 }
 
 int QuickMenuRebornSeparator(const char *refID)
 {
     char sepID[256] = {0};
-    sceClibSnprintf(sepID, sizeof(sepID), "qm_reborn_%s_separator", refID);
+    sce_paf_snprintf(sepID, sizeof(sepID), "qm_reborn_%s_separator", refID);
 
     vector4 size = makeWidgetVector4(825.0f,2.0f,0.0f,0.0f), pos = makeWidgetVector4(0,0,0,0);
     widgetColor col = makeWidgetColor(.75f,.75f,.75f,.75f);
@@ -232,14 +170,13 @@ int QuickMenuRebornSeparator(const char *refID)
 
 int QuickMenuRebornUpdateButton(const char *refID, vector4 *Size, vector4 *Position, widgetColor *Color, const char *Text, void(*OnPress)(void), void (*OnLoad)(), int flags)
 {
-    sceKernelDelayThread(1000);
     print("Updating button with refID: %s\n", refID);
     widgetData widget;
     sceClibMemset(&widget, 0, sizeof(widget));
 
     print("Made and set widget\n");
 
-    sceClibStrncpy(widget.refId, refID, sizeof(widget.refId));
+    sce_paf_strncpy(widget.refId, refID, sizeof(widget.refId));
 
     print("Copied refID\n");
 
@@ -252,7 +189,7 @@ int QuickMenuRebornUpdateButton(const char *refID, vector4 *Size, vector4 *Posit
     if(Color != NULL) widget.col = *Color;
     print("Set Col\n");
     if(Text != NULL)
-        sceClibStrncpy(widget.data.ButtonData.label, Text, sizeof(widget.data.ButtonData.label));
+        sce_paf_strncpy(widget.data.ButtonData.label, Text, sizeof(widget.data.ButtonData.label));
     print("Copied Text\n");
     if(flags & UPDATE_EVENT)
         widget.data.ButtonData.onPress = OnPress;
@@ -269,7 +206,7 @@ int QuickMenuRebornUpdateCheckBox(const char *refID, vector4 *Size, vector4 *Pos
     widgetData widget;
     
     sceClibMemset(widget.refId, 0, sizeof(widget.refId));
-    sceClibStrncpy(widget.refId, refID, sizeof(widget.refId));
+    sce_paf_strncpy(widget.refId, refID, sizeof(widget.refId));
 
 
     if(Size != NULL) widget.size = *Size;
@@ -283,7 +220,7 @@ int QuickMenuRebornUpdateCheckBox(const char *refID, vector4 *Size, vector4 *Pos
     widget.isAdvanced = 0;
 
 
-    return updateWidget(&widget, flags);
+return updateWidget(&widget, flags);
 }
 
 int QuickMenuRebornUpdateText(const char *refID, vector4 *Size, vector4 *Position, widgetColor *Color, const char *Text, void (*OnLoad)(), int flags)
@@ -291,7 +228,7 @@ int QuickMenuRebornUpdateText(const char *refID, vector4 *Size, vector4 *Positio
     widgetData widget;
     
     sceClibMemset(widget.refId, 0, sizeof(widget.refId));
-    sceClibStrncpy(widget.refId, refID, sizeof(widget.refId));
+    sce_paf_strncpy(widget.refId, refID, sizeof(widget.refId));
 
     if(Size != NULL) widget.size = *Size;
     if(Position != NULL) widget.pos = *Position;
@@ -301,14 +238,14 @@ int QuickMenuRebornUpdateText(const char *refID, vector4 *Size, vector4 *Positio
     if(Text != NULL)
     {
         sceClibMemset(widget.data.ButtonData.label, 0, sizeof(widget.data.ButtonData.label));
-        sceClibStrncpy(widget.data.ButtonData.label, Text, sizeof(widget.data.ButtonData.label));        
+        sce_paf_strncpy(widget.data.ButtonData.label, Text, sizeof(widget.data.ButtonData.label));        
     }
 
     widget.OnLoad = OnLoad;
 
     widget.isAdvanced = 0;
 
-    return updateWidget(&widget, flags);
+return updateWidget(&widget, flags);
 
 }
 
@@ -317,7 +254,7 @@ int QuickMenuRebornUpdatePlane(const char *refID, vector4 *Size, vector4 *Positi
     widgetData widget;
     
     sceClibMemset(widget.refId, 0, sizeof(widget.refId));
-    sceClibStrncpy(widget.refId, refID, sizeof(widget.refId));
+    sce_paf_strncpy(widget.refId, refID, sizeof(widget.refId));
 
     if(Size != NULL) widget.size = *Size;
     if(Position != NULL) widget.pos = *Position;
@@ -328,7 +265,7 @@ int QuickMenuRebornUpdatePlane(const char *refID, vector4 *Size, vector4 *Positi
 
     widget.isAdvanced = 0;
 
-    return updateWidget(&widget, flags);
+return updateWidget(&widget, flags);
 
 }
 
@@ -337,10 +274,10 @@ int QuickMenuRebornAddAdvancedWidget(const char *refID, const char *parentRefID,
     widgetData widget;
 
     sceClibMemset(widget.refId, 0, sizeof(widget.refId));
-    sceClibStrncpy(widget.refId, refID, sizeof(widget.refId));
+    sce_paf_strncpy(widget.refId, refID, sizeof(widget.refId));
     
     sceClibMemset(widget.parentRefId, 0, sizeof(widget.parentRefId));
-    if(parentRefID != NULL) sceClibStrncpy(widget.parentRefId, parentRefID, sizeof(widget.parentRefId));
+    if(parentRefID != NULL) sce_paf_strncpy(widget.parentRefId, parentRefID, sizeof(widget.parentRefId));
 
     if(Size != NULL) widget.size = *Size;
     if(Position != NULL) widget.pos = *Position;
@@ -352,10 +289,10 @@ int QuickMenuRebornAddAdvancedWidget(const char *refID, const char *parentRefID,
 
     sceClibMemset(&widget.adata, 0, sizeof(widget.adata));
 
-    sceClibStrncpy(widget.adata.idType, idType, sizeof(widget.adata.idType));
-    sceClibStrncpy(widget.adata.type, Type, sizeof(widget.adata.type));
+    sce_paf_strncpy(widget.adata.idType, idType, sizeof(widget.adata.idType));
+    sce_paf_strncpy(widget.adata.type, Type, sizeof(widget.adata.type));
 
     widget.OnLoad = OnLoad;
 
-    return addWidget(&widget);
+    return registerWidget(&widget);
 }

@@ -18,7 +18,7 @@
     #endif
     }
 
-    void linked_list::update_checkbox_status(const char *refID, int state)
+    void linked_list::update_checkbox_status(const char *refID, CheckBoxState state)
     {
         node *tmp = head;
         while(tmp != NULL)
