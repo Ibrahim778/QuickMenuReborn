@@ -3,28 +3,29 @@ sceModuleInfo_type: 6
 module_function: module_start localname: module_start
 module_function: module_stop localname: module_stop
 
-Library: quickMenuRebornExports version: 5
-Library: quickMenuRebornExports nidsuffix: ""
-Library: quickMenuRebornExports attr: auto_export
+Library: quickMenuReborn version: 5
+Library: quickMenuReborn nidsuffix: ""
+Library: quickMenuReborn attr: auto_export
 
-Library: quickMenuRebornExports function: addWidget
-Library: quickMenuRebornExports function: removeWidget
-Library: quickMenuRebornExports function: updateWidget
+Library: quickMenuReborn function: addWidget
+Library: quickMenuReborn function: removeWidget
+Library: quickMenuReborn function: updateWidget
 
-Library: quickMenuRebornExports function: makeWidgetColor
-Library: quickMenuRebornExports function: makeWidgetVector4
+Library: quickMenuReborn function: makeWidgetColor
+Library: quickMenuReborn function: makeWidgetVector4
 
-Library: quickMenuRebornExports function: QuickMenuRebornButton
-Library: quickMenuRebornExports function: QuickMenuRebornCheckBox
-Library: quickMenuRebornExports function: QuickMenuRebornText
-Library: quickMenuRebornExports function: QuickMenuRebornPlane
-Library: quickMenuRebornExports function: QuickMenuRebornSeparator
+Library: quickMenuReborn function: QuickMenuRebornButton
+Library: quickMenuReborn function: QuickMenuRebornCheckBox
+Library: quickMenuReborn function: QuickMenuRebornText
+Library: quickMenuReborn function: QuickMenuRebornPlane
+Library: quickMenuReborn function: QuickMenuRebornSeparator
 
-Library: quickMenuRebornExports function: QuickMenuRebornUpdateButton
-Library: quickMenuRebornExports function: QuickMenuRebornUpdateCheckBox
-Library: quickMenuRebornExports function: QuickMenuRebornUpdateText
-Library: quickMenuRebornExports function: QuickMenuRebornUpdatePlane
+Library: quickMenuReborn function: QuickMenuRebornUpdateButton
+Library: quickMenuReborn function: QuickMenuRebornUpdateCheckBox
+Library: quickMenuReborn function: QuickMenuRebornUpdateText
+Library: quickMenuReborn function: QuickMenuRebornUpdatePlane
 
-Library: quickMenuRebornExports function: QuickMenuRebornAddAdvancedWidget
+Library: quickMenuReborn function: QuickMenuRebornAddAdvancedWidget
+Library: quickMenuReborn function: removeSeparator
 
-Library: quickMenuRebornExports function: removeSeparator
+Library: quickMenuReborn function: QuickMenuRebornGetCheckBoxState

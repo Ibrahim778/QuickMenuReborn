@@ -16,5 +16,4 @@
 int readCheckBoxState(const char *refID);
 int saveCheckBoxState(const char *refID, CheckBoxState state); 
 
-
 #endif

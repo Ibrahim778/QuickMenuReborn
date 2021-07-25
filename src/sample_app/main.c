@@ -20,8 +20,6 @@
 //Set our current count
 int count = 0;
 
-SceUID sema = SCE_UID_INVALID_UID;
-
 //Declare our boolean
 bool resetOnExit = false;
 
@@ -55,11 +53,9 @@ ONLOAD_HANDLER(OnButtonLoad)
     {
         //Reset our count
         count = 0;
-        sceKernelWaitSema(sema, SCE_KERNEL_1KiB, NULL);
         //Update our widget manually (dont use QuickMenuReborn functions here)
-        vector4 size = makeWidgetVector4(400, 75, 0, 0);
+        vector4 size = makeWidgetVector4(200, 75, 0, 0);
         QuickMenuRebornUpdateButton(BUTTON_REF_ID, &size, NULL, NULL, "Press Me!", NULL, NULL, UPDATE_TEXT | UPDATE_SIZE);
-        sceKernelSignalSema(sema, SCE_KERNEL_1KiB);
     }
 }
 
@@ -70,8 +66,8 @@ CHECKBOX_HANDLER(OnToggleCheckBox)
 
 int module_start()
 {
-    sema = sceKernelOpenSema(QM_REBORN_SEMA_NAME);
-    sceKernelWaitSema(sema, SCE_KERNEL_1KiB, NULL);
+    //Get our checkboxes saved state
+    resetOnExit = QuickMenuRebornGetCheckBoxState(CHECKBOX_REF_ID);
     //Make a separator for our widgets, this is just for looks (adds some spacing and a white line at the top, this ensures the accessability menu isn't ruined and other plugins get thier share of space)
     QuickMenuRebornSeparator(SEPARATOR_ID);
     //First Widget we make, the text
@@ -97,7 +93,7 @@ int module_start()
     pos = makeWidgetVector4Int(350, 0, 0, 0);
 
     //Make our checkbox as a child of the plane, so we can put the text besides it
-    QuickMenuRebornCheckBox(CHECKBOX_REF_ID, PLANE_ID, &size, &pos, &col, NULL, NULL, CHECKBOX_PREV_STATE);
+    QuickMenuRebornCheckBox(CHECKBOX_REF_ID, PLANE_ID, &size, &pos, &col, NULL, OnToggleCheckBox, CHECKBOX_PREV_STATE);
 
     //Fourth widget the checkbox text
     size = makeWidgetVector4Int(500, 75, 0, 0);
@@ -113,7 +109,6 @@ int module_start()
 
     QuickMenuRebornButton(BUTTON_REF_ID, NULL, &size, &pos, &col, "Press Me!", OnButtonLoad, onPress);
 
-    sceKernelSignalSema(sema, SCE_KERNEL_1KiB);
 
     return SCE_KERNEL_START_SUCCESS;
 }

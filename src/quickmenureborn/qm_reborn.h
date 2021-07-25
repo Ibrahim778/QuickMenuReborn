@@ -106,6 +106,9 @@ int QuickMenuRebornUpdateText(const char *refID, vector4 *Size, vector4 *Positio
 EXPORT
 int QuickMenuRebornUpdatePlane(const char *refID, vector4 *Size, vector4 *Position, widgetColor *Color, void (*OnLoad)(), int flags);
 
+EXPORT
+int QuickMenuRebornGetCheckBoxState(const char *refID);
+
 #define QM_REBORN_SEMA_NAME "qm_reborn_semaphore"
 
 #endif

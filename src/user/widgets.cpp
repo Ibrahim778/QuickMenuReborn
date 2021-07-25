@@ -116,7 +116,7 @@ int unregisterWidget(const char *refId)
 int registerWidget(widgetData *data)
 {
     #ifdef DEBUG
-    SCE_DBG_LOG_INFO("Internal add call\n");
+    print("Internal add call\n");
     #endif
     //This is just a wrapper, it'll add the widgets to a linked list, widgets are made on demand when impose menu loads via another thread
     currentWidgets.add_node(data);
@@ -184,7 +184,7 @@ int updateValues(Widget *made, widgetData *widget, int flags)
     {
         case button:
         {
-            if(flags & UPDATE_EVENT)
+            if(flags && UPDATE_EVENT)
             {
                 print("Updating event...\n");
                 eh->pUserData = sce_paf_malloc(sizeof(widgetData));
@@ -193,7 +193,7 @@ int updateValues(Widget *made, widgetData *widget, int flags)
                 print("Done memcpy();\n");
                 made->RegisterEventCallback(ON_PRESS_EVENT_ID, eh, 0);
             }
-            if(flags & UPDATE_TEXT) 
+            if(flags && UPDATE_TEXT) 
             {
                 setText(widget->data.ButtonData.label, made);
             }
@@ -203,13 +203,14 @@ int updateValues(Widget *made, widgetData *widget, int flags)
 
         case check_box:
         {
-            if(flags & UPDATE_EVENT)
+            if(flags && UPDATE_EVENT)
             {
                 print("Updating checkbox event....\n");
                 eh->pUserData = sce_paf_malloc(sizeof(widgetData));
                 print("Done malloc();\n");
                 sce_paf_memcpy(eh->pUserData, widget, sizeof(widgetData));
                 print("Done memcpy();\n");
+                print("OnToggle %s NULL\n", widget->data.CheckBoxData.OnToggle ? "==" : "!=");
                 made->RegisterEventCallback(ON_PRESS_EVENT_ID, eh, 0);
             }
             break;
@@ -218,7 +219,7 @@ int updateValues(Widget *made, widgetData *widget, int flags)
         case text:
         {
             delete eh;
-            if(flags & UPDATE_TEXT)
+            if(flags && UPDATE_TEXT)
             {
                 made->SetOption((paf::widget::Widget::Option)7, 0,0,widget->data.TextData.isbold ? SCE_TRUE : SCE_FALSE);
                 setText(widget->data.TextData.label, made);
@@ -321,15 +322,14 @@ int openQuickMenu()
 
 int displayWidgets()
 {
-    sceKernelWaitSema(semaID, SCE_KERNEL_1KiB, NULL);
     node *current = currentWidgets.head;
     while(current != NULL)
     {
         spawn(&current->widget, UPDATE_ALL);
+        print("ONLOAD IS %s\n", current->widget.OnLoad == NULL ? "NULL" : "NOT NULL");
         if(current->widget.OnLoad != NULL) current->widget.OnLoad();
         current = current->next;
     }
-    sceKernelSignalSema(semaID, SCE_KERNEL_1KiB);
     return 0;
 }
 #endif

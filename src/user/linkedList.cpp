@@ -14,7 +14,13 @@
     void linked_list::printall()
     {
     #ifdef DEBUG
-
+        node *current = head;
+        while (current != NULL)
+        {
+            print("%s, ", current->widget.refId);
+            current = current->next;
+        }
+        
     #endif
     }
 

@@ -59,6 +59,10 @@ SceInt32 VblankCallback(SceUID notifyId, SceInt32 notifyCount, SceInt32 notifyAr
         {
             if(initWidgets() >= 0)
             {
+
+                //Delay to make sure it displays it at the end
+                sceKernelDelayThread(1000);
+
 #ifdef DEBUG
                 leakTestTask();
 #endif

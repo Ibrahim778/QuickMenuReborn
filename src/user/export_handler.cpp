@@ -2,9 +2,9 @@
 #include "../quickmenureborn/qm_reborn.h"
 #include <kernel.h>
 #include <libdbg.h>
-#define DEBUG
 #include "main.h"
 #include "widgets.h"
+#include "config_mgr.h"
 
 
 int updateWidget(widgetData *data, int flags)
@@ -99,7 +99,7 @@ int QuickMenuRebornCheckBox(const char *refID, const char *parentRefID, vector4 
 
     widget.isAdvanced = 0;
 
-return registerWidget(&widget);
+    return registerWidget(&widget);
 
 }
 
@@ -295,4 +295,9 @@ int QuickMenuRebornAddAdvancedWidget(const char *refID, const char *parentRefID,
     widget.OnLoad = OnLoad;
 
     return registerWidget(&widget);
+}
+
+int QuickMenuRebornGetCheckBoxState(const char *refID)
+{
+    return readCheckBoxState(refID);
 }

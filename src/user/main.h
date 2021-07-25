@@ -16,7 +16,6 @@ using namespace widget;
 #define PLUGINS_DIR2 "ur0:QuickMenuReborn/"
 #define PLUGINS_DIR "ux0:QuickMenuReborn/"
 
-#define DEBUG
 
 int sceClibPrintf(const char * fmt, ...);
 #define QM_REBORN_INTERNAL

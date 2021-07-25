@@ -23,7 +23,7 @@ set(CMAKE_C_STANDARD 99)
 enable_language(EMD)
 
 add_compile_options(
-  -O3
+  -O0
 )
 add_link_options(
   --prx-no-runtime-support
@@ -63,7 +63,7 @@ VDSuiteSignElf(${PROJECT_NAME}.suprx ${PROJECT_NAME})
 
 VDSuiteCreateStubs(stubs ${PROJECT_NAME}.emd
   LIBRARIES
-    quickMenuRebornExports_stub
+    quickMenuReborn_stub
 )
 
 #Sample App
@@ -76,7 +76,7 @@ add_library(samples MODULE
 target_link_libraries(samples
   SceKernel_stub
   SceDbg_stub
-  quickMenuRebornExports_stub
+  quickMenuReborn_stub
 )
 
 VDSuiteSignElf(QuickMenuRebornSample.suprx samples)
