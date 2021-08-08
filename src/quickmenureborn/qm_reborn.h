@@ -17,16 +17,16 @@
 #endif
 
 EXPORT
-int addWidget(widgetData *data);
+int QuickMenuRebornAddWidget(widgetData *data);
 
 EXPORT
-int updateWidget(widgetData *data, int flags);
+int QuickMenuRebornUpdateWidget(widgetData *data, int flags);
 
 EXPORT
-int removeWidget(const char *data);
+int QuickMenuRebornRemoveWidget(const char *data);
 
 EXPORT
-int removeSeparator(const char *refID);
+int QuickMenuRebornRemoveSeparator(const char *refID);
 
 
 EXPORT
@@ -109,6 +109,9 @@ int QuickMenuRebornUpdatePlane(const char *refID, vector4 *Size, vector4 *Positi
 EXPORT
 int QuickMenuRebornGetCheckBoxState(const char *refID);
 
-#define QM_REBORN_SEMA_NAME "qm_reborn_semaphore"
+#define CONFIG_MGR_ERROR_NOT_EXIST -1
+#define CONFIG_MGR_ERROR_COULD_NOT_WRITE_FULL -2
+#define CONFIG_MGR_OK 0
+
 
 #endif

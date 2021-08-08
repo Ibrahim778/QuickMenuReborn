@@ -7,9 +7,9 @@ Library: quickMenuReborn version: 5
 Library: quickMenuReborn nidsuffix: ""
 Library: quickMenuReborn attr: auto_export
 
-Library: quickMenuReborn function: addWidget
-Library: quickMenuReborn function: removeWidget
-Library: quickMenuReborn function: updateWidget
+Library: quickMenuReborn function: QuickMenuRebornAddWidget
+Library: quickMenuReborn function: QuickMenuRebornRemoveWidget
+Library: quickMenuReborn function: QuickMenuRebornUpdateWidget
 
 Library: quickMenuReborn function: makeWidgetColor
 Library: quickMenuReborn function: makeWidgetVector4
@@ -26,6 +26,6 @@ Library: quickMenuReborn function: QuickMenuRebornUpdateText
 Library: quickMenuReborn function: QuickMenuRebornUpdatePlane
 
 Library: quickMenuReborn function: QuickMenuRebornAddAdvancedWidget
-Library: quickMenuReborn function: removeSeparator
+Library: quickMenuReborn function: QuickMenuRebornRemoveSeparator
 
 Library: quickMenuReborn function: QuickMenuRebornGetCheckBoxState

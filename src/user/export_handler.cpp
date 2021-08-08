@@ -7,17 +7,17 @@
 #include "config_mgr.h"
 
 
-int updateWidget(widgetData *data, int flags)
+int QuickMenuRebornUpdateWidget(widgetData *data, int flags)
 {
     return update_Widget(data, flags);
 }
 
-int addWidget(widgetData *data)
+int QuickMenuRebornAddWidget(widgetData *data)
 {
     return registerWidget(data);
 }
 
-int removeWidget(const char *refID)
+int QuickMenuRebornRemoveWidget(const char *refID)
 {
     return unregisterWidget(refID);
 }
@@ -42,7 +42,7 @@ widgetColor makeWidgetColor(float r, float g, float b, float a)
     return c;
 }
 
-int removeSeparator(const char *refID)
+int QuickMenuRebornRemoveSeparator(const char *refID)
 {
     char id[0x100];
     sce_paf_snprintf(id, sizeof(id), "qm_reborn_%s_separator", refID);
@@ -198,7 +198,7 @@ int QuickMenuRebornUpdateButton(const char *refID, vector4 *Size, vector4 *Posit
         widget.OnLoad = OnLoad;
     print("Set LoadEvent\n");
 
-    return updateWidget(&widget, flags);
+    return QuickMenuRebornUpdateWidget(&widget, flags);
 }
 
 int QuickMenuRebornUpdateCheckBox(const char *refID, vector4 *Size, vector4 *Position, widgetColor *Color, void(*OnToggle)(int state), void (*OnLoad)(), int flags)
@@ -220,7 +220,7 @@ int QuickMenuRebornUpdateCheckBox(const char *refID, vector4 *Size, vector4 *Pos
     widget.isAdvanced = 0;
 
 
-return updateWidget(&widget, flags);
+return QuickMenuRebornUpdateWidget(&widget, flags);
 }
 
 int QuickMenuRebornUpdateText(const char *refID, vector4 *Size, vector4 *Position, widgetColor *Color, const char *Text, void (*OnLoad)(), int flags)
@@ -245,7 +245,7 @@ int QuickMenuRebornUpdateText(const char *refID, vector4 *Size, vector4 *Positio
 
     widget.isAdvanced = 0;
 
-return updateWidget(&widget, flags);
+return QuickMenuRebornUpdateWidget(&widget, flags);
 
 }
 
@@ -265,7 +265,7 @@ int QuickMenuRebornUpdatePlane(const char *refID, vector4 *Size, vector4 *Positi
 
     widget.isAdvanced = 0;
 
-return updateWidget(&widget, flags);
+return QuickMenuRebornUpdateWidget(&widget, flags);
 
 }
 

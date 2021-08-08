@@ -15,7 +15,7 @@
 #define PLANE_ID "qm_reborn_sample_plane"
 #define TEXT_ID "qm_reborn_sample_text"
 #define CHECKBOX_TEXT_ID "qm_reborn_sample_checkbox_text"
-#define SEPARATOR_ID "qm_reborn_sample_plane"
+#define SEPARATOR_ID "qm_reborn_sample_separator"
 
 //Set our current count
 int count = 0;
@@ -53,7 +53,7 @@ ONLOAD_HANDLER(OnButtonLoad)
     {
         //Reset our count
         count = 0;
-        //Update our widget manually (dont use QuickMenuReborn functions here)
+        //Update our widget with new size and text
         vector4 size = makeWidgetVector4(200, 75, 0, 0);
         QuickMenuRebornUpdateButton(BUTTON_REF_ID, &size, NULL, NULL, "Press Me!", NULL, NULL, UPDATE_TEXT | UPDATE_SIZE);
     }
@@ -67,7 +67,11 @@ CHECKBOX_HANDLER(OnToggleCheckBox)
 int module_start()
 {
     //Get our checkboxes saved state
-    resetOnExit = QuickMenuRebornGetCheckBoxState(CHECKBOX_REF_ID);
+    int ret = QuickMenuRebornGetCheckBoxState(CHECKBOX_REF_ID);
+    if(ret == CONFIG_MGR_ERROR_NOT_EXIST) resetOnExit = 0;
+    else resetOnExit = ret;
+    
+    
     //Make a separator for our widgets, this is just for looks (adds some spacing and a white line at the top, this ensures the accessability menu isn't ruined and other plugins get thier share of space)
     QuickMenuRebornSeparator(SEPARATOR_ID);
     //First Widget we make, the text
@@ -116,12 +120,11 @@ int module_start()
 int module_stop()
 {
     //Remove our widgets from the list using our refrence ids, it will no longer be displayed
-    removeWidget(BUTTON_REF_ID);
-    removeWidget(CHECKBOX_REF_ID);
-    removeWidget(TEXT_ID);
-    removeWidget(CHECKBOX_TEXT_ID);
-    removeWidget(PLANE_ID);
-    //Don't forget this!
-    removeSeparator(SEPARATOR_ID);
+    QuickMenuRebornRemoveWidget(BUTTON_REF_ID);
+    QuickMenuRebornRemoveWidget(CHECKBOX_REF_ID);
+    QuickMenuRebornRemoveWidget(TEXT_ID);
+    QuickMenuRebornRemoveWidget(CHECKBOX_TEXT_ID);
+    QuickMenuRebornRemoveWidget(PLANE_ID);
+    QuickMenuRebornRemoveSeparator(SEPARATOR_ID); //Don't forget this!
     return SCE_KERNEL_STOP_SUCCESS;
 }

@@ -1,9 +1,7 @@
 cmake_minimum_required(VERSION 3.12)
 set(CMAKE_TOOLCHAIN_FILE "$ENV{SCE_PSP2_SDK_DIR}/host_tools/build/cmake/psp2-snc-toolchain.cmake")
 project(QuickMenuReborn)
-file(GLOB pafStubs
-    "${CMAKE_SOURCE_DIR}/vdsuite_paf_stub/*_weak.a"
-)
+
 file(GLOB user_cppfiles
     "${CMAKE_SOURCE_DIR}/src/user/*.cpp"
 )
@@ -23,7 +21,7 @@ set(CMAKE_C_STANDARD 99)
 enable_language(EMD)
 
 add_compile_options(
-  -O0
+  -O1
 )
 add_link_options(
   --prx-no-runtime-support
@@ -56,7 +54,15 @@ target_link_libraries(${PROJECT_NAME}
     SceRegMgr_stub
     SceDisplay_stub
     taihenUnsafe_stub
-    ${pafStubs}
+    ScePafCommon_stub_weak
+    ScePafGraphics_stub_weak
+    ScePafLowLayer_stub_weak
+    ScePafMisc_stub_weak
+    ScePafResource_stub_weak
+    ScePafStdc_stub_weak
+    ScePafThread_stub_weak
+    ScePafTopLevel_stub_weak
+    ScePafWidget_stub_weak
 )
 
 VDSuiteSignElf(${PROJECT_NAME}.suprx ${PROJECT_NAME})

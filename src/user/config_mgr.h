@@ -9,9 +9,6 @@
 #define CONFIG_SAVE_DIR "ur0:quickMenuRebornConfig/"
 #define CHECKBOX_SAVE_DIR "ur0:quickMenuRebornConfig/CheckBox/"
 
-#define CONFIG_MGR_ERROR_NOT_EXIST -1
-#define CONFIG_MGR_ERROR_COULD_NOT_WRITE_FULL -2
-#define CONFIG_MGR_OK 0
 
 int readCheckBoxState(const char *refID);
 int saveCheckBoxState(const char *refID, CheckBoxState state); 

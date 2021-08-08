@@ -110,7 +110,7 @@ int impose_thread(SceSize, void *)
     return sceKernelExitDeleteThread(0);
 }
 
-int checkDirExist(const char *path);
+int checkFileExist(const char *path);
 
  SceUID taiLoadStartModuleForPid(SceUID pid, const char *path, int args, void *argp, int flags) {
   tai_module_args_t argg;
@@ -129,16 +129,16 @@ int load_thread(SceSize, void*)
 
     char dir[20] = {0};
     
-    if(checkDirExist(PLUGINS_DIR))
+    if(checkFileExist(PLUGINS_DIR))
         sce_paf_snprintf(dir, 20, PLUGINS_DIR);
-    else if(checkDirExist(PLUGINS_DIR2))
+    else if(checkFileExist(PLUGINS_DIR2))
         sce_paf_snprintf(dir, 20, PLUGINS_DIR2);
-    else if(checkDirExist("ux0:"))
+    else if(checkFileExist("ux0:"))
     {
         sceIoMkdir(PLUGINS_DIR, 0777);
         sce_paf_snprintf(dir, 20, PLUGINS_DIR);
     }
-    else if(checkDirExist("ur0:"))
+    else if(checkFileExist("ur0:"))
     {
         sceIoMkdir(PLUGINS_DIR2, 0777);
         sce_paf_snprintf(dir, 20, PLUGINS_DIR2);

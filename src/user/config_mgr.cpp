@@ -2,18 +2,8 @@
 
 int checkFileExist(const char *path)
 {
-	SceUID ret = sceIoOpen(path, SCE_O_RDONLY, 0);
-	if(ret < 0) return 0;
-	sceIoClose(ret);
-	return 1;
-}
-
-int checkDirExist(const char *path)
-{
-	SceUID ret = sceIoDopen(path);
-	if(ret < 0) return 0;
-	sceIoDclose(ret);
-	return 1;
+	SceIoStat stat;
+	return sceIoGetstat(path, &stat) >= 0;
 }
 
 int readIntFromFile(const char *path)
@@ -36,9 +26,12 @@ int writeIntToFile(const char *path, int val)
 int preSetup()
 {
 	int ret = 0;
-	if(!checkDirExist(CONFIG_SAVE_DIR))
+	if(!checkFileExist(CONFIG_SAVE_DIR))
+	{
 		sceIoMkdir(CONFIG_SAVE_DIR, 0777);
-	if(!checkDirExist(CHECKBOX_SAVE_DIR))
+		sceIoMkdir(CHECKBOX_SAVE_DIR, 0777);
+	}
+	else if(!checkFileExist(CHECKBOX_SAVE_DIR))
 		sceIoMkdir(CHECKBOX_SAVE_DIR, 0777);
 	
 	return ret;

@@ -15,10 +15,6 @@ static widget::Widget *(*getImposeRoot)();
 static Plugin *imposePlugin;
 static widget::Widget *powerRoot;
 static Widget *main_plane;
-//Actual Impose_plugin
-static Plugin *impose_plugin;
-static Widget *impose_pluginFirstWidget;
-
 
 linked_list currentWidgets;
 
@@ -51,10 +47,10 @@ int initWidgets()
 {
     //Credit to GrapheneCT
     //Get power manage plugin object
-    imposePlugin = Plugin::GetByName("power_manage_plugin");
+    imposePlugin = Plugin::Find("power_manage_plugin");
     NULL_ERROR_FAIL(imposePlugin);
     //Power manage plugin -> power manage root
-    powerRoot = imposePlugin->GetWidgetByNum(1);
+    powerRoot = imposePlugin->GetInterface(1);
     NULL_ERROR_FAIL(powerRoot);
 
     //Power manage root -> impose root (some virtual function)
@@ -259,6 +255,7 @@ int setupValues(Widget *widget, widgetData *dat)
             break;
         case CHECKBOX_PREV_STATE:
             toSet = readCheckBoxState(dat->refId);
+            if(toSet == CONFIG_MGR_ERROR_NOT_EXIST) toSet = 0;
             print("Got toSet = %d\n", toSet);
             break;
         case CHECKBOX_OFF:
@@ -298,25 +295,6 @@ int spawn(widgetData *widget, int flags)
     print("Setting up values, %s\n", widget->refId);
     setupValues(made, widget);
     print("DONE ALL\n");
-    return 0;
-}
-
-int openQuickMenu()
-{
-    SCE_DBG_LOG_INFO("REACHED INTERNAL FUNCTION");
-    if(impose_plugin == NULL)
-    {
-        impose_plugin = Plugin::GetByName("impose_plugin");
-        NULL_ERROR_FAIL(impose_plugin);
-    }
-    if(impose_pluginFirstWidget == NULL)
-    {
-        impose_pluginFirstWidget = impose_plugin->GetWidgetByNum(1);
-        NULL_ERROR_FAIL(impose_pluginFirstWidget);
-    }
-    int (*openQM)();
-    openQM = (int(*)()) *(int *)((int)impose_pluginFirstWidget + 0xc);
-    openQM();
     return 0;
 }
 
