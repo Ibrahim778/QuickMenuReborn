@@ -6,9 +6,9 @@ modules:
         kernel: false
         nid: 0x4baca64c
         functions:
-          addWidget: 0x5333a639
-          removeWidget: 0x6407e3cc
-          updateWidget: 0x9d9a9164
+          QuickMenuRebornAddWidget: 0x5333a639
+          QuickMenuRebornRemoveWidget: 0x6407e3cc
+          QuickMenuRebornUpdateWidget: 0x9d9a9164
           makeWidgetColor: 0x43842625
           makeWidgetVector4: 0xcbf8945b
           QuickMenuRebornButton: 0xc15df0ed
