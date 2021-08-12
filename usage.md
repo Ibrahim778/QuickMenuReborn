@@ -60,4 +60,14 @@ Once again these need refrence id's, You should only add separators at the start
 # Removing Widgets
 
 Use the QuickMenuRebornRemoveWidget function and pass in the widget refrence id.  
-To remove separators use 
+To remove separators use the QuickMenuRebornRemoveSeparator function and pass in the refrence id.
+
+For Example
+```
+    QuickMenuRebornRemoveWidget(BUTTON_REF_ID);
+    QuickMenuRebornRemoveWidget(CHECKBOX_REF_ID);
+    QuickMenuRebornRemoveWidget(TEXT_ID);
+    QuickMenuRebornRemoveWidget(CHECKBOX_TEXT_ID);
+    QuickMenuRebornRemoveWidget(PLANE_ID);
+    QuickMenuRebornRemoveSeparator(SEPARATOR_ID); //Don't forget this!
+```
