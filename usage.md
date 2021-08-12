@@ -11,7 +11,6 @@ Or Use the functions made for individual widgets which will populate the fields 
 
 For example. Adding a button: 
 ```
-
     size = makeWidgetVector4Int(200,75,0,0);
     pos = makeCommonWidgetVector4Int(0);
     col = makeWidgetColorInt(1, 1, 1, 1) //range is 0-1, you can alternativly use defines (already in the headers) like COLOR_WHITE
