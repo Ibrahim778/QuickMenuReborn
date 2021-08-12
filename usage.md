@@ -56,3 +56,8 @@ You may have noticed that the default widgets in the quick menu all have a line 
 Once again these need refrence id's, You should only add separators at the start of your code so they appear at the top, DO NOT ADD SEPARATORS ON THE BOTTOM, this is for 2 reasons.
 1. If your plugin is the first one, there is a separator between your widget and the accessability widgets
 2. If your widgets are in the middle, they separate with the previous ones and blend in with the next ones
+
+# Removing Widgets
+
+Use the QuickMenuRebornRemoveWidget function and pass in the widget refrence id.  
+To remove separators use 
