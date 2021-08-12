@@ -35,6 +35,7 @@ For Example:
 ```
     //Get our checkboxes saved state
     int ret = QuickMenuRebornGetCheckBoxState(CHECKBOX_REF_ID);
-    if(ret == CONFIG_MGR_ERROR_NOT_EXIST) resetOnExit = 0; // Check if it was successful
+    // Check if it was successful, if not default to 0 (false)
+    if(ret == CONFIG_MGR_ERROR_NOT_EXIST) resetOnExit = 0; 
     else resetOnExit = ret;
 ```
