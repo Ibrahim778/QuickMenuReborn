@@ -23,7 +23,7 @@ int count = 0;
 //Declare our boolean
 bool resetOnExit = false;
 
-//Declare our function that will act as the callback for when our burron is pressed, Format: BUTTON_HANDLER(name of function)
+//Declare our function that will act as the callback for when our button is pressed, Format: BUTTON_HANDLER(name of function)
 BUTTON_HANDLER(onPress)
 {
     //Increment the count
