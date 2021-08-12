@@ -37,8 +37,7 @@ For Example:
     size = makeWidgetVector4Int(50, 50, 0, 0);
     pos = makeWidgetVector4Int(350, 0, 0, 0);
 
-    //Make our checkbox as a child of the plane, so we can put the text besides it
-    QuickMenuRebornCheckBox(CHECKBOX_REF_ID, PLANE_ID, &size, &pos, &col, NULL, OnToggleCheckBox, CHECKBOX_PREV_STATE);
+    QuickMenuRebornCheckBox(CHECKBOX_REF_ID, NULL, &size, &pos, &col, NULL, OnToggleCheckBox, CHECKBOX_PREV_STATE);
 ```
 
 If you want to get the previous saved state of the checkbox via code you can use QuickMenuRebornGetCheckBoxState function and pass the refrence Id of the checkbox.  
