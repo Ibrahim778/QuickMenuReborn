@@ -81,9 +81,6 @@ int impose_thread(SceSize, void *)
 {
     //Delay to let shell load properly
     sceKernelDelayThread(4 * 1000 * 1000);
-    
-    if(semaID = sceKernelCreateSema(QM_REBORN_SEMA_NAME, SCE_KERNEL_ATTR_OPENABLE, SCE_KERNEL_1KiB, SCE_KERNEL_4KiB, NULL), semaID < 0) return sceKernelExitDeleteThread(0);
-    else print("Make Sema success!\n");
 
     addInitialSpacer();
 
@@ -111,7 +108,7 @@ int impose_thread(SceSize, void *)
 }
 
 int checkFileExist(const char *path);
-
+/*
  SceUID taiLoadStartModuleForPid(SceUID pid, const char *path, int args, void *argp, int flags) {
   tai_module_args_t argg;
   argg.size = sizeof(argg);
@@ -121,7 +118,7 @@ int checkFileExist(const char *path);
   argg.flags = flags;
   return taiLoadStartModuleForPidForUser(path, &argg);
 }
-
+*/
 int load_thread(SceSize, void*)
 {
     //Delay a bit, to let everything load

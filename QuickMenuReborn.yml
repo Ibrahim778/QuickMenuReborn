@@ -1,4 +1,4 @@
-modules:
+modules: # apparently u make these with random ints?
   QuickMenuReborn:
     nid: 0xa3630fe4
     libraries:

@@ -2,10 +2,12 @@
 #define QM_REBORN_H
 
 #define QM_REBORN_INTERNAL
-
+#ifdef __SNC__
 #include <scetypes.h>
+#else
+#include <psp2/types.h>
+#endif
 #include "c_types.h"
-
 #define CHECKBOX_HANDLER(name) void name(int checked)
 #define BUTTON_HANDLER(name) void name()
 #define ONLOAD_HANDLER(name) void name()

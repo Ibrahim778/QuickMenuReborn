@@ -7,7 +7,7 @@
 #include <kernel/libkernel.h>
 #include <libdbg.h>
 #include <ctrl.h>
-#include "../quickmenureborn/qm_reborn.h"
+#include <quickmenureborn/qm_reborn.h>
 
 //define a refrence id for each our widgets, make sure they're all unique, like the ones below. Doesn't need to be anything specific, just something unique
 #define BUTTON_REF_ID "qm_reborn_sample_button"
@@ -30,7 +30,8 @@ BUTTON_HANDLER(onPress)
     count++;
 
     //Make our buffer to pass to the function
-    char newText[0x100];
+    char newText[0x100]; // 0x100 is the max size for everything
+
     //Fill our buffer
     sceClibSnprintf(newText, 0x100, "You Pressed Me %d Times", count);
 

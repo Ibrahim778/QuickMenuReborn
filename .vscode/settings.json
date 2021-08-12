@@ -29,6 +29,7 @@
         "syscon.h": "c",
         "config_mgr.h": "cpp",
         "scetypes.h": "c",
-        "taihen.h": "c"
+        "taihen.h": "c",
+        "fios2_types.h": "c"
     }
 }

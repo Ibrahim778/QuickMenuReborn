@@ -1,6 +1,7 @@
 /ScePaf.yml
 /build
 /vdsuite_paf_stub
+/stubs
 /run.sh
 /out.txt
 /release

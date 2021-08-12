@@ -1,12 +1,20 @@
 cmake_minimum_required(VERSION 3.12)
 set(CMAKE_TOOLCHAIN_FILE "$ENV{SCE_PSP2_SDK_DIR}/host_tools/build/cmake/psp2-snc-toolchain.cmake")
 project(QuickMenuReborn)
+include(VitaDevelopmentSuite)
+
+file(GLOB pafStub
+    "${CMAKE_SOURCE_DIR}/stubs/*_weak.a"
+)
 
 file(GLOB user_cppfiles
     "${CMAKE_SOURCE_DIR}/src/user/*.cpp"
 )
 file(GLOB user_cfiles
     "${CMAKE_SOURCE_DIR}/src/user/*.c"
+)
+file(GLOB export_cfiles
+    "${CMAKE_SOURCE_DIR}/src/export_handler/*.c"
 )
 file(GLOB user_hfiles
     "${CMAKE_SOURCE_DIR}/src/user/*.h"
@@ -15,11 +23,11 @@ file(GLOB qm_reborn_includes
     "${CMAKE_SOURCE_DIR}/src/quickmenureborn/*.h"
 )
 
-include(VitaDevelopmentSuite)
-
 set(CMAKE_C_STANDARD 99)
+set(CMAKE_CXX_STANDARD 11)
 enable_language(EMD)
 
+# ONLY COMPILE MAIN PLUGIN WITH -O0 or -O1
 add_compile_options(
   -O1
 )
@@ -54,15 +62,7 @@ target_link_libraries(${PROJECT_NAME}
     SceRegMgr_stub
     SceDisplay_stub
     taihenUnsafe_stub
-    ScePafCommon_stub_weak
-    ScePafGraphics_stub_weak
-    ScePafLowLayer_stub_weak
-    ScePafMisc_stub_weak
-    ScePafResource_stub_weak
-    ScePafStdc_stub_weak
-    ScePafThread_stub_weak
-    ScePafTopLevel_stub_weak
-    ScePafWidget_stub_weak
+    ${pafStub}
 )
 
 VDSuiteSignElf(${PROJECT_NAME}.suprx ${PROJECT_NAME})
@@ -70,24 +70,18 @@ VDSuiteSignElf(${PROJECT_NAME}.suprx ${PROJECT_NAME})
 VDSuiteCreateStubs(stubs ${PROJECT_NAME}.emd
   LIBRARIES
     quickMenuReborn_stub
+    quickMenuReborn_stub_weak
 )
-
-#Sample App
-add_library(samples MODULE
-  ${qm_reborn_includes}
-  src/sample_app/main.c
-  QuickMenuRebornSample.emd
-)
-
-target_link_libraries(samples
-  SceKernel_stub
-  SceDbg_stub
-  quickMenuReborn_stub
-)
-
-VDSuiteSignElf(QuickMenuRebornSample.suprx samples)
 
 # Generate VitaSDK stubs
 add_custom_command(TARGET QuickMenuReborn POST_BUILD
-  COMMAND $ENV{SCE_PSP2_SDK_DIR}/host_tools/build/bin/vdsuite-libgen.exe ${CMAKE_SOURCE_DIR}/ExportHandler.yml ${CMAKE_BINARY_DIR}/vitasdk_stubs --output-kind VitasdkStub
+  COMMAND $ENV{SCE_PSP2_SDK_DIR}/host_tools/build/bin/vdsuite-libgen.exe ${CMAKE_SOURCE_DIR}/QuickMenuReborn.yml ${CMAKE_BINARY_DIR}/vitasdk_stubs --output-kind VitasdkStub
 )
+
+add_custom_target(install_vdsuite
+    COMMAND xcopy /E /I /H /Y ..\\src\\quickmenureborn\\ %SCE_PSP2_SDK_DIR%\\target\\include\\vdsuite\\user\\quickmenureborn\\
+    COMMAND xcopy /E /I /H /Y stubs\\libquickMenuReborn_stub.a %SCE_PSP2_SDK_DIR%\\target\\lib\\vdsuite\\
+    COMMAND xcopy /E /I /H /Y stubs\\libquickMenuReborn_stub_weak.a %SCE_PSP2_SDK_DIR%\\target\\lib\\vdsuite\\
+)
+
+add_subdirectory(sample_plugin)
