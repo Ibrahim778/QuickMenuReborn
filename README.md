@@ -34,3 +34,6 @@ For usage see usage.md
 
 ## Installing plugins that use the QuickMenuReborn
 Simply drag and drop the plugin in the QuickMenuReborn folder you made earlier.
+
+There is also a sample plugin provided. It's totally useless (don't know why anyone would want it in their menu, but it shows all the features)
+[Sample]()
