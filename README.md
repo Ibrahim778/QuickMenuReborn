@@ -14,12 +14,20 @@ Library for developers to easily add their own widgets, to the vita's Quick Menu
 
 ## Developer Library
 
+### VitaSDK / DolceSDK
+
 1. Make sure you have installed the plugin (see above).
 1. Download the file dev_pkg.zip
 1. Extract it
 1. Copy the folder quickmenureborn to your sdk's include folder so that the subdirectory quickmenureborn is inside it.
-1. Copy the stubs to your sdk's lib folder, stubs inside vitasdk_stubs are for vitasdk / dolcesdk, stubs inside stubs are for vdsuite
+1. Copy the stubs from vitasdk_stubs to your lib folder, stubs inside stubs are for vdsuite
 1. Done
+
+### VDSuite
+
+1. Either follow instructions for vitaSDK but using the vdsuite stubs or,
+1. Clone Repo
+1. Build with cmake and use target install_vdsuite
 
 For usage see usage.md
 
