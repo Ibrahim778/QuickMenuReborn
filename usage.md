@@ -15,8 +15,26 @@ For example. Adding a button:
     pos = makeCommonWidgetVector4Int(0);
     col = makeWidgetColorInt(1, 1, 1, 1) //range is 0-1, you can alternativly use defines (already in the headers) like COLOR_WHITE
     
-    QuickMenuRebornButton(BUTTON_REF_ID, NULL, &size, &pos, &col, "Press Me!", OnButtonLoad, onPress);
+    QuickMenuRebornButton(BUTTON_REF_ID, NULL, &size, &pos, &col, "Press Me!", OnButtonLoad, onPress); //Last 2 parameters are event handlers, you can pass null
 ```
   
+    
 ## CheckBox save system
 
+Every added checkbox will have it's value saved on each press, this save is identified by the refrence Id, so if you change it, it will act as if you reset it.
+The last parameter for the checkbox function takes in one of 3 values
+```
+CHECKBOX_ON
+CHECKBOX_OFF
+CHECKBOX_PREV_STATE
+```
+  
+These will determine the initial value of the checkbox every time the quick menu is opened. The last one will use the previous saved state.
+If you want to get the previous saved state of the checkbox via code you can use QuickMenuRebornGetCheckBoxState function and pass the refrence Id of the checkbox.  
+For Example:
+```
+    //Get our checkboxes saved state
+    int ret = QuickMenuRebornGetCheckBoxState(CHECKBOX_REF_ID);
+    if(ret == CONFIG_MGR_ERROR_NOT_EXIST) resetOnExit = 0; // Check if it was successful
+    else resetOnExit = ret;
+```
