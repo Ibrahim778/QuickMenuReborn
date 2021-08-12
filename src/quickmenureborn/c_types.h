@@ -2,8 +2,11 @@
 #define C_TYPES_H_QM_REBORN
 
 #ifdef QM_REBORN_INTERNAL
+#ifdef __SNC__
 #include <kernel/types.h>
-#define EXPORT_PIPE "quickmenureborn_exports_pipe"
+#else
+#include <psp2/types.h>
+#endif
 #endif
 
 #ifdef __cplusplus
