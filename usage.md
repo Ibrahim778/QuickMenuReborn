@@ -74,3 +74,8 @@ For Example
   
 I also recommend not removing widgets like checkboxes and buttons at times when the quickmenu is open, so do not remove widgets in the OnLoad and onPress/OnTrigger callbacks.  
 This is to ensure the user doesn't trigger dead callbacks, which would crash shell.
+
+# Kernel Plugins
+
+QuickMenuReborn does not suppourt kernel plugins, it's not worth making a kernel plugin because kernel can't call userland functions  
+I recommend devs to make a separete user plugin for their gui, it's not hard and use syscalls to send over the commands.
