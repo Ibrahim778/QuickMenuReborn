@@ -6,10 +6,8 @@
 
 
 SceUID mainThreadID = SCE_UID_INVALID_UID;
-
 bool mainEnd = false;
-
-bool dispalyed = 0;
+bool dispalyed = false;
 
 #define INTERNAL_SPACER_ID "qm_reborn_internal_spacer"
 
@@ -108,17 +106,7 @@ int impose_thread(SceSize, void *)
 }
 
 int checkFileExist(const char *path);
-/*
- SceUID taiLoadStartModuleForPid(SceUID pid, const char *path, int args, void *argp, int flags) {
-  tai_module_args_t argg;
-  argg.size = sizeof(argg);
-  argg.pid = pid;
-  argg.args = args;
-  argg.argp = argp;
-  argg.flags = flags;
-  return taiLoadStartModuleForPidForUser(path, &argg);
-}
-*/
+
 int load_thread(SceSize, void*)
 {
     //Delay a bit, to let everything load
@@ -184,8 +172,6 @@ extern "C"
             mainEnd = true;
             sceKernelWaitThreadEnd(mainThreadID, NULL, NULL);
         }
-        if(semaID > 0)
-            sceKernelDeleteSema(semaID);
 
         return SCE_KERNEL_STOP_SUCCESS;
     }

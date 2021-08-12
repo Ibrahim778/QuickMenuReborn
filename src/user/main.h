@@ -38,7 +38,4 @@ int sceClibPrintf(const char * fmt, ...);
 #define NULL_ERROR_FAIL(con) if (con < 0 || con == NULL) { return -1; }
 #endif
 
-int sceAppMgrGetIdByName(SceUID *pid, const char *name);
-static SceUID semaID;
-
 #endif
