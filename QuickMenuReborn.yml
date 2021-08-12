@@ -20,3 +20,5 @@ modules: # apparently u make these with random ints?
           QuickMenuRebornUpdateCheckBox: 0xda5c655a
           QuickMenuRebornUpdateText: 0xde7bc643
           QuickMenuRebornUpdatePlane: 0x871368f6
+          QuickMenuRebornRemoveSeparator: 0x7550C9BF
+          QuickMenuRebornGetCheckBoxState: 0x65214907
