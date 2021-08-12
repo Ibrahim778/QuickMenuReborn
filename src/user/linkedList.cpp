@@ -1,35 +1,46 @@
+#include "linkedList.hpp"
+#include "main.h"
+#include "types.h"
 #include "widgets.h"
+#ifndef QM_REBORN_LL_CPP
+#define QM_REBORN_LL_CPP
 
-struct node
-{
-    widgetData widget;
-    node *next;
-};
-
-class linked_list
-{
-public:
-    node *head;
-    linked_list()
+    linked_list::linked_list()
     {
         head = NULL;
+        tail = NULL;
     }
 
-    void print()
+    void linked_list::printall()
     {
     #ifdef DEBUG
-        SCE_DBG_LOG_INFO("W:\n");
-        node *tmp = head;
-        while(tmp != NULL)
+        node *current = head;
+        while (current != NULL)
         {
-            SCE_DBG_LOG_INFO("%s, ", tmp->widget.refId);
-            tmp = tmp->next;
+            print("%s, ", current->widget.refId);
+            current = current->next;
         }
-        SCE_DBG_LOG_INFO("\n");
+        
     #endif
     }
 
-    void update_node(widgetData *widget, int flags)
+    void linked_list::update_checkbox_status(const char *refID, CheckBoxState state)
+    {
+        node *tmp = head;
+        while(tmp != NULL)
+        {
+            if(sce_paf_strcmp(tmp->widget.refId, refID) == 0)
+                break;
+            tmp = tmp->next;
+        }
+
+        if(tmp == NULL)
+            return;
+
+        tmp->widget.data.CheckBoxData.state = state;
+    }
+
+    void linked_list::update_node(widgetData *widget, int flags)
     {
         node *tmp = head;
         while (tmp != NULL)
@@ -40,6 +51,7 @@ public:
         }
         if(tmp == NULL)
         {
+            print("WARNING TMP == NULL CANNOT UPDATE\n");
             return;
         }
 
@@ -55,18 +67,28 @@ public:
             {
             case button:
             {
-                sce_paf_strncpy(tmp->widget.data.ButtonData.label, widget->data.ButtonData.label, 0x100);
+                sce_paf_memcpy(tmp->widget.data.ButtonData.label, widget->data.ButtonData.label, sizeof(tmp->widget.data.ButtonData.label));
+                print("After copying text %s\n", tmp->widget.data.ButtonData.label);
                 break;
             }
             case text:
             {
-                sce_paf_strncpy(tmp->widget.data.TextData.label, widget->data.ButtonData.label, 0x100);
+                sce_paf_strncpy(tmp->widget.data.TextData.label, widget->data.ButtonData.label, sizeof(tmp->widget.data.ButtonData.label));
                 break;
             }
             default:
                 break;
             }
         }
+
+        if(flags & UPDATE_CHECKBOX_STATE)
+        {
+            if(tmp->widget.type == check_box)
+            {
+                tmp->widget.data.CheckBoxData.state = widget->data.CheckBoxData.state;
+            }
+        }
+
         if(flags & UPDATE_EVENT)
         {
             switch (widget->type)
@@ -87,9 +109,12 @@ public:
                 break;
             }
         }
+
+        if(flags & UPDATE_LOAD)
+            tmp->widget.OnLoad = widget->OnLoad;
     }
 
-    void add_node(widgetData *widget)
+    void linked_list::add_node(widgetData *widget)
     {
         node *tmp = new node;
         sce_paf_memcpy(&tmp->widget, widget, sizeof(widgetData));
@@ -98,11 +123,17 @@ public:
         if(head == NULL)
         {
             head = tmp;
+            tail = tmp;
+        }
+        else
+        {
+            tail->next = tmp;
+            tail = tail->next;
         }
     }
     
     //Credit to CreepNT for this
-    void remove_node(const char *tag) {
+    void linked_list::remove_node(const char *tag) {
         //Check head isn't NULL
         if (head == NULL)
             return;
@@ -136,35 +167,4 @@ public:
         sce_paf_free(nodeToDelete);
     }
 
-    /*
-    void remove_node(const char *refId)
-    {  
-        node *prev = NULL;
-        node *current = head;
-        while (current != NULL)
-        {
-
-            if(sce_paf_strcmp(refId, current->widget->refId) == 0)
-            {
-                break;
-            }
-            else
-            {
-                prev = current;
-                current = current->next;
-            }
-        }
-        
-        if(current == NULL)
-            return;
-
-        if(current == head) 
-        {
-            head = NULL; 
-        }
-        else prev->next = current->next;
-
-        delete current;
-    }
-    */
-};
+#endif

@@ -14,12 +14,22 @@
         "qm_reborn.h": "c",
         "main.h": "c",
         "libkernel.h": "c",
-        "paf.h": "c",
-        "resource.h": "c",
-        "misc.h": "c",
-        "stdc.h": "c",
-        "kernel.h": "c",
+        "paf.h": "cpp",
+        "resource.h": "cpp",
+        "misc.h": "cpp",
+        "stdc.h": "cpp",
+        "kernel.h": "cpp",
         "cdefs.h": "c",
-        "libdbg.h": "c"
+        "libdbg.h": "c",
+        "linkedlist.cpp": "cpp",
+        "linkedlist.hpp": "cpp",
+        "appmgr.h": "c",
+        "export_handler_internal.h": "c",
+        "state_mgr.h": "c",
+        "syscon.h": "c",
+        "config_mgr.h": "cpp",
+        "scetypes.h": "c",
+        "taihen.h": "c",
+        "fios2_types.h": "c"
     }
 }
