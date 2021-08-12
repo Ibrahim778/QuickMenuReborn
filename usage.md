@@ -29,7 +29,18 @@ CHECKBOX_OFF
 CHECKBOX_PREV_STATE
 ```
   
-These will determine the initial value of the checkbox every time the quick menu is opened. The last one will use the previous saved state.
+These will determine the initial value of the checkbox every time the quick menu is opened. The last one will use the previous saved state.  
+For Example:
+```
+    //Checkbox
+    col = COLOR_WHITE;
+    size = makeWidgetVector4Int(50, 50, 0, 0);
+    pos = makeWidgetVector4Int(350, 0, 0, 0);
+
+    //Make our checkbox as a child of the plane, so we can put the text besides it
+    QuickMenuRebornCheckBox(CHECKBOX_REF_ID, PLANE_ID, &size, &pos, &col, NULL, OnToggleCheckBox, CHECKBOX_PREV_STATE);
+```
+
 If you want to get the previous saved state of the checkbox via code you can use QuickMenuRebornGetCheckBoxState function and pass the refrence Id of the checkbox.  
 For Example:
 ```
