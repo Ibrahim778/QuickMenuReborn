@@ -72,4 +72,5 @@ For Example
     QuickMenuRebornRemoveSeparator(SEPARATOR_ID); //Don't forget this!
 ```
   
-I also recommend not removing widgets like checkboxes and buttons at times when the quickmenu is open, so do not remove widgets in the OnLoad and onPress/OnTrigger callbacks
+I also recommend not removing widgets like checkboxes and buttons at times when the quickmenu is open, so do not remove widgets in the OnLoad and onPress/OnTrigger callbacks.  
+This is to ensure the user doesn't trigger dead callbacks, which would crash shell.
