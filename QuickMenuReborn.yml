@@ -1,24 +1,22 @@
-modules: # apparently u make these with random ints?
+modules:
   QuickMenuReborn:
-    nid: 0xa3630fe4
     libraries:
       quickMenuReborn:
-        kernel: false
-        nid: 0x4baca64c
+        nid: 0xCF1E4EF8
         functions:
-          QuickMenuRebornAddWidget: 0x5333a639
-          QuickMenuRebornRemoveWidget: 0x6407e3cc
-          QuickMenuRebornUpdateWidget: 0x9d9a9164
-          makeWidgetColor: 0x43842625
-          makeWidgetVector4: 0xcbf8945b
-          QuickMenuRebornButton: 0xc15df0ed
-          QuickMenuRebornCheckBox: 0x8b41d5de
-          QuickMenuRebornText: 0xbbbfe82f
-          QuickMenuRebornPlane: 0x8cb84172
-          QuickMenuRebornSeparator: 0xbaf2aa22
-          QuickMenuRebornUpdateButton: 0xe6a4a4e6
-          QuickMenuRebornUpdateCheckBox: 0xda5c655a
-          QuickMenuRebornUpdateText: 0xde7bc643
-          QuickMenuRebornUpdatePlane: 0x871368f6
+          QuickMenuRebornAddWidget: 0x11202C4E
+          QuickMenuRebornRemoveWidget: 0x2A690516
+          QuickMenuRebornUpdateWidget: 0x8A4F2291
+          makeWidgetColor: 0xB68C617D
+          makeWidgetVector4: 0x5F2B7794
+          QuickMenuRebornButton: 0x8DEFE60D
+          QuickMenuRebornCheckBox: 0x93245A61
+          QuickMenuRebornText: 0x36F4C81F
+          QuickMenuRebornPlane: 0xEFD76FB6
+          QuickMenuRebornSeparator: 0x554D28CD
+          QuickMenuRebornUpdateButton: 0xF8E8F906
+          QuickMenuRebornUpdateCheckBox: 0x1FAEA672
+          QuickMenuRebornUpdateText: 0x68680E26
+          QuickMenuRebornUpdatePlane: 0xFC8EA5DB
           QuickMenuRebornRemoveSeparator: 0x7550C9BF
           QuickMenuRebornGetCheckBoxState: 0x65214907

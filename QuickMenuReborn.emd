@@ -3,29 +3,23 @@ sceModuleInfo_type: 6
 module_function: module_start localname: module_start
 module_function: module_stop localname: module_stop
 
-Library: quickMenuReborn version: 5
+Library: quickMenuReborn version: 1
 Library: quickMenuReborn nidsuffix: ""
 Library: quickMenuReborn attr: auto_export
-
-Library: quickMenuReborn function: QuickMenuRebornAddWidget
-Library: quickMenuReborn function: QuickMenuRebornRemoveWidget
-Library: quickMenuReborn function: QuickMenuRebornUpdateWidget
-
-Library: quickMenuReborn function: makeWidgetColor
-Library: quickMenuReborn function: makeWidgetVector4
-
-Library: quickMenuReborn function: QuickMenuRebornButton
-Library: quickMenuReborn function: QuickMenuRebornCheckBox
-Library: quickMenuReborn function: QuickMenuRebornText
-Library: quickMenuReborn function: QuickMenuRebornPlane
-Library: quickMenuReborn function: QuickMenuRebornSeparator
-
-Library: quickMenuReborn function: QuickMenuRebornUpdateButton
-Library: quickMenuReborn function: QuickMenuRebornUpdateCheckBox
-Library: quickMenuReborn function: QuickMenuRebornUpdateText
-Library: quickMenuReborn function: QuickMenuRebornUpdatePlane
-
-Library: quickMenuReborn function: QuickMenuRebornAddAdvancedWidget
-Library: quickMenuReborn function: QuickMenuRebornRemoveSeparator
-
-Library: quickMenuReborn function: QuickMenuRebornGetCheckBoxState
+Library: quickMenuReborn libnamenid: 0xCF1E4EF8
+Library: quickMenuReborn function: QuickMenuRebornAddWidget nidvalue: 0x11202C4E
+Library: quickMenuReborn function: QuickMenuRebornRemoveWidget nidvalue: 0x2A690516
+Library: quickMenuReborn function: QuickMenuRebornUpdateWidget nidvalue: 0x8A4F2291
+Library: quickMenuReborn function: makeWidgetColor nidvalue: 0xB68C617D
+Library: quickMenuReborn function: makeWidgetVector4 nidvalue: 0x5F2B7794
+Library: quickMenuReborn function: QuickMenuRebornButton nidvalue: 0x8DEFE60D
+Library: quickMenuReborn function: QuickMenuRebornCheckBox nidvalue: 0x93245A61
+Library: quickMenuReborn function: QuickMenuRebornText nidvalue: 0x36F4C81F
+Library: quickMenuReborn function: QuickMenuRebornPlane nidvalue: 0xEFD76FB6
+Library: quickMenuReborn function: QuickMenuRebornSeparator nidvalue: 0x554D28CD
+Library: quickMenuReborn function: QuickMenuRebornUpdateButton nidvalue: 0xF8E8F906
+Library: quickMenuReborn function: QuickMenuRebornUpdateCheckBox nidvalue: 0x1FAEA672
+Library: quickMenuReborn function: QuickMenuRebornUpdateText nidvalue: 0x68680E26
+Library: quickMenuReborn function: QuickMenuRebornUpdatePlane nidvalue: 0xFC8EA5DB
+Library: quickMenuReborn function: QuickMenuRebornRemoveSeparator nidvalue: 0x7550C9BF
+Library: quickMenuReborn function: QuickMenuRebornGetCheckBoxState nidvalue: 0x65214907
