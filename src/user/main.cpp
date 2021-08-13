@@ -22,30 +22,6 @@ SceVoid leakTestTask(void)
 }
 #endif
 
-//Add an invisible spacer after accesability widgets, just to make things look a bit cleaner
-int addInitialSpacer()
-{
-    widgetData widget;
-    sce_paf_memset(&widget, 0, sizeof(widget));
-
-    widget.type = plane;
-
-    //Need to set everything manually
-    widget.col.r = 1.0f;
-    widget.col.g = 1.0f;
-    widget.col.b = 1.0f;
-    widget.col.a = 0.0f;
-
-    widget.size.x = 825.0f;
-    widget.size.y = 20.0f;
-    widget.size.z = 0.0f;
-    widget.size.w = 0.0f;
-    
-    sce_paf_memcpy(widget.refId, INTERNAL_SPACER_ID, sizeof(widget.refId));
-
-    return registerWidget(&widget);
-}
-
 SceInt32 VblankCallback(SceUID notifyId, SceInt32 notifyCount, SceInt32 notifyArg, void* pCommon) 
 {
     SceAppMgrAppState state;
@@ -79,8 +55,6 @@ int impose_thread(SceSize, void *)
 {
     //Delay to let shell load properly
     sceKernelDelayThread(4 * 1000 * 1000);
-
-    addInitialSpacer();
 
     SceUID CallbackUID = sceKernelCreateCallback("QMR_VblankCB", 0, VblankCallback, NULL);
     if (CallbackUID < 0)

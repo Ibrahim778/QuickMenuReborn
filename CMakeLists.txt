@@ -69,8 +69,8 @@ VDSuiteSignElf(${PROJECT_NAME}.suprx ${PROJECT_NAME})
 
 VDSuiteCreateStubs(stubs ${PROJECT_NAME}.emd
   LIBRARIES
-    quickMenuReborn_stub
-    quickMenuReborn_stub_weak
+    QuickMenuReborn_stub
+    QuickMenuReborn_stub_weak
 )
 
 # Generate VitaSDK stubs
@@ -80,8 +80,8 @@ add_custom_command(TARGET QuickMenuReborn POST_BUILD
 
 add_custom_target(install_vdsuite
     COMMAND xcopy /E /I /H /Y ..\\src\\quickmenureborn\\ %SCE_PSP2_SDK_DIR%\\target\\include\\vdsuite\\user\\quickmenureborn\\
-    COMMAND xcopy /E /I /H /Y stubs\\libquickMenuReborn_stub.a %SCE_PSP2_SDK_DIR%\\target\\lib\\vdsuite\\
-    COMMAND xcopy /E /I /H /Y stubs\\libquickMenuReborn_stub_weak.a %SCE_PSP2_SDK_DIR%\\target\\lib\\vdsuite\\
+    COMMAND xcopy /E /I /H /Y stubs\\libQuickMenuReborn_stub.a %SCE_PSP2_SDK_DIR%\\target\\lib\\vdsuite\\
+    COMMAND xcopy /E /I /H /Y stubs\\libQuickMenuReborn_stub_weak.a %SCE_PSP2_SDK_DIR%\\target\\lib\\vdsuite\\
 )
 
 add_subdirectory(sample_plugin)

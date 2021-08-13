@@ -1,8 +1,8 @@
 modules:
   QuickMenuReborn:
     libraries:
-      quickMenuReborn:
-        nid: 0xCF1E4EF8
+      QuickMenuReborn:
+        nid: 0x6642F554
         functions:
           QuickMenuRebornAddWidget: 0x11202C4E
           QuickMenuRebornRemoveWidget: 0x2A690516

@@ -3,8 +3,8 @@ import hashlib
 EMD_PATH="QuickMenuReborn.emd"
 YML_PATH="QuickMenuReborn.yml"
 
-EMD_START="Module: QuickMenuReborn major_version: 3 minor_version: 0\nsceModuleInfo_type: 6\nmodule_function: module_start localname: module_start\nmodule_function: module_stop localname: module_stop\n\nLibrary: quickMenuReborn version: 1\nLibrary: quickMenuReborn nidsuffix: \"\"\nLibrary: quickMenuReborn attr: auto_export\n"
-LIB_NAME="quickMenuReborn"
+EMD_START="Module: QuickMenuReborn major_version: 3 minor_version: 0\nsceModuleInfo_type: 6\nmodule_function: module_start localname: module_start\nmodule_function: module_stop localname: module_stop\n\nLibrary: QuickMenuReborn version: 1\nLibrary: QuickMenuReborn nidsuffix: \"\"\nLibrary: QuickMenuReborn attr: auto_export\n"
+LIB_NAME="QuickMenuReborn"
 functionNames=[ 
         "QuickMenuRebornAddWidget",
         "QuickMenuRebornRemoveWidget",

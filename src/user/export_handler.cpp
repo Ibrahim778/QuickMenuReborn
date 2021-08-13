@@ -45,8 +45,10 @@ widgetColor makeWidgetColor(float r, float g, float b, float a)
 int QuickMenuRebornRemoveSeparator(const char *refID)
 {
     char id[0x100];
-    sce_paf_snprintf(id, sizeof(id), "qm_reborn_%s_separator", refID);
+    sce_paf_snprintf(id, sizeof(id), "qm_reborn_%s_separator_0", refID);
+    unregisterWidget(id);
 
+    sce_paf_snprintf(id, sizeof(id), "qm_reborn_%s_separator_1", refID);
     return unregisterWidget(id);
 }
 
@@ -159,10 +161,19 @@ int QuickMenuRebornPlane(const char *refID, const char *parentRefID, vector4 *Si
 int QuickMenuRebornSeparator(const char *refID)
 {
     char sepID[256] = {0};
-    sce_paf_snprintf(sepID, sizeof(sepID), "qm_reborn_%s_separator", refID);
+    sce_paf_snprintf(sepID, sizeof(sepID), "qm_reborn_%s_separator_0", refID);
+    
+    //Invisible Spacer
+    vector4 size = makeWidgetVector4Int(825, 20, 0, 0), pos = makeCommonWidgetVector4Int(0);
+    widgetColor col = COLOR_TRANSPARENT;
+    
+    QuickMenuRebornPlane(sepID, NULL, &size, &pos, &col, NULL);
 
-    vector4 size = makeWidgetVector4(825.0f,2.0f,0.0f,0.0f), pos = makeWidgetVector4(0,0,0,0);
-    widgetColor col = makeWidgetColor(.75f,.75f,.75f,.75f);
+    //Line
+    sce_paf_snprintf(sepID, sizeof(sepID), "qm_reborn_%s_separator_1", refID);
+    size = makeWidgetVector4(825.0f,2.0f,0.0f,0.0f);
+    pos = makeWidgetVector4(0,0,0,0);
+    col = makeWidgetColor(.75f,.75f,.75f,.75f);
     QuickMenuRebornPlane(sepID, NULL, &size, &pos, &col, NULL);
 
     return 0;

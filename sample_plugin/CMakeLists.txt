@@ -30,7 +30,7 @@ add_library(samples MODULE
 
 target_link_libraries(samples
   SceKernel_stub
-  quickMenuReborn_stub_weak
+  QuickMenuReborn_stub_weak
 )
 
 VDSuiteSignElf(QuickMenuRebornSample.suprx samples)
