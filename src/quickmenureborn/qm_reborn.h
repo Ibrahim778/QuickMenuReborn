@@ -113,29 +113,6 @@ EXPORT vector4 makeWidgetVector4(float x, float y, float z, float w);
 */
 EXPORT int QuickMenuRebornAddAdvancedWidget(const char *refID, const char *parentRefID, vector4 *Size, vector4 *Position, widgetColor *Color, const char *Type, const char *style, void (*OnLoad)());
 
-#define COLOR_WHITE makeWidgetColor(1.0f, 1.0f, 1.0f, 1.0f)
-#define COLOR_RED makeWidgetColor(1.0f, 0.0f, 0.0f, 1.0f)
-#define COLOR_GREEN makeWidgetColor(0.0f, 1.0f, 0.0f, 1.0f)
-#define COLOR_BLUE makeWidgetColor(0.0f, 0.0f, 1.0f, 1.0f)
-#define COLOR_YELLOW makeWidgetColor(1.0f, 1.0f, 0.0f, 1.0f)
-#define COLOR_LIGHT_BLUE makeWidgetColor(0.0f, 1.0f, 1.0f, 1.0f)
-#define COLOR_PINK makeWidgetColor(1.0f, 0, 1.0f, 1.0f)
-#define COLOR_YELLOW makeWidgetColor(1.0f, 1.0f, 0.0f, 1.0f)
-#define COLOR_GRAY makeWidgetColor(0.5f, 0.5f, 0.5f, 0.5f)
-#define COLOR_TRANSPARENT makeWidgetColor(1.0f, 1.0f, 1.0f, 0.0f)
-
-#define makeCommonWidgetColor(common) makeWidgetColor(common, common, common, common)
-#define makeCommonWidgetVector4(common) makeWidgetVector4(common, common, common, common)
-
-#define makeWidgetVector4Int(x,y,z,w) makeWidgetVector4(x##.0f, y##.0f, z##.0f, w##.0f)
-#define makeWidgetColorInt(r,g,b,a) makeWidgetColor(r##.0f, g##.0f, b##.0f, a##.0f)
-
-#define makeCommonWidgetVector4Int(common) makeWidgetVector4(common##.0f, common##.0f, common##.0f, common##.0f)
-#define makeCommonWidgetColorInt(common) makeWidgetColor(common##.0f, common##.0f, common##.0f, common##.0f)
-
-//Size of all the other planes in the quick menu (as close as I could get)
-#define SCE_PLANE_WIDTH 825.0f
-
 /**
  *
  * @brief                   Add a button to the quick menu
@@ -293,6 +270,29 @@ EXPORT int QuickMenuRebornUpdatePlane(const char *refID, vector4 *Size, vector4 
  * 
 */
 EXPORT int QuickMenuRebornGetCheckBoxState(const char *refID);
+
+#define COLOR_WHITE makeWidgetColor(1.0f, 1.0f, 1.0f, 1.0f)
+#define COLOR_RED makeWidgetColor(1.0f, 0.0f, 0.0f, 1.0f)
+#define COLOR_GREEN makeWidgetColor(0.0f, 1.0f, 0.0f, 1.0f)
+#define COLOR_BLUE makeWidgetColor(0.0f, 0.0f, 1.0f, 1.0f)
+#define COLOR_YELLOW makeWidgetColor(1.0f, 1.0f, 0.0f, 1.0f)
+#define COLOR_LIGHT_BLUE makeWidgetColor(0.0f, 1.0f, 1.0f, 1.0f)
+#define COLOR_PINK makeWidgetColor(1.0f, 0, 1.0f, 1.0f)
+#define COLOR_YELLOW makeWidgetColor(1.0f, 1.0f, 0.0f, 1.0f)
+#define COLOR_GRAY makeWidgetColor(0.5f, 0.5f, 0.5f, 0.5f)
+#define COLOR_TRANSPARENT makeWidgetColor(1.0f, 1.0f, 1.0f, 0.0f)
+
+#define makeCommonWidgetColor(common) makeWidgetColor(common, common, common, common)
+#define makeCommonWidgetVector4(common) makeWidgetVector4(common, common, common, common)
+
+#define makeWidgetVector4Int(x,y,z,w) makeWidgetVector4(x##.0f, y##.0f, z##.0f, w##.0f)
+#define makeWidgetColorInt(r,g,b,a) makeWidgetColor(r##.0f, g##.0f, b##.0f, a##.0f)
+
+#define makeCommonWidgetVector4Int(common) makeWidgetVector4(common##.0f, common##.0f, common##.0f, common##.0f)
+#define makeCommonWidgetColorInt(common) makeWidgetColor(common##.0f, common##.0f, common##.0f, common##.0f)
+
+//Size of all the other planes in the quick menu (as close as I could get)
+#define SCE_PLANE_WIDTH 825.0f
 
 #define CONFIG_MGR_ERROR_NOT_EXIST -1
 #define CONFIG_MGR_ERROR_COULD_NOT_WRITE_FULL -2
