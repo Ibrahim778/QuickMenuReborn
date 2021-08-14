@@ -267,6 +267,10 @@ int setupValues(Widget *widget, widgetData *dat)
         print("DONE SET CHECKED\n");
         break;
     }
+    case text:
+    {
+        widget->SetOption(Widget::Option::Text_Bold, 0, 0, SCE_FALSE);
+    }
     
     default:
         break;
