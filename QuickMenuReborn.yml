@@ -20,3 +20,6 @@ modules:
           QuickMenuRebornUpdatePlane: 0xFC8EA5DB
           QuickMenuRebornRemoveSeparator: 0x7550C9BF
           QuickMenuRebornGetCheckBoxState: 0x65214907
+          QuickMenuRebornAddAdvancedWidget: 0xC698BC91
+          QuickMenuRebornAddAdvancedWidgetWithStyleHash: 0x5E63C077
+          QuickMenuRebornSlider: 0xB962832B

@@ -18,7 +18,8 @@ typedef enum
     button = 0,
     check_box,
     text,
-    plane
+    plane,
+    slidebar,
 } widget_type;
 
 typedef enum check_box_state
@@ -56,6 +57,11 @@ typedef struct
 
 typedef struct
 {
+    void (*OnChange)();
+} slidebarData;
+
+typedef struct
+{
     float r;
     float g;
     float b;
@@ -73,7 +79,9 @@ typedef struct
 typedef struct
 {
     char type[256];
-    char idType[256];
+    char styleInfo[256];
+    int useHash;
+    int hash;
 } advancedData;
 
 typedef struct
@@ -96,6 +104,7 @@ typedef struct
         toggleData CheckBoxData;
         buttonData ButtonData;
         textData TextData;
+        slidebarData SlidebarData;
     } data;
 
     //BOOL: Set weather the advanced data is used

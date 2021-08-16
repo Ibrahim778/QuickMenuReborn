@@ -23,3 +23,6 @@ Library: QuickMenuReborn function: QuickMenuRebornUpdateText nidvalue: 0x68680E2
 Library: QuickMenuReborn function: QuickMenuRebornUpdatePlane nidvalue: 0xFC8EA5DB
 Library: QuickMenuReborn function: QuickMenuRebornRemoveSeparator nidvalue: 0x7550C9BF
 Library: QuickMenuReborn function: QuickMenuRebornGetCheckBoxState nidvalue: 0x65214907
+Library: QuickMenuReborn function: QuickMenuRebornAddAdvancedWidget nidvalue: 0xC698BC91
+Library: QuickMenuReborn function: QuickMenuRebornAddAdvancedWidgetWithStyleHash nidvalue: 0x5E63C077
+Library: QuickMenuReborn function: QuickMenuRebornSlider nidvalue: 0xB962832B

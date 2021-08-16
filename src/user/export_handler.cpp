@@ -161,20 +161,13 @@ int QuickMenuRebornPlane(const char *refID, const char *parentRefID, vector4 *Si
 int QuickMenuRebornSeparator(const char *refID)
 {
     char sepID[256] = {0};
-    sce_paf_snprintf(sepID, sizeof(sepID), "qm_reborn_%s_separator_0", refID);
+    sce_paf_snprintf(sepID, sizeof(sepID), "qm_reborn_%s_separator", refID);
     
     //Invisible Spacer
-    vector4 size = makeWidgetVector4Int(825, 20, 0, 0), pos = makeCommonWidgetVector4Int(0);
-    widgetColor col = COLOR_TRANSPARENT;
+    vector4 size = makeWidgetVector4Int(835, 20, 0, 0), pos = makeCommonWidgetVector4Int(0);
+    widgetColor col = COLOR_WHITE;
     
-    QuickMenuRebornPlane(sepID, NULL, &size, &pos, &col, NULL);
-
-    //Line
-    sce_paf_snprintf(sepID, sizeof(sepID), "qm_reborn_%s_separator_1", refID);
-    size = makeWidgetVector4(825.0f,2.0f,0.0f,0.0f);
-    pos = makeWidgetVector4(0,0,0,0);
-    col = makeWidgetColor(.75f,.75f,.75f,.75f);
-    QuickMenuRebornPlane(sepID, NULL, &size, &pos, &col, NULL);
+    QuickMenuRebornAddAdvancedWidgetWithStyleHash(sepID, NULL, &size, &pos, &col, "plane", 0x26C7781E, NULL);
 
     return 0;
 }
@@ -231,7 +224,7 @@ int QuickMenuRebornUpdateCheckBox(const char *refID, vector4 *Size, vector4 *Pos
     widget.isAdvanced = 0;
 
 
-return QuickMenuRebornUpdateWidget(&widget, flags);
+    return QuickMenuRebornUpdateWidget(&widget, flags);
 }
 
 int QuickMenuRebornUpdateText(const char *refID, vector4 *Size, vector4 *Position, widgetColor *Color, const char *Text, void (*OnLoad)(), int flags)
@@ -253,11 +246,9 @@ int QuickMenuRebornUpdateText(const char *refID, vector4 *Size, vector4 *Positio
     }
 
     widget.OnLoad = OnLoad;
-
     widget.isAdvanced = 0;
 
-return QuickMenuRebornUpdateWidget(&widget, flags);
-
+    return QuickMenuRebornUpdateWidget(&widget, flags);
 }
 
 int QuickMenuRebornUpdatePlane(const char *refID, vector4 *Size, vector4 *Position, widgetColor *Color, void (*OnLoad)(), int flags)
@@ -276,11 +267,11 @@ int QuickMenuRebornUpdatePlane(const char *refID, vector4 *Size, vector4 *Positi
 
     widget.isAdvanced = 0;
 
-return QuickMenuRebornUpdateWidget(&widget, flags);
+    return QuickMenuRebornUpdateWidget(&widget, flags);
 
 }
 
-int QuickMenuRebornAddAdvancedWidget(const char *refID, const char *parentRefID, vector4 *Size, vector4 *Position, widgetColor *Color, const char *Type, const char *idType, void (*OnLoad)())
+int QuickMenuRebornAddAdvancedWidget(const char *refID, const char *parentRefID, vector4 *Size, vector4 *Position, widgetColor *Color, const char *Type, const char *styleInfo, void (*OnLoad)())
 {
     widgetData widget;
 
@@ -300,12 +291,68 @@ int QuickMenuRebornAddAdvancedWidget(const char *refID, const char *parentRefID,
 
     sceClibMemset(&widget.adata, 0, sizeof(widget.adata));
 
-    sce_paf_strncpy(widget.adata.idType, idType, sizeof(widget.adata.idType));
+    sce_paf_strncpy(widget.adata.styleInfo, styleInfo, sizeof(widget.adata.styleInfo));
     sce_paf_strncpy(widget.adata.type, Type, sizeof(widget.adata.type));
 
     widget.OnLoad = OnLoad;
 
     return registerWidget(&widget);
+}
+
+int QuickMenuRebornAddAdvancedWidgetWithStyleHash(const char *refID, const char *parentRefID, vector4 *Size, vector4 *Position, widgetColor *Color, const char *Type, int styleHash, void (*OnLoad)())
+{
+    widgetData widget;
+
+    sceClibMemset(widget.refId, 0, sizeof(widget.refId));
+    sce_paf_strncpy(widget.refId, refID, sizeof(widget.refId));
+    
+    sceClibMemset(widget.parentRefId, 0, sizeof(widget.parentRefId));
+    if(parentRefID != NULL) sce_paf_strncpy(widget.parentRefId, parentRefID, sizeof(widget.parentRefId));
+
+    if(Size != NULL) widget.size = *Size;
+    if(Position != NULL) widget.pos = *Position;
+    if(Color != NULL) widget.col = *Color;
+
+    widget.isAdvanced = true;
+
+    widget.hasParent = parentRefID != NULL;
+
+    sceClibMemset(&widget.adata, 0, sizeof(widget.adata));
+
+    widget.adata.useHash = 1;
+    widget.adata.hash = styleHash;
+    sce_paf_strncpy(widget.adata.type, Type, sizeof(widget.adata.type));
+
+    widget.OnLoad = OnLoad;
+
+    return registerWidget(&widget);
+}
+
+int QuickMenuRebornSlider(const char *refID, const char *parentRefID, vector4 *Size, vector4 *Position, widgetColor *Color, void (*OnChange)(), void (*OnLoad)())
+{
+    widgetData dat;
+    sceClibMemset(&dat, 0, sizeof(dat));
+
+    sceClibMemset(dat.refId, 0, sizeof(dat.refId));
+    sce_paf_strncpy(dat.refId, refID, sizeof(dat.refId));    
+
+    sceClibMemset(dat.parentRefId, 0, sizeof(dat.parentRefId));
+    if(parentRefID != NULL) sce_paf_strncpy(dat.parentRefId, parentRefID, sizeof(dat.parentRefId));
+
+    dat.type = slidebar;
+    dat.hasParent = parentRefID != NULL;
+
+    dat.pos = *Position;
+    dat.size = *Size;
+    dat.col = *Color;
+
+    dat.OnLoad = OnLoad;
+
+    dat.isAdvanced = 0;
+
+    dat.data.SlidebarData.OnChange = OnChange;
+
+    return registerWidget(&dat);    
 }
 
 int QuickMenuRebornGetCheckBoxState(const char *refID)

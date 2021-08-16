@@ -271,6 +271,26 @@ EXPORT int QuickMenuRebornUpdatePlane(const char *refID, vector4 *Size, vector4 
 */
 EXPORT int QuickMenuRebornGetCheckBoxState(const char *refID);
 
+/**
+ *
+ * @brief                   Add an advanced widget with stylehash directly
+ * 
+ * @param       refID       Refrence ID of the widget
+ * @param       parentRefID Refrence ID of the parent widget (pass NULL if none)
+ * @param       Size        Pointer to size of widget
+ * @param       Position    Pointer to position of widget
+ * @param       Color       Pointer to color of widget
+ * @param       Type        Type of widget
+ * @param       styleHash   Hash of the style of widget
+ * @param       OnLoad      Function to be called whenever widget is loaded in quick menu
+ * @todo
+ * @retval      Bool: 0 or 1 on succes < 0 on error
+ * 
+*/
+EXPORT int QuickMenuRebornAddAdvancedWidgetWithStyleHash(const char *refID, const char *parentRefID, vector4 *Size, vector4 *Position, widgetColor *Color, const char *Type, int styleHash, void (*OnLoad)());
+
+EXPORT int QuickMenuRebornSlider(const char *refID, const char *parentRefID, vector4 *Size, vector4 *Position, widgetColor *Color, void(*OnChange)(), void (*OnLoad)());
+
 #define COLOR_WHITE makeWidgetColor(1.0f, 1.0f, 1.0f, 1.0f)
 #define COLOR_RED makeWidgetColor(1.0f, 0.0f, 0.0f, 1.0f)
 #define COLOR_GREEN makeWidgetColor(0.0f, 1.0f, 0.0f, 1.0f)
@@ -291,8 +311,8 @@ EXPORT int QuickMenuRebornGetCheckBoxState(const char *refID);
 #define makeCommonWidgetVector4Int(common) makeWidgetVector4(common##.0f, common##.0f, common##.0f, common##.0f)
 #define makeCommonWidgetColorInt(common) makeWidgetColor(common##.0f, common##.0f, common##.0f, common##.0f)
 
-//Size of all the other planes in the quick menu (as close as I could get)
-#define SCE_PLANE_WIDTH 825.0f
+//Size of all the other planes in the quick menu
+#define SCE_PLANE_WIDTH 835.0f
 
 #define CONFIG_MGR_ERROR_NOT_EXIST -1
 #define CONFIG_MGR_ERROR_COULD_NOT_WRITE_FULL -2

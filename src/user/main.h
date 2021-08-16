@@ -31,7 +31,7 @@ int sceClibPrintf(const char * fmt, ...);
 #else
 #define print dummyprint
 #define TRY(method) method;
-#define TRY_RET(method, toSet, type) do { void *ret = (void *)method; toSet = (type)ret;  } while(0)
+#define TRY_RET(method, toSet, type) do { type ret = (type)method; toSet = (type)ret;  } while(0)
 #define DO(method)
 #define FAIL_IF(con) if (con) {  return 0; }
 #define FAILTHREAD_IF(con) if (con) { return sceKernelExitDeleteThread(0); }

@@ -30,6 +30,7 @@
         "config_mgr.h": "cpp",
         "scetypes.h": "c",
         "taihen.h": "c",
-        "fios2_types.h": "c"
+        "fios2_types.h": "c",
+        "display.h": "c"
     }
 }

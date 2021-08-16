@@ -6,7 +6,7 @@
 
 Widget *findWidgetByHash(SceUInt32 hash);
 int initWidgets();
-Widget *makeWidget(const char *refId, const char *idType, const char *type, Widget *parent);
+Widget *makeWidget(const char *refId, const char *styleInfo, const char *type, Widget *parent);
 int displayWidgets();
 int openQuickMenu();
 int editWidget(widgetData *data, int flags);
