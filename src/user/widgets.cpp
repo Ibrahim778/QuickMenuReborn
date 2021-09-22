@@ -119,7 +119,7 @@ Widget *makeWidget(const char *refId, int styleHash, const char *type, Widget *p
     
     Widget *newWidget;
     TRY_RET(actualImposePlugin->CreateWidgetWithStyle(parent, type, &winfo, &sinfo), newWidget, Widget *);
-    if(newWidget == NULL) sceClibPrintf("Error can't make widget with refID %s, type %s, styleid = 0x%X\n", refId, type, styleHash);
+    if(newWidget == NULL) print("Error can't make widget with refID %s, type %s, styleid = 0x%X\n", refId, type, styleHash);
     FAIL_IF(newWidget == NULL || newWidget < 0);
     return newWidget;
 }
@@ -163,7 +163,11 @@ int registerWidget(widgetData *data)
 
 int setText(const char *text, Widget *widget)
 {
-    WString wstr = makeWString((const char *)text);
+    WString wstr;
+    String str;
+    str.Set(text);
+    str.ToWString(&wstr);
+    print("Got Actual Text: %s got text in String %s got Text in WString %ls\n", text, str.data, wstr.data);
     return widget->SetLabel(&wstr);
 }
 
@@ -182,7 +186,9 @@ int update_Widget(widgetData *data, int flags)
     if(state.isSystemUiOverlaid)
     {
         print("EDITING WIDGET\n");
-        editWidget(data, flags);
+        widgetData *dat;
+        if((dat = currentWidgets.get_node(data->refId)) != NULL)
+            editWidget(dat, flags);
         print("DONE\n");
     }
     
@@ -246,8 +252,8 @@ int updateValues(Widget *made, widgetData *widget, int flags)
             delete eh;
             if(flags && UPDATE_TEXT)
             {
-                made->SetOption((paf::widget::Widget::Option)7, 0,0,widget->data.TextData.isbold ? SCE_TRUE : SCE_FALSE);
                 setText(widget->data.TextData.label, made);
+                made->SetOption(Widget::Option::Text_Bold, 0,0,widget->data.TextData.isbold ? SCE_TRUE : SCE_FALSE);
             }
             break;
         }
@@ -285,7 +291,6 @@ int setupValues(Widget *widget, widgetData *dat)
         case CHECKBOX_PREV_STATE:
             toSet = readCheckBoxState(dat->refId);
             if(toSet == CONFIG_MGR_ERROR_NOT_EXIST) toSet = 0;
-            print("Got toSet = %d\n", toSet);
             break;
         case CHECKBOX_OFF:
         default:
@@ -293,7 +298,6 @@ int setupValues(Widget *widget, widgetData *dat)
             break;
         }
         ((CheckBox *)widget)->SetChecked(0, toSet, 0);
-        print("DONE SET CHECKED\n");
         break;
     }
     case text:
@@ -308,6 +312,8 @@ int setupValues(Widget *widget, widgetData *dat)
 
         Widget *ball = widget->GetChildByNum(0);
         if(ball != NULL) ball->SetSize(&size);
+
+        sceClibPrintf("%s\n", ((SlideBar *)widget)->TypeSlideBar());
         break;
     }
     
@@ -320,7 +326,7 @@ int setupValues(Widget *widget, widgetData *dat)
 int spawn(widgetData *widget, int flags)
 {
     Widget *made;
-    sceClibPrintf("Got widget %s parent %s\n", widget->refId, widget->parentRefId);
+    print("Got widget %s parent %s\n", widget->refId, widget->parentRefId);
     if(widget->isAdvanced)
     {
         if(widget->adata.useHash)

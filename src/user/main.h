@@ -19,7 +19,7 @@ using namespace widget;
 
 int sceClibPrintf(const char * fmt, ...);
 #define QM_REBORN_INTERNAL
-#ifdef DEBUG
+#ifdef _DEBUG
 #define print sceClibPrintf
 #define TRY(method) do { sceClibPrintf("Trying " #method "\n"); void *ret = (void *)method; sceClibPrintf("Got ret = 0x%X\n", ret); } while(0);
 #define TRY_RET(method, toSet, type) do { sceClibPrintf("Trying " #method "\n"); type ret = (type)method; sceClibPrintf("Got ret = 0x%X\n", ret); toSet = ret;  } while(0)

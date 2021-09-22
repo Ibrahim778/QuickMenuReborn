@@ -1,15 +1,6 @@
 #include "main.h"
 #include "types.h"
 
-WString makeWString(const char *string)
-{
-    String *str = new String((char *)string);
-    WString wstr;
-    str->ToWString(&wstr);
-    delete str;
-    return wstr;
-}
-
 Widget::Color makeSceColor(float r, float g, float b, float a)
 {
     Widget::Color color;

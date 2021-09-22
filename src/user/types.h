@@ -8,7 +8,6 @@
 #include "main.h"
 #include "../quickmenureborn/qm_reborn.h"
 
-WString makeWString(const char *string);
 Widget::Color makeSceColor(float r, float g, float b, float a);
 Widget::Color makeSceColor(widgetColor col);
 SceFVector4 makeSceVector4(SceFloat x, SceFloat y, SceFloat z, SceFloat w);

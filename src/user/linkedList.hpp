@@ -16,7 +16,7 @@ public:
     void printall();
     void update_node(widgetData *widget, int flags);
     void update_checkbox_status(const char *refID, CheckBoxState state);
-
+    widgetData *get_node(const char *refID);
     void add_node(widgetData *widget);
     void remove_node(const char *tag);
 };
