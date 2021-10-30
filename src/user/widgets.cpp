@@ -1,87 +1,174 @@
-
-#ifndef WIDGETS_CPP_QM_REBORN
-#define WIDGETS_CPP_QM_REBORN
-
 #include "main.h"
 #include "linkedList.hpp"
-#include "types.h"
-#include "widgets.h"
+#include "utils.hpp"
+#include "widgets.hpp"
 #include "event_handler.hpp"
 #include "config_mgr.h"
 #include <kernel/libkernel.h>
-#include <registrymgr.h>
+#include "common.hpp"
 
-static widget::Widget *(*getImposeRoot)();
-//Power Manage Plugin
-static Plugin *imposePlugin;
-//Impose Plugin
-static Plugin *actualImposePlugin;
-static widget::Widget *powerRoot;
-static Widget *main_plane;
+Widget *(*getImposeRoot)() = SCE_NULL;
+Plugin *imposePlugin = SCE_NULL;
+Plugin *QuickMenuRebornPlugin = SCE_NULL;
+Widget *powerRoot = SCE_NULL;
+Box *scrollBox;
 
-linked_list currentWidgets;
+LinkedList currentWidgets;
 
-const char *widgetStyles[] = 
+const char *widgetTemplateID[] = 
 {
-    "_common_default_style_button",
-    "_common_default_style_check_box",
-    "_common_default_style_text",
-    "_common_default_style_plane",
-    "30396CEA" // Hex
+    BUTTON_TEMPLATE_ID,
+    CHECKBOX_TEMPLATE_ID,
+    TEXT_TEMPLATE_ID,
+    PLANE_TEMPLATE_ID,
+    SLIDEBAR_TEMPLATE_ID,
+    PROGRESSBAR_TOUCH_TEMPLATE_ID,
 };
 
-const char *widgetTypes[] = 
+SceVoid onPluginReady(Plugin *plugin)
 {
-    "button",
-    "check_box",
-    "text",
-    "plane",
-    "slidebar"
-};
-
-Widget *findWidgetByHash(SceUInt32 hash)
-{
-    Resource::Element find;
-    find.hash = hash;
-
-    Widget *found = getImposeRoot()->GetChildByHash(&find, 0);
-    return found;
+    if(plugin == SCE_NULL) print("Error Loading Plugin!\n");
+    else print("Loaded Plugin Successfully!\n");
+    QuickMenuRebornPlugin = plugin;
 }
 
 int initWidgets()
 {
+    if(!QuickMenuRebornPlugin)
+    {
+        Framework::PluginInitParam piParam;
+
+        piParam.pluginName.Set("quick_menu_reborn_plugin");
+        piParam.resourcePath.Set("ur0:QuickMenuReborn/qmr_plugin.rco");
+        piParam.scopeName.Set("__main__");
+
+        piParam.pluginStartCB = onPluginReady;
+
+        paf::Framework::LoadPlugin(&piParam);
+    }
+
     //Credit to GrapheneCT
     //Get power manage plugin object
-    imposePlugin = Plugin::Find("power_manage_plugin");
-    NULL_ERROR_FAIL(imposePlugin);
+    Plugin *powerManagePlugin = Plugin::Find("power_manage_plugin");
+    if(powerManagePlugin < 0 || powerManagePlugin == NULL) return -1;
 
-    actualImposePlugin = Plugin::Find("impose_plugin");
-    NULL_ERROR_FAIL(actualImposePlugin);
+    imposePlugin = Plugin::Find("impose_plugin");
+    if(imposePlugin < 0 || imposePlugin == NULL) return -1;
 
     //Power manage plugin -> power manage root
-    powerRoot = imposePlugin->GetInterface(1);
-    NULL_ERROR_FAIL(powerRoot);
+    powerRoot = powerManagePlugin->GetInterface(1);
+    if(powerRoot < 0 || powerRoot == NULL) return -1;
 
     //Power manage root -> impose root (some virtual function)
     getImposeRoot = (widget::Widget *(*)()) *(int *)((int)powerRoot + 0x54);
-    NULL_ERROR_FAIL(getImposeRoot);
-    main_plane = findWidgetByHash(SCROLL_VIEW_BOX_ID);
-    NULL_ERROR_FAIL(main_plane);
+    
+    scrollBox = (Box *)Utils::FindWidget(SCROLL_VIEW_BOX_ID);
+    if(scrollBox == SCE_NULL) return -1;
     return 0;
 }
 
-SceUInt32 getHashByID(const char *id)
-{    
-    Resource::Element sinfo;
-    Resource::Element searchRequest;
+int summon(widgetData *data)
+{
+    Widget *w;
+    if(data->isAdvanced)
+    {
+        if(data->advancedData.useHash)
+            w = QMR::MakeAdvancedWidgetWithHash(data->refId, data->advancedData.StyleInfo.hash, data->advancedData.type, data->hasParent ? Utils::FindWidget(Utils::GetHashById(data->parentRefId)) : scrollBox);
+        else w = QMR::MakeAdvancedWidgetWithID(data->refId, data->advancedData.StyleInfo.styleID, data->advancedData.type, data->hasParent ? Utils::FindWidget(Utils::GetHashById(data->parentRefId)) : scrollBox);
+    }   
+    else w = QMR::MakeWidgetFromTemplate(widgetTemplateID[data->type], data->hasParent ? Utils::FindWidget(Utils::GetHashById(data->parentRefId)) : scrollBox);
+    if(w == NULL)
+    {
+        print("Error making widget with id: %s\n", data->refId);
+        return;
+    }
+    
+    data->widget = w;
 
-    searchRequest.id.Set(id);
+    w->hash = Utils::GetHashById(data->refId); //VERY IMPORTANT
 
-    sinfo.hash = searchRequest.GetHashById(&searchRequest);
-    return sinfo.hash;
+    Utils::SetWidgetPosition(w, &data->pos);
+    Utils::SetWidgetColor(w, &data->col);
+    Utils::SetWidgetSize(w, &data->size);
+    Utils::SetWidgetLabel(data->label, w);
+
+    //Create an int array and a variable to keep track of size. Loop through callbacks in struct. If event id is not present in int array add it and assign callback with id.
+    {
+        int idNum = 0;
+        int *ids = NULL;
+        for (int  i = 0; i < data->CallbackNum; i++)
+        {
+            bool isRegistered = false;
+            for(int x = 0; x < idNum && !isRegistered; x++)
+                isRegistered = ids[x] == data->Callbacks[i].id;
+
+            if(!isRegistered)
+            {
+
+                QMREventHandler *eventHandler = new QMREventHandler();
+                eventHandler->pUserData = sce_paf_malloc(sizeof(widgetData *));
+                *(widgetData **)eventHandler->pUserData = data;
+                w->RegisterEventCallback(data->Callbacks[i].id, eventHandler, 0); 
+
+                ids = (int *)sce_paf_realloc(ids, sizeof(int) * (i + 1));
+                ids[i] = data->Callbacks->id;
+                idNum ++;
+            }
+        }
+        sce_paf_free(ids);
+    }
+
+    if(data->OnRecall != NULL)
+        data->OnRecall(data->refId);
+    
+    if(data->OnLoad != NULL)
+        data->OnLoad(data->refId);
+    return;
 }
 
-Widget *makeWidget(const char *refId, const char *styleInfo, const char *type, Widget *parent)
+int displayWidgets()
+{
+    node *n = currentWidgets.head;
+    while(n != NULL)
+    {
+        summon(&n->widget);
+        n = n->next;
+    }
+}
+
+SceInt32 QMR::UnregisterWidget(const char *id)
+{
+    currentWidgets.RemoveNode(id);
+}
+
+SceInt32 QMR::RegisterWidget(widgetData *dat)
+{
+    currentWidgets.AddNode(dat);
+}
+
+SceInt32 QMR::RegisterEventHandler(SceInt32 id, widgetData *dat, ECallback Function, void *userDat)
+{
+    if(dat == NULL || Function == NULL) 
+    {
+        print("Error Invalid Arg\n");
+        return -2;
+    }
+    dat->Callbacks = (CallbackData *)sce_paf_realloc(dat->Callbacks, (dat->CallbackNum + 1) * sizeof(CallbackData)); 
+    if(dat->Callbacks == NULL) 
+    {
+        print("Error allocating mem\n");
+        return -1;
+    } 
+
+    dat->Callbacks[dat->CallbackNum].function = Function;
+    dat->Callbacks[dat->CallbackNum].id = id;
+    dat->Callbacks[dat->CallbackNum].userDat = userDat;
+    
+    dat->CallbackNum++;
+    return 0;
+}
+
+Widget *QMR::MakeAdvancedWidgetWithID(const char *refId, const char *styleInfo, const char *type, Widget *parent)
 {
     //WidgetInfo
     paf::Resource::Element winfo;
@@ -91,19 +178,17 @@ Widget *makeWidget(const char *refId, const char *styleInfo, const char *type, W
     paf::Resource::Element searchRequest;
 
     searchRequest.id.Set(refId);
-    TRY_RET(winfo.GetHashById(&searchRequest), winfo.hash, SceUInt32);
+    winfo.hash = winfo.GetHashById(&searchRequest);
     
     searchRequest.id.Set(styleInfo);
-    TRY_RET(sinfo.GetHashById(&searchRequest), sinfo.hash, SceUInt32);
-    
+    sinfo.hash = sinfo.GetHashById(&searchRequest);    
 
-    Widget *newWidget;
-    TRY_RET(imposePlugin->CreateWidgetWithStyle(parent, type, &winfo, &sinfo), newWidget, Widget *);
-    FAIL_IF(newWidget == NULL || newWidget < 0);
+    Widget *newWidget = imposePlugin->CreateWidgetWithStyle(parent, type, &winfo, &sinfo);
+    
     return newWidget;
 }
 
-Widget *makeWidget(const char *refId, int styleHash, const char *type, Widget *parent)
+Widget *QMR::MakeAdvancedWidgetWithHash(const char *refId, int styleHash, const char *type, Widget *parent)
 {
     //WidgetInfo
     paf::Resource::Element winfo;
@@ -113,261 +198,22 @@ Widget *makeWidget(const char *refId, int styleHash, const char *type, Widget *p
     paf::Resource::Element searchRequest;
 
     searchRequest.id.Set(refId);
-    TRY_RET(winfo.GetHashById(&searchRequest), winfo.hash, SceUInt32);
+    winfo.hash = winfo.GetHashById(&searchRequest);
     
     sinfo.hash = styleHash;    
     
-    Widget *newWidget;
-    TRY_RET(actualImposePlugin->CreateWidgetWithStyle(parent, type, &winfo, &sinfo), newWidget, Widget *);
-    if(newWidget == NULL) print("Error can't make widget with refID %s, type %s, styleid = 0x%X\n", refId, type, styleHash);
-    FAIL_IF(newWidget == NULL || newWidget < 0);
+    Widget *newWidget = imposePlugin->CreateWidgetWithStyle(parent, type, &winfo, &sinfo);
     return newWidget;
 }
 
-int unregisterWidget(const char *refId)
+Widget *QMR::MakeWidgetFromTemplate(const char *id, Widget *targetRoot)
 {
-    #ifdef DEBUG
-    SCE_DBG_LOG_INFO("Called unregister widget, refId: %s\n", refId);
-    #endif
-    //If refID not given, bail out
-    if(sce_paf_strcmp(refId, "") == 0) return 0;
+    Plugin::TemplateInitParam tinit;
+    Resource::Element e;
+    e.id.Set(id);
+    e.hash = e.GetHashById(&e);
 
-    //Remove widget from list
-    currentWidgets.remove_node(refId);
-    currentWidgets.printall();
+    QuickMenuRebornPlugin->AddWidgetFromTemplate(targetRoot, &e, &tinit);
 
-    return 0;
+    return targetRoot->GetChildByNum(targetRoot->childNum - 1);
 }
-
-int registerWidget(widgetData *data)
-{
-    #ifdef DEBUG
-    print("Internal add call\n");
-    #endif
-    //This is just a wrapper, it'll add the widgets to a linked list, widgets are made on demand when impose menu loads via another thread
-    currentWidgets.add_node(data);
-    #ifdef DEBUG
-    currentWidgets.printall();
-    #endif
-
-    SceAppMgrAppState state;
-    sceAppMgrGetAppState(&state);
-    if(state.isSystemUiOverlaid)
-    {
-        spawn(data, UPDATE_ALL);
-        if(data->OnLoad != NULL) data->OnLoad();
-    }
-
-    return 0;
-}
-
-int setText(const char *text, Widget *widget)
-{
-    WString wstr;
-    String str;
-    str.Set(text);
-    str.ToWString(&wstr);
-    print("Got Actual Text: %s got text in String %s got Text in WString %ls\n", text, str.data, wstr.data);
-    return widget->SetLabel(&wstr);
-}
-
-int update_Widget(widgetData *data, int flags)
-{
-    print("UPDATING NODE\n");
-    
-    //Update the widget in the linked list for when it needs to be redrawn
-    currentWidgets.update_node(data, flags);
-
-    print("DONE!!!\n");
-
-    SceAppMgrAppState state;
-    sceAppMgrGetAppState(&state);
-    //If quickMenu is being displayed, update the current widget
-    if(state.isSystemUiOverlaid)
-    {
-        print("EDITING WIDGET\n");
-        widgetData *dat;
-        if((dat = currentWidgets.get_node(data->refId)) != NULL)
-            editWidget(dat, flags);
-        print("DONE\n");
-    }
-    
-    return 0;
-}
-
-void dummyprint(const char *fmt, ...)
-{
-    //Just to let the snc compiler acually freaking compile!
-    (void)fmt;
-}
-
-int updateValues(Widget *made, widgetData *widget, int flags)
-{
-    SceFVector4 pos = makeSceVector4(widget->pos);
-    SceFVector4 size = makeSceVector4(widget->size);
-    Widget::Color col = makeSceColor(widget->col);
-    
-    if(flags & UPDATE_POSITION) made->SetPosition(&pos);
-    if(flags & UPDATE_SIZE) made->SetSize(&size);
-    if(flags & UPDATE_COLOR) made->SetFilterColor(&col);
-
-    QMEventHandler *eh = new QMEventHandler();
-    switch (widget->type)
-    {
-        case button:
-        {
-            if(flags && UPDATE_EVENT)
-            {
-                eh->pUserData = sce_paf_malloc(sizeof(widgetData));
-                sce_paf_memcpy(eh->pUserData, widget, sizeof(widgetData));
-                made->RegisterEventCallback(ON_PRESS_EVENT_ID, eh, 0);
-            }
-            if(flags && UPDATE_TEXT) 
-            {
-                setText(widget->data.ButtonData.label, made);
-            }
-
-            break;
-        }
-
-        case check_box:
-        {
-            if(flags && UPDATE_EVENT)
-            {
-                eh->pUserData = sce_paf_malloc(sizeof(widgetData));
-                sce_paf_memcpy(eh->pUserData, widget, sizeof(widgetData));
-                made->RegisterEventCallback(ON_PRESS_EVENT_ID, eh, 0);
-            }
-            break;
-        }
-
-        case slidebar:
-        {
-            delete eh;
-            break;
-        }
-        
-        case text:
-        {
-            delete eh;
-            if(flags && UPDATE_TEXT)
-            {
-                setText(widget->data.TextData.label, made);
-                made->SetOption(Widget::Option::Text_Bold, 0,0,widget->data.TextData.isbold ? SCE_TRUE : SCE_FALSE);
-            }
-            break;
-        }
-
-        default:
-        {
-            delete eh;
-            break;
-        }
-    }
-    return 0;
-}
-
-int editWidget(widgetData *data, int flags)
-{
-    
-    Widget *toEdit = findWidgetByHash(getHashByID(data->refId));
-    updateValues(toEdit, data, flags);
-    return 0;
-}
-
-int setupValues(Widget *widget, widgetData *dat)
-{
-    switch (dat->type)
-    {
-    case check_box:
-    {
-        print("Got state %d\n", dat->data.CheckBoxData.state);
-        int toSet = 0;
-        switch (dat->data.CheckBoxData.state)
-        {
-        case CHECKBOX_ON:
-            toSet = 1;
-            break;
-        case CHECKBOX_PREV_STATE:
-            toSet = readCheckBoxState(dat->refId);
-            if(toSet == CONFIG_MGR_ERROR_NOT_EXIST) toSet = 0;
-            break;
-        case CHECKBOX_OFF:
-        default:
-            toSet = 0;
-            break;
-        }
-        ((CheckBox *)widget)->SetChecked(0, toSet, 0);
-        break;
-    }
-    case text:
-    {
-        widget->SetOption(Widget::Option::Text_Bold, 0, 0, SCE_FALSE);
-        break;
-    }
-    case slidebar:
-    {
-        SceFVector4 size = makeSceVector4(65, 65, 0, 0);
-
-
-        Widget *ball = widget->GetChildByNum(0);
-        if(ball != NULL) ball->SetSize(&size);
-
-        sceClibPrintf("%s\n", ((SlideBar *)widget)->TypeSlideBar());
-        break;
-    }
-    
-    default:
-        break;
-    }
-    return 0;
-}
-
-int spawn(widgetData *widget, int flags)
-{
-    Widget *made;
-    print("Got widget %s parent %s\n", widget->refId, widget->parentRefId);
-    if(widget->isAdvanced)
-    {
-        if(widget->adata.useHash)
-            made = makeWidget(widget->refId, widget->adata.hash, widget->adata.type, (widget->hasParent == 0) ? main_plane : findWidgetByHash(getHashByID(widget->parentRefId)));
-        else
-            made = makeWidget(widget->refId, widget->adata.styleInfo, widget->adata.type, (widget->hasParent == 0) ? main_plane : findWidgetByHash(getHashByID(widget->parentRefId)));
-    }
-    else
-    {
-        int style = 0;
-        if(style = (int)sceClibStrtoll(widgetStyles[widget->type], NULL, 16), style != 0)
-            made = makeWidget(widget->refId, style, widgetTypes[widget->type], (widget->hasParent == 0) ? main_plane : findWidgetByHash(getHashByID(widget->parentRefId)));
-        else
-            made = makeWidget(widget->refId, widgetStyles[widget->type], widgetTypes[widget->type], (widget->hasParent == 0) ? main_plane : findWidgetByHash(getHashByID(widget->parentRefId)));
-    }
-
-
-#ifdef DEBUG
-    print("Adding widget with settings:\nrefId: %s\nparentRefID: %s\nhasParent: %s\nisAdvanced: %s", widget->refId, widget->parentRefId, widget->hasParent ? "True" : "False", widget->isAdvanced ? "True" : "False");
-#endif
-
-    NULL_ERROR_FAIL(made);
-    updateValues(made, widget, widget->isAdvanced ? UPDATE_COLOR | UPDATE_POSITION | UPDATE_SIZE : flags);
-    print("DONE\n");
-    print("OnLoad %s NULL\n", widget->OnLoad == NULL ? "==" : "!=");
-    print("Setting up values, %s\n", widget->refId);
-    setupValues(made, widget);
-    print("DONE ALL\n");
-    return 0;
-}
-
-int displayWidgets()
-{
-    node *current = currentWidgets.head;
-    while(current != NULL)
-    {
-        spawn(&current->widget, UPDATE_ALL);
-        print("ONLOAD IS %s\n", current->widget.OnLoad == NULL ? "NULL" : "NOT NULL");
-        if(current->widget.OnLoad != NULL) current->widget.OnLoad();
-        current = current->next;
-    }
-    return 0;
-}
-#endif

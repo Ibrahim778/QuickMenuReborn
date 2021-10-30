@@ -6,25 +6,27 @@ YML_PATH="QuickMenuReborn.yml"
 LIB_NAME="QuickMenuReborn"
 EMD_START="Module: " + LIB_NAME + " major_version: 3 minor_version: 0\nsceModuleInfo_type: 6\nmodule_function: module_start localname: module_start\nmodule_function: module_stop localname: module_stop\n\nLibrary: " + LIB_NAME + " version: 1\nLibrary: "+ LIB_NAME +" nidsuffix: \"\"\nLibrary: " + LIB_NAME + " attr: auto_export\n"
 functionNames=[ 
-        "QuickMenuRebornAddWidget",
-        "QuickMenuRebornRemoveWidget",
-        "QuickMenuRebornUpdateWidget",
-        "makeWidgetColor",
-        "makeWidgetVector4",
-        "QuickMenuRebornButton",
-        "QuickMenuRebornCheckBox",
-        "QuickMenuRebornText",
-        "QuickMenuRebornPlane",
+        "QuickMenuRebornMakeWidgetVector4",
+        "QuickMenuRebornMakeWidgetColor",
+        "QuickMenuRebornRegisterWidget",
+        "QuickMenuRebornRegisterWidgetFromData",
+        "QuickMenuRebornUnregisterWidget",
+        "QuickMenuRebornRegisterEventHanlder",
         "QuickMenuRebornSeparator",
-        "QuickMenuRebornUpdateButton",
-        "QuickMenuRebornUpdateCheckBox",
-        "QuickMenuRebornUpdateText",
-        "QuickMenuRebornUpdatePlane",
         "QuickMenuRebornRemoveSeparator",
-        "QuickMenuRebornGetCheckBoxState",
-        "QuickMenuRebornAddAdvancedWidget",
-        "QuickMenuRebornAddAdvancedWidgetWithStyleHash",
-        "QuickMenuRebornSlider"
+        "QuickMenuRebornSetWidgetSize",
+        "QuickMenuRebornSetWidgetPosition",
+        "QuickMenuRebornSetWidgetColor",
+        "QuickMenuRebornSetWidgetLabel",
+        "QuickMenuRebornGetSlidebarValue",
+        "QuickMenuRebornGetCheckboxValue",
+        "QuickMenuRebornAssignRecallHandler",
+        "QuickMenuRebornAssignSaveHandler",
+        "QuickMenuRebornAssignOnLoadHandler",
+        "QuickMenuRebornAssignDefaultCheckBoxSave",
+        "QuickMenuRebornAssignDefaultCheckBoxRecall",
+        "QuickMenuRebornAssignDefaultSliderSave",
+        "QuickMenuRebornAssignDefaultSliderRecall"
 ]
 
 def getHash(string):

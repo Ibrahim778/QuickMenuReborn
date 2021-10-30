@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resource version="0.1" type="normal" id="bhbb_plugin">
+
+	<templatetable>
+        <template fast_open="1" id="qmr_button_template">
+            <button style="_common_default_style_button" sound="_common_sound_button_enter" id="qmr_button"/>
+        </template>
+
+        <template fast_open="1" id="qmr_checkbox_template">
+            <check_box style="_common_default_style_check_box" id="qmr_checkbox"/>
+        </template>
+
+        <template fast_open="1" id="qmr_plane_template">
+            <plane style="_common_default_style_plane" id="qmr_plane" />
+        </template>
+
+        <template fast_open="1" id="qmr_box_template">
+            <box id="qmr_box" />
+        </template>
+
+        <template fast_open="1" id="qmr_progressbar_touch_template">
+            <progressbar_touch style="" id="qmr_progressbar_touch" />
+        </template>
+
+        <template fast_open="1" id="qmr_text_template">
+            <text style="text_quickmenu_style" id="qmr_text" />
+        </template>
+
+        <template fast_open="1" id="qmr_slidebar_template">
+            <progressbar_touch style="slidebar_style" id="qmr_slidebar" />
+        </template>
+        
+        <template fast_open="1" id="busyindicator_template">
+            <busyindicator id="qmr_busyindicator" style="base_style_busyindicator" texture="_common_texture_busy" />
+        </template>
+
+	</templatetable>
+
+	<styletable>
+        <style_progressbar_touch base_obj="slidebar_style_progressbar_base" slider_obj="slidebar_style_progressbar_slider" slider_glow_obj="slidebar_style_progressbar_slider_glow" glow_obj="slidebar_style_progressbar_glow" bar_shadow_obj="slidebar_style_progressbar_bar_shadow" shadow_margin="0, 0" bar_fore_obj="slidebar_style_progressbar_bar_front" shadow_offset="0, -5" bar_back_obj="slidebar_style_progressbar_bar_back" signal_obj="slidebar_style_progressbar_signal" base_shadow_obj="slidebar_style_progressbar_shadow" id="slidebar_style">
+            <planeobj scale_mode_y="1" texture0="_common_texture_progressbar_base" id="slidebar_style_progressbar_base" />
+            <planeobj color="0.659, 1, 0, 1" scale_mode_y="1" texture0="_common_texture_transparent" id="slidebar_style_progressbar_bar_front" />
+            <planeobj scale_mode_y="1" texture0="_common_texture_transparent" id="slidebar_style_progressbar_bar_back" />
+            <planeobj scale_mode_y="1" texture0="_common_texture_transparent" id="slidebar_style_progressbar_signal" />
+            <planeobj texture0="_common_texture_transparent" color="0.75, 1, 0, 1" scale_mode_x="1" scale_mode_y="1" blend="2" id="slidebar_style_progressbar_glow" scale_value="2.5" />
+            <planeobj color="1, 1, 1, 0.7" scale_mode_y="1" texture0="_common_texture_transparent" id="slidebar_style_progressbar_shadow" />
+            <planeobj color="0.612, 1, 0, 0.7" scale_mode_y="1" texture0="_common_texture_transparent" id="slidebar_style_progressbar_bar_shadow" />
+            <planeobj texture0="_common_texture_transparent" scale_mode_x="1" scale_mode_y="1" id="slidebar_style_progressbar_slider_glow" scale_value="0.5, 0.5" />
+            <planeobj scale_mode_y="1" scale_mode_x="1" texture0="slidebar_handle_tex" id="slidebar_style_progressbar_slider" scale_value="1, 1" />
+          </style_progressbar_touch>
+
+        <style_text textobj="text_obj" id="text_quickmenu_style">
+            <textobj font_size="24" bold="1" align_y="0" align_x="0" text_align="0" color="1, 1, 1, 1" id="text_obj" />
+        </style_text>
+		
+		<style_busyindicator color="1, 1, 1, 1" ball_size="15" id="base_style_busyindicator" />
+    	<style_busyindicator color="1, 1, 1, 1" ball_size="7" id="tiny_style_busyindicator" />
+
+		<style_scroll_view color="0, 0, 0, 0" sound="_common_sound_scroll_view" id="menu_style_scroll_view" sbar_v_margin="10, 80, 9" />	
+
+	</styletable>
+
+    <stringtable>
+    </stringtable>
+
+	<texturetable>
+        <texture src="texture/slidebar_handle.png" type="texture/png" id="slidebar_handle_tex" />
+	</texturetable>
+</resource>  

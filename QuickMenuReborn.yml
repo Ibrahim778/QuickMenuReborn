@@ -4,22 +4,24 @@ modules:
       QuickMenuReborn:
         nid: 0x6642F554
         functions:
-          QuickMenuRebornAddWidget: 0x11202C4E
-          QuickMenuRebornRemoveWidget: 0x2A690516
-          QuickMenuRebornUpdateWidget: 0x8A4F2291
-          makeWidgetColor: 0xB68C617D
-          makeWidgetVector4: 0x5F2B7794
-          QuickMenuRebornButton: 0x8DEFE60D
-          QuickMenuRebornCheckBox: 0x93245A61
-          QuickMenuRebornText: 0x36F4C81F
-          QuickMenuRebornPlane: 0xEFD76FB6
+          QuickMenuRebornMakeWidgetVector4: 0x517E135B
+          QuickMenuRebornMakeWidgetColor: 0x05ECC074
+          QuickMenuRebornRegisterWidget: 0x77BD7806
+          QuickMenuRebornRegisterWidgetFromData: 0x93C05099
+          QuickMenuRebornUnregisterWidget: 0xAD586CDF
+          QuickMenuRebornRegisterEventHanlder: 0x0863AF23
           QuickMenuRebornSeparator: 0x554D28CD
-          QuickMenuRebornUpdateButton: 0xF8E8F906
-          QuickMenuRebornUpdateCheckBox: 0x1FAEA672
-          QuickMenuRebornUpdateText: 0x68680E26
-          QuickMenuRebornUpdatePlane: 0xFC8EA5DB
           QuickMenuRebornRemoveSeparator: 0x7550C9BF
-          QuickMenuRebornGetCheckBoxState: 0x65214907
-          QuickMenuRebornAddAdvancedWidget: 0xC698BC91
-          QuickMenuRebornAddAdvancedWidgetWithStyleHash: 0x5E63C077
-          QuickMenuRebornSlider: 0xB962832B
+          QuickMenuRebornSetWidgetSize: 0xB49B464C
+          QuickMenuRebornSetWidgetPosition: 0x979759AE
+          QuickMenuRebornSetWidgetColor: 0x72BF9D2A
+          QuickMenuRebornSetWidgetLabel: 0x2CD65CA6
+          QuickMenuRebornGetSlidebarValue: 0x460F702C
+          QuickMenuRebornGetCheckboxValue: 0x3DACB8A6
+          QuickMenuRebornAssignRecallHandler: 0x88A838AB
+          QuickMenuRebornAssignSaveHandler: 0x67D83A20
+          QuickMenuRebornAssignOnLoadHandler: 0x3DF0A41F
+          QuickMenuRebornAssignDefaultCheckBoxSave: 0xF9A7F16C
+          QuickMenuRebornAssignDefaultCheckBoxRecall: 0xA29C7517
+          QuickMenuRebornAssignDefaultSliderSave: 0x34A7D5DB
+          QuickMenuRebornAssignDefaultSliderRecall: 0x9439EAF6

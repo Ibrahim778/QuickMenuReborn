@@ -13,6 +13,16 @@
 extern "C" {
 #endif
 
+typedef void (*ECallback)(SceInt32 hash, SceInt32 eventId, void *userDat);
+typedef void (*VoidCallback)(const char *refID);
+
+typedef struct
+{
+    ECallback function;
+    void *userDat;
+    SceInt32 id;
+} CallbackData;
+
 typedef enum
 {
     button = 0,
@@ -20,9 +30,10 @@ typedef enum
     text,
     plane,
     slidebar,
-} widget_type;
+    progressbar_touch,
+} QMRWidgetType;
 
-typedef enum check_box_state
+typedef enum
 {
     //ON
     CHECKBOX_ON,
@@ -31,34 +42,6 @@ typedef enum check_box_state
     //Previous saved state
     CHECKBOX_PREV_STATE
 } CheckBoxState;
-
-
-typedef struct 
-{
-    //Text to be displayed
-    char label[0x100];
-    int isbold;
-} textData;
-
-typedef struct 
-{
-    void (*onPress)(void);
-    //Text to be displayed
-    char label[0x100];
-} buttonData;
-
-typedef struct 
-{
-    //Function called when toggled
-    void (*OnToggle)(int state);
-    //Current State
-    CheckBoxState state;
-} toggleData;
-
-typedef struct
-{
-    void (*OnChange)();
-} slidebarData;
 
 typedef struct
 {
@@ -78,65 +61,52 @@ typedef struct
 
 typedef struct
 {
-    char type[256];
-    char styleInfo[256];
+    union{
+        char styleID[256];
+        int hash;
+    } StyleInfo;
+
     int useHash;
-    int hash;
+
+    char type[256];
 } advancedData;
+
 
 typedef struct
 {
+    char label[0x400];
     char refId[256];
-
     char parentRefId[256];
-    int hasParent;
-    
-    widget_type type;
+    //Set weather the widget has a parent or not
+    bool hasParent;
+
+    QMRWidgetType type;
 
     vector4 pos;
     widgetColor col;
     vector4 size;
-    
-    void (*OnLoad)(void);
 
-    union extraData
-    {
-        toggleData CheckBoxData;
-        buttonData ButtonData;
-        textData TextData;
-        slidebarData SlidebarData;
-    } data;
+    //Main Callbacks
+    CallbackData *Callbacks;
+    //Size of main callback array
+    SceInt32 CallbackNum;
 
-    //BOOL: Set weather the advanced data is used
-    int isAdvanced;
+    VoidCallback OnLoad;
 
-    //Don't mess with, unless you know what you're doing
-    advancedData adata;
-    
+    //Meant for internal use only!
+    VoidCallback OnSave;
+    VoidCallback OnRecall;
+
+    bool isAdvanced;
+    advancedData advancedData;
+
+    //Actuall Widget Class Pointer, ONLY ACCESS WHEN QUICKMENU IS OPEN
+    void *widget;
+
 } widgetData;
 
-typedef enum packet_type
-{
-    register_widget,
-    unregister_widget,
-    update_widget,
-    open_quickmenu
-
-} packetType;
-
-widgetColor makeWidgetColor(float r, float g, float b, float a);
-vector4 makeWidgetVector4(float x, float y, float z, float w);
-
-#define UPDATE_COLOR 0x1
-#define UPDATE_SIZE 0x2
-#define UPDATE_POSITION 0x4
-#define UPDATE_TEXT 0x8
-// Corresponds to the event called on press (OnPress for buttons and OnToggle for Check Boxes)
-#define UPDATE_EVENT 0x10
-#define UPDATE_ALL 0xFF
-// Corresponds to the OnLoad event for all widgets
-#define UPDATE_LOAD 0x20
-#define UPDATE_CHECKBOX_STATE 0x40
+vector4 QuickMenuRebornMakeWidgetVector4(float x, float y, float z, float w);
+widgetColor QuickMenuRebornMakeWidgetColor(float r, float g, float b, float a);
 
 #ifdef __cplusplus
 }

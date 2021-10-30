@@ -1,4 +1,4 @@
-Module: QuickMenuReborn major_version: 3 minor_version: 0
+Module: QuickMenuReborn major_version: 4 minor_version: 0
 sceModuleInfo_type: 6
 module_function: module_start localname: module_start
 module_function: module_stop localname: module_stop
@@ -7,22 +7,24 @@ Library: QuickMenuReborn version: 1
 Library: QuickMenuReborn nidsuffix: ""
 Library: QuickMenuReborn attr: auto_export
 Library: QuickMenuReborn libnamenid: 0x6642F554
-Library: QuickMenuReborn function: QuickMenuRebornAddWidget nidvalue: 0x11202C4E
-Library: QuickMenuReborn function: QuickMenuRebornRemoveWidget nidvalue: 0x2A690516
-Library: QuickMenuReborn function: QuickMenuRebornUpdateWidget nidvalue: 0x8A4F2291
-Library: QuickMenuReborn function: makeWidgetColor nidvalue: 0xB68C617D
-Library: QuickMenuReborn function: makeWidgetVector4 nidvalue: 0x5F2B7794
-Library: QuickMenuReborn function: QuickMenuRebornButton nidvalue: 0x8DEFE60D
-Library: QuickMenuReborn function: QuickMenuRebornCheckBox nidvalue: 0x93245A61
-Library: QuickMenuReborn function: QuickMenuRebornText nidvalue: 0x36F4C81F
-Library: QuickMenuReborn function: QuickMenuRebornPlane nidvalue: 0xEFD76FB6
+Library: QuickMenuReborn function: QuickMenuRebornMakeWidgetVector4 nidvalue: 0x517E135B
+Library: QuickMenuReborn function: QuickMenuRebornMakeWidgetColor nidvalue: 0x05ECC074
+Library: QuickMenuReborn function: QuickMenuRebornRegisterWidget nidvalue: 0x77BD7806
+Library: QuickMenuReborn function: QuickMenuRebornRegisterWidgetFromData nidvalue: 0x93C05099
+Library: QuickMenuReborn function: QuickMenuRebornUnregisterWidget nidvalue: 0xAD586CDF
+Library: QuickMenuReborn function: QuickMenuRebornRegisterEventHanlder nidvalue: 0x0863AF23
 Library: QuickMenuReborn function: QuickMenuRebornSeparator nidvalue: 0x554D28CD
-Library: QuickMenuReborn function: QuickMenuRebornUpdateButton nidvalue: 0xF8E8F906
-Library: QuickMenuReborn function: QuickMenuRebornUpdateCheckBox nidvalue: 0x1FAEA672
-Library: QuickMenuReborn function: QuickMenuRebornUpdateText nidvalue: 0x68680E26
-Library: QuickMenuReborn function: QuickMenuRebornUpdatePlane nidvalue: 0xFC8EA5DB
 Library: QuickMenuReborn function: QuickMenuRebornRemoveSeparator nidvalue: 0x7550C9BF
-Library: QuickMenuReborn function: QuickMenuRebornGetCheckBoxState nidvalue: 0x65214907
-Library: QuickMenuReborn function: QuickMenuRebornAddAdvancedWidget nidvalue: 0xC698BC91
-Library: QuickMenuReborn function: QuickMenuRebornAddAdvancedWidgetWithStyleHash nidvalue: 0x5E63C077
-Library: QuickMenuReborn function: QuickMenuRebornSlider nidvalue: 0xB962832B
+Library: QuickMenuReborn function: QuickMenuRebornSetWidgetSize nidvalue: 0xB49B464C
+Library: QuickMenuReborn function: QuickMenuRebornSetWidgetPosition nidvalue: 0x979759AE
+Library: QuickMenuReborn function: QuickMenuRebornSetWidgetColor nidvalue: 0x72BF9D2A
+Library: QuickMenuReborn function: QuickMenuRebornSetWidgetLabel nidvalue: 0x2CD65CA6
+Library: QuickMenuReborn function: QuickMenuRebornGetSlidebarValue nidvalue: 0x460F702C
+Library: QuickMenuReborn function: QuickMenuRebornGetCheckboxValue nidvalue: 0x3DACB8A6
+Library: QuickMenuReborn function: QuickMenuRebornAssignRecallHandler nidvalue: 0x88A838AB
+Library: QuickMenuReborn function: QuickMenuRebornAssignSaveHandler nidvalue: 0x67D83A20
+Library: QuickMenuReborn function: QuickMenuRebornAssignOnLoadHandler nidvalue: 0x3DF0A41F
+Library: QuickMenuReborn function: QuickMenuRebornAssignDefaultCheckBoxSave nidvalue: 0xF9A7F16C
+Library: QuickMenuReborn function: QuickMenuRebornAssignDefaultCheckBoxRecall nidvalue: 0xA29C7517
+Library: QuickMenuReborn function: QuickMenuRebornAssignDefaultSliderSave nidvalue: 0x34A7D5DB
+Library: QuickMenuReborn function: QuickMenuRebornAssignDefaultSliderRecall nidvalue: 0x9439EAF6

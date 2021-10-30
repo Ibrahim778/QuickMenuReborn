@@ -1,18 +1,15 @@
 
 #include "main.h"
-#include "types.h"
-#include "widgets.h"
+#include "utils.hpp"
+#include "widgets.hpp"
 #include "../quickmenureborn/qm_reborn.h"
-
+#include "common.hpp"
 
 SceUID mainThreadID = SCE_UID_INVALID_UID;
 bool mainEnd = false;
-bool dispalyed = false;
+bool displayed = false;
 
-#define INTERNAL_SPACER_ID "qm_reborn_internal_spacer"
-
-
-#ifdef DEBUG
+#ifdef _DEBUG
 SceVoid leakTestTask(void)
 {
     Allocator *glAlloc = Allocator::GetGlobalAllocator();
@@ -29,7 +26,7 @@ SceInt32 VblankCallback(SceUID notifyId, SceInt32 notifyCount, SceInt32 notifyAr
     sceAppMgrGetAppState(&state);
     if(state.isSystemUiOverlaid)
     {
-        if(!dispalyed)
+        if(!displayed)
         {
             if(initWidgets() >= 0)
             {
@@ -37,16 +34,16 @@ SceInt32 VblankCallback(SceUID notifyId, SceInt32 notifyCount, SceInt32 notifyAr
                 //Delay to make sure it displays it at the end
                 sceKernelDelayThread(1000);
 
-#ifdef DEBUG
+#ifdef _DEBUG
                 leakTestTask();
 #endif
                 displayWidgets();
-                dispalyed = true;
+                displayed = true;
             
             }
         }
     }
-    else dispalyed = false;
+    else displayed = false;
 
     return 0;
 }
@@ -78,8 +75,6 @@ int impose_thread(SceSize, void *)
 
     return sceKernelExitDeleteThread(0);
 }
-
-int checkFileExist(const char *path);
 
 int load_thread(SceSize, void*)
 {
@@ -115,27 +110,42 @@ int load_thread(SceSize, void*)
         entries = sceIoDread(d, &de);
         if(!SCE_STM_ISDIR(de.d_stat.st_mode))
         {
-            char buff[0x400] = {0};
-            sce_paf_snprintf(buff, 0x400, "%s/%s", dir, de.d_name);
-            taiLoadStartModuleForPid(id, buff, 0, NULL, 0);
-            print("Loading module at %s\n", buff);
+            if(sce_paf_strncmp(&de.d_name[sce_paf_strlen(de.d_name) - 5], "suprx", 5) == 0)
+            {
+                char buff[0x400] = {0};
+                sce_paf_snprintf(buff, 0x400, "%s/%s", dir, de.d_name);
+                taiLoadStartModuleForPid(id, buff, 0, NULL, 0);
+                print("Loading module at %s\n", buff);
+            }
         }
     }while(entries > 0);
     sceIoDclose(d);
     return sceKernelExitDeleteThread(0);
 }
 
+#ifdef _DEBUG
+int testWidgetThread(SceSize, void*)
+{
+    //Only filled during dev
+}
+#endif
+
 extern "C"
 {
     int module_start(SceSize, void *)
     {
         sceClibPrintf("QuickMenuReborn, by Ibrahim\n");
+
         mainThreadID = sceKernelCreateThread("quickmenureborn", impose_thread, 248, SCE_KERNEL_64KiB, 0, 0, NULL);
         if(sceKernelStartThread(mainThreadID, 0, NULL) < 0) return SCE_KERNEL_START_NO_RESIDENT;
         
         SceUID load_thread_id = sceKernelCreateThread("quickmenureborn_plugins", load_thread, 250, SCE_KERNEL_4KiB, 0, 0, NULL);
-        if(load_thread_id < 0) return SCE_KERNEL_START_NO_RESIDENT;
         if(sceKernelStartThread(load_thread_id, 0, NULL) < 0) return SCE_KERNEL_START_NO_RESIDENT;
+
+#ifdef _DEBUG
+        sceKernelStartThread(sceKernelCreateThread("test_widget_thread", testWidgetThread, 250, SCE_KERNEL_128KiB, 0, 0, NULL), 0, NULL);
+#endif
+
         return SCE_KERNEL_START_SUCCESS;
     }
 

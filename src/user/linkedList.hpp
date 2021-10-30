@@ -1,23 +1,22 @@
 
-#include "types.h"
 #ifndef QM_REBORN_LL_HPP
 #define QM_REBORN_LL_HPP
+#include "utils.hpp"
 struct node
 {
     widgetData widget;
     node *next;
 };
 
-class linked_list
+class LinkedList
 {
 public:
     node *head, *tail;
-    linked_list();
-    void printall();
-    void update_node(widgetData *widget, int flags);
-    void update_checkbox_status(const char *refID, CheckBoxState state);
-    widgetData *get_node(const char *refID);
-    void add_node(widgetData *widget);
-    void remove_node(const char *tag);
+    LinkedList();
+    void PrintAll();
+    void UpdateNode(widgetData *widget, int flags);
+    widgetData *GetNode(const char *refID);
+    void AddNode(widgetData *widget);
+    void RemoveNode(const char *tag);
 };
 #endif

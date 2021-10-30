@@ -1,40 +1,26 @@
 #include "event_handler.hpp"
 #include "config_mgr.h"
+#include "common.hpp"
 
-extern linked_list currentWidgets;
+extern LinkedList currentWidgets;
 
-QMEventHandler::QMEventHandler()
+QMREventHandler::QMREventHandler()
 {
     eventHandler = onGet;
 }
 
-void QMEventHandler::onGet(SceInt32 , Widget *self, SceInt32, ScePVoid puserData)
+void QMREventHandler::onGet(SceInt32 eventId, Widget *self, SceInt32, ScePVoid puserData)
 {
-    widgetData *widget = (widgetData *)puserData;
-    switch (widget->type)
+    widgetData *widgetInfo = *(widgetData **)puserData;
+
+    if(puserData == NULL || self == NULL || widgetInfo == NULL || widgetInfo->CallbackNum == 0 || widgetInfo->Callbacks == NULL) return;
+
+    for (int i = 0; i < widgetInfo->CallbackNum; i++)
     {
-        case button:
-        {
-            if(widget->data.ButtonData.onPress != NULL) widget->data.ButtonData.onPress();
-            break;
-        }
-            
-        case check_box:
-        {
-            currentWidgets.update_checkbox_status(widget->refId, ((CheckBox *)self)->checked ? CHECKBOX_ON : CHECKBOX_OFF);
-            if(widget->data.CheckBoxData.OnToggle != NULL) widget->data.CheckBoxData.OnToggle(((CheckBox *)self)->checked);    
-            break;
-        }
+        if(widgetInfo->Callbacks[i].function != NULL && widgetInfo->Callbacks[i].id == eventId)
+            widgetInfo->Callbacks[i].function(self->hash, eventId, widgetInfo->Callbacks[i].userDat);
+    }   
 
-        case slidebar:
-        {
-            if(widget->data.SlidebarData.OnChange != NULL) widget->data.SlidebarData.OnChange();
-            break;
-        }
-
-        default:
-        {
-            break;
-        }
-    }
+    if(widgetInfo->OnSave != NULL)
+        widgetInfo->OnSave(widgetInfo->refId);
 }

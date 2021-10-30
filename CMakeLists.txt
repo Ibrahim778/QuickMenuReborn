@@ -3,22 +3,19 @@ set(CMAKE_TOOLCHAIN_FILE "$ENV{SCE_PSP2_SDK_DIR}/host_tools/build/cmake/psp2-snc
 project(QuickMenuReborn)
 include(VitaDevelopmentSuite)
 
-file(GLOB pafStub
-    "${CMAKE_SOURCE_DIR}/stubs/*_weak.a"
-)
-
 file(GLOB user_cppfiles
     "${CMAKE_SOURCE_DIR}/src/user/*.cpp"
 )
+
 file(GLOB user_cfiles
     "${CMAKE_SOURCE_DIR}/src/user/*.c"
 )
-file(GLOB export_cfiles
-    "${CMAKE_SOURCE_DIR}/src/export_handler/*.c"
-)
+
+
 file(GLOB user_hfiles
     "${CMAKE_SOURCE_DIR}/src/user/*.h"
 )
+
 file(GLOB qm_reborn_includes
     "${CMAKE_SOURCE_DIR}/src/quickmenureborn/*.h"
 )
@@ -29,7 +26,7 @@ enable_language(EMD)
 
 # ONLY COMPILE MAIN PLUGIN WITH -O0 or -O1
 add_compile_options(
-  -O1
+    -D_SCE_TARGET_OS_PSP2=1 -Xdiag=0 -Xquit=2
 )
 add_link_options(
   --prx-no-runtime-support
@@ -51,6 +48,7 @@ add_library(${PROJECT_NAME} MODULE
     ${user_cppfiles}
     ${qm_reborn_includes}
     ${user_hfiles}
+    ${user_cfiles}
     QuickMenuReborn.emd
 )
 
@@ -62,7 +60,14 @@ target_link_libraries(${PROJECT_NAME}
     SceRegMgr_stub
     SceDisplay_stub
     taihenUnsafe_stub
-    ${pafStub}
+	ScePafStdc_stub_weak
+    ScePafThread_stub_weak
+    ScePafTopLevel_stub_weak
+    ScePafWidget_stub_weak
+    ScePafCommon_stub_weak
+    ScePafGraphics_stub_weak
+    ScePafMisc_stub_weak
+    ScePafResource_stub_weak
 )
 
 VDSuiteSignElf(${PROJECT_NAME}.suprx ${PROJECT_NAME})
@@ -76,6 +81,10 @@ VDSuiteCreateStubs(stubs ${PROJECT_NAME}.emd
 # Generate VitaSDK stubs
 add_custom_command(TARGET QuickMenuReborn POST_BUILD
   COMMAND $ENV{SCE_PSP2_SDK_DIR}/host_tools/build/bin/vdsuite-libgen.exe ${CMAKE_SOURCE_DIR}/QuickMenuReborn.yml ${CMAKE_BINARY_DIR}/vitasdk_stubs --output-kind VitasdkStub
+)
+
+add_custom_command(TARGET QuickMenuReborn POST_BUILD
+    COMMAND python ${CMAKE_SOURCE_DIR}/resource/cxml/appinfo/appinfo_compiler.py -o ${CMAKE_SOURCE_DIR}/resource/qmr_plugin.rco ${CMAKE_SOURCE_DIR}/resource/src/qmr_plugin.xml
 )
 
 add_custom_target(install_vdsuite
