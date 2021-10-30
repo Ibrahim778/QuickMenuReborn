@@ -8,7 +8,7 @@ First thing you need for your widgets is a refrence id, it doesn't need to be an
 Once you've gotten your id figured out you need to make a layout, this layout **will** need tweaking until it feels right so be prepared to experiment.  
 To actually add the widget you can use the QuickMenuRebornRegisterWidget
 # Separators
-You may have noticed that the default widgets in the quick menu all have a line to separate themselves. You can use Separators in quickmenureborn to imitate this (it's not perfect, but close)
+You may have noticed that the default widgets in the quick menu all have a line to separate themselves. You can use Separators in quickmenureborn to do this.
 
 Once again these need refrence id's, You should only add separators at the start of your code so they appear at the top, DO NOT ADD SEPARATORS ON THE BOTTOM, this is for 2 reasons.
 1. If your plugin is the first one, there is a separator between your widget and the accessability widgets
