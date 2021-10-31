@@ -26,7 +26,7 @@ enable_language(EMD)
 
 # ONLY COMPILE MAIN PLUGIN WITH -O0 or -O1
 add_compile_options(
-    -D_SCE_TARGET_OS_PSP2=1 -Xdiag=0 -Xquit=2
+    -D_SCE_TARGET_OS_PSP2=1 -Xdiag=0 -Xquit=2 -O0
 )
 add_link_options(
   --prx-no-runtime-support

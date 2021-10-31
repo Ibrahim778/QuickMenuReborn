@@ -82,15 +82,16 @@ int summon(widgetData *data)
         print("Error making widget with id: %s\n", data->refId);
         return;
     }
-    
+    else print("Made widget %s (0x%X) successfully!\n", data->refId, Utils::GetHashById(data->refId));
+
     data->widget = w;
-
+    print("Assigned pointer\n");
     w->hash = Utils::GetHashById(data->refId); //VERY IMPORTANT
-
-    Utils::SetWidgetPosition(w, &data->pos);
-    Utils::SetWidgetColor(w, &data->col);
-    Utils::SetWidgetSize(w, &data->size);
-    Utils::SetWidgetLabel(data->label, w);
+    print("Assigned w->hash\n");
+    Utils::SetWidgetPosition(w, &data->pos); print("Assigned position\n");
+    Utils::SetWidgetColor(w, &data->col); print("Assigned Color\n");
+    Utils::SetWidgetSize(w, &data->size); print("Assigned Size\n");
+    Utils::SetWidgetLabel(data->label, w); print("Assigned Label\n");
 
     //Create an int array and a variable to keep track of size. Loop through callbacks in struct. If event id is not present in int array add it and assign callback with id.
     {

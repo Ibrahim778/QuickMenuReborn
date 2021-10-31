@@ -11,7 +11,6 @@
 
 #include "c_types.h"
 
-#define CHECKBOX_HANDLER(name) void name(int checked)
 #define BUTTON_HANDLER(name) void name(SceInt32 hash, SceInt32 eventId, void *userDat)
 #define ONLOAD_HANDLER(name) void name(const char *id)
 
@@ -28,6 +27,7 @@
 
 //Size of all the other planes in the quick menu
 #define SCE_PLANE_WIDTH 835.0f
+#define SCE_SEPARATOR_HEIGHT 20.0f
 
 #define CONFIG_MGR_ERROR_NOT_EXIST -1
 #define CONFIG_MGR_ERROR_COULD_NOT_WRITE_FULL -2
@@ -41,8 +41,6 @@
 
 #ifdef __cplusplus
 extern "C" {
-#else
-#define EXPORT extern
 #endif
 
 vector4 QuickMenuRebornMakeWidgetVector4(float x, float y, float z, float w);
@@ -51,7 +49,7 @@ widgetColor QuickMenuRebornMakeWidgetColor(float r, float g, float b, float a);
 int QuickMenuRebornRegisterWidget(const char *id, const char *parentId, QMRWidgetType type);
 int QuickMenuRebornRegisterWidgetFromData(widgetData *widgetInfo);
 int QuickMenuRebornUnregisterWidget(const char *id);
-int QuickMenuRebornRegisterEventHanlder(const char *widgetID, SceInt32 EventID, ECallback Fucntion, void *userDat = SCE_NULL);
+int QuickMenuRebornRegisterEventHanlder(const char *widgetID, SceInt32 EventID, ECallback Fucntion, void *userDat);
 
 int QuickMenuRebornSeparator(const char *id, float height = 20.0f);
 int QuickMenuRebornRemoveSeparator(const char *id);
