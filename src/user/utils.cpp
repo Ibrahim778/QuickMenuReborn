@@ -117,10 +117,12 @@ Widget *Utils::FindWidget(SceUInt32 hash)
 
 SceInt32 Utils::SetWidgetLabel(const char *text, Widget *widget)
 {
+    if(text == NULL || widget == NULL || text[0] == '\0' /* empty string */ ) return;
     WString wstr;
     String str;
     str.Set(text);
     str.ToWString(&wstr);
+    print("Assigning to 0x%X text: %s str: %s wstr: %ls\n", widget->hash, text, str.data, wstr.data);
 
     return widget->SetLabel(&wstr);
 }
