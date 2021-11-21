@@ -27,7 +27,6 @@ Library for developers to easily add their own widgets, to the vita's Quick Menu
 
 1. Either follow instructions for vitaSDK but using the vdsuite stubs (recommended) or,
 1. Clone Repo
-1. Find the proper yml file and generate stubs 
 1. Build with cmake and use target install_vdsuite
 
 For usage see usage.md
