@@ -45,6 +45,7 @@ BUTTON_HANDLER(onPress)
     //Set new vaulues
     QuickMenuRebornSetWidgetSize(BUTTON_REF_ID, x, 75, 0, 0);
     QuickMenuRebornSetWidgetLabel(BUTTON_REF_ID, newText);
+    
 }
 
 ONLOAD_HANDLER(OnButtonLoad)
