@@ -83,11 +83,14 @@ int saveCheckBoxState(const char *refID, int val)
 int saveSlidebarState(const char *refId, SceFloat32 val)
 {
 	int ret = CONFIG_MGR_OK;
-	if(ret = preSetup(), ret < 0) return ret;
-
+	if(ret = preSetup(), ret < 0)
+    {
+        print("preSetup() Failed!\n");
+        return ret;
+    }
 	char key[0x400] = {0};
 	sce_paf_snprintf(key, 0x400, SLIDEBAR_SAVE_DIR "%s", refId);
-	
+	print("Saving to: %s\n", key);
 	ret = writeFloatToFile(key, val);
 
 	return ret;

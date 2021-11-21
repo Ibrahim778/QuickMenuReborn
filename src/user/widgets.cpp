@@ -126,7 +126,7 @@ int summon(widgetData *data)
     
     if(data->OnLoad != NULL)
         data->OnLoad(data->refId); 
-    
+
     return;
 }
 
@@ -169,6 +169,8 @@ SceInt32 QMR::RegisterEventHandler(SceInt32 id, widgetData *dat, ECallback Funct
     dat->Callbacks[dat->CallbackNum].userDat = userDat;
     
     dat->CallbackNum++;
+
+    print("%s: Assigned callback for function: %p id: 0x%X\n", dat->refId, Function, id);
     return 0;
 }
 

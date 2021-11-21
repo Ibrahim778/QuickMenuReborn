@@ -13,8 +13,9 @@ void QMREventHandler::onGet(SceInt32 eventId, Widget *self, SceInt32, ScePVoid p
 {
     widgetData *widgetInfo = *(widgetData **)puserData;
 
-    if(puserData == NULL || self == NULL || widgetInfo == NULL || widgetInfo->CallbackNum == 0 || widgetInfo->Callbacks == NULL) return;
-
+    if(puserData == NULL || self == NULL || widgetInfo == NULL || widgetInfo->CallbackNum == 0 || widgetInfo->Callbacks == NULL)
+        return;
+    
     for (int i = 0; i < widgetInfo->CallbackNum; i++)
     {
         if(widgetInfo->Callbacks[i].function != NULL && widgetInfo->Callbacks[i].id == eventId)

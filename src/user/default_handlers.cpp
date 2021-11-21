@@ -13,7 +13,11 @@ void defaultCheckBoxSave(const char *refID)
 void defaultSliderSave(const char *refID)
 {
     widgetData *data = currentWidgets.GetNode(refID);
-    if(data == NULL) return;
+    if(data == NULL)
+    {
+        print("Error cannot find widget!\n");
+        return;
+    } 
     saveSlidebarState(refID, ((ProgressBarTouch *)data->widget)->currentValue);
 }
 
