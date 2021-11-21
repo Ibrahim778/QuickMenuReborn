@@ -236,3 +236,34 @@ int QuickMenuRebornAssignDefaultSliderRecall(const char *refID)
 
     data->OnRecall = defaultSliderRecall;
 }
+
+int QuickMenuRebornSetSlidebarValue(const char *refID, float val)
+{
+    if(!widgetsDisplayed()) return -1;
+
+    widgetData *data = currentWidgets.GetNode(refID);
+    if(data == NULL) return;
+
+    ((ProgressBarTouch *)data->widget)->SetProgress(val, 0, 0);
+}
+
+int QuickMenuRebornSaveSlidebarValue(const char *refID, float val)
+{
+    saveSlidebarState(refID, val);
+}
+
+int QuickMenuRebornSetCheckBoxState(const char *refID, int state)
+{
+    if(!widgetsDisplayed()) return -1;
+
+    widgetData *data = currentWidgets.GetNode(refID);
+    if(data == NULL) return;
+
+    ((CheckBox *)data->widget)->SetChecked(state, 0, 0);
+
+}
+
+int QuickMenuRebornSaveCheckBoxState(const char *refID, int state)
+{
+    saveCheckBoxState(refID, state);
+}

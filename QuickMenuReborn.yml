@@ -25,3 +25,7 @@ modules:
           QuickMenuRebornAssignDefaultCheckBoxRecall: 0xA29C7517
           QuickMenuRebornAssignDefaultSliderSave: 0x34A7D5DB
           QuickMenuRebornAssignDefaultSliderRecall: 0x9439EAF6
+          QuickMenuRebornSetCheckBoxState: 0xB8AEECEB
+          QuickMenuRebornSaveCheckBoxState: 0x7C987BD7
+          QuickMenuRebornSaveSlidebarValue: 0x3FCE9D1B
+          QuickMenuRebornSetSlidebarValue: 0x1CBDF817

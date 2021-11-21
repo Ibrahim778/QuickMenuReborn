@@ -26,7 +26,11 @@ functionNames=[
         "QuickMenuRebornAssignDefaultCheckBoxSave",
         "QuickMenuRebornAssignDefaultCheckBoxRecall",
         "QuickMenuRebornAssignDefaultSliderSave",
-        "QuickMenuRebornAssignDefaultSliderRecall"
+        "QuickMenuRebornAssignDefaultSliderRecall",
+        "QuickMenuRebornSetCheckBoxState",
+        "QuickMenuRebornSaveCheckBoxState",
+        "QuickMenuRebornSaveSlidebarValue",
+        "QuickMenuRebornSetSlidebarValue"
 ]
 
 def getHash(string):

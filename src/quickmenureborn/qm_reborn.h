@@ -72,6 +72,12 @@ int QuickMenuRebornAssignDefaultCheckBoxRecall(const char *refID);
 int QuickMenuRebornAssignDefaultSliderSave(const char *refID);
 int QuickMenuRebornAssignDefaultSliderRecall(const char *refID);
 
+int QuickMenuRebornSetSlidebarValue(const char *refID, float val);
+int QuickMenuRebornSaveSlidebarValue(const char *refID, float val);
+
+int QuickMenuRebornSetCheckBoxState(const char *refID, int state);
+int QuickMenuRebornSaveCheckBoxState(const char *refID, int state);
+
 #ifdef __cplusplus
 }
 #endif
