@@ -138,7 +138,7 @@ float QuickMenuRebornGetSlidebarValue(const char *refID)
     return ((ProgressBarTouch *)dat->widget)->currentValue;
 }
 
-bool QuickMenuRebornGetCheckboxValue(const char *refID)
+int QuickMenuRebornGetCheckboxValue(const char *refID)
 {
     widgetData *dat = currentWidgets.GetNode(refID);
     if(dat == NULL) return -1;

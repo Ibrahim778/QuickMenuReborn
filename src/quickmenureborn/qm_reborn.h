@@ -51,7 +51,7 @@ int QuickMenuRebornRegisterWidgetFromData(widgetData *widgetInfo);
 int QuickMenuRebornUnregisterWidget(const char *id);
 int QuickMenuRebornRegisterEventHanlder(const char *widgetID, SceInt32 EventID, ECallback Fucntion, void *userDat);
 
-int QuickMenuRebornSeparator(const char *id, float height = 20.0f);
+int QuickMenuRebornSeparator(const char *id, float height);
 int QuickMenuRebornRemoveSeparator(const char *id);
 
 int QuickMenuRebornSetWidgetSize(const char *refID, float x, float y, float z, float w);
@@ -60,7 +60,7 @@ int QuickMenuRebornSetWidgetColor(const char *refID, float r, float g, float b, 
 int QuickMenuRebornSetWidgetLabel(const char *refID, const char *label);
 
 float QuickMenuRebornGetSlidebarValue(const char *refID);
-bool QuickMenuRebornGetCheckboxValue(const char *refID);
+int QuickMenuRebornGetCheckboxValue(const char *refID);
 
 int QuickMenuRebornAssignRecallHandler(VoidCallback callback, const char *refID);
 int QuickMenuRebornAssignSaveHandler(VoidCallback callback, const char *refID);

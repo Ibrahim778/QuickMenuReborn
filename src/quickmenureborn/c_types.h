@@ -78,7 +78,7 @@ typedef struct
     char refId[256];
     char parentRefId[256];
     //Set weather the widget has a parent or not
-    bool hasParent;
+    int hasParent;
 
     QMRWidgetType type;
     SceUInt32 hash;
@@ -98,7 +98,7 @@ typedef struct
     VoidCallback OnSave;
     VoidCallback OnRecall;
 
-    bool isAdvanced;
+    int isAdvanced;
     advancedData advancedData;
 
     //Actuall Widget Class Pointer, ONLY ACCESS WHEN QUICKMENU IS OPEN
