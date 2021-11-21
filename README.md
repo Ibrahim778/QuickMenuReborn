@@ -10,6 +10,7 @@ Library for developers to easily add their own widgets, to the vita's Quick Menu
 1. Copy the plugin to your tai folder
 1. Add it's path under *main to enable it
 1. Make a folder called QuickMenuReborn (exactly that, case sensitive) in ur0: or ux0: (ur0: if you use sd2vita) 
+1. Copy qmr_plugin.rco into the folder
 1. Reboot
 
 ## Developer Library
