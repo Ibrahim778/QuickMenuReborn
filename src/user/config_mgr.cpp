@@ -90,7 +90,7 @@ int saveSlidebarState(const char *refId, SceFloat32 val)
     }
 	char key[0x400] = {0};
 	sce_paf_snprintf(key, 0x400, SLIDEBAR_SAVE_DIR "%s", refId);
-	print("Saving to: %s\n", key);
+
 	ret = writeFloatToFile(key, val);
 
 	return ret;
