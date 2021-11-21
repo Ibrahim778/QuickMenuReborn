@@ -15,6 +15,7 @@
 #define PLANE_ID "qm_reborn_sample_plane"
 #define TEXT_ID "qm_reborn_sample_text"
 #define CHECKBOX_TEXT_ID "qm_reborn_sample_checkbox_text"
+#define SLIDEBAR_ID "qm_reborn_sample_slidebar"
 #define SEPARATOR_ID "qm_reborn_sample_separator"
 
 //Set our current count
@@ -34,8 +35,7 @@ BUTTON_HANDLER(onPress)
 
     //Fill our buffer
     sceClibSnprintf(newText, 0x100, "You Pressed Me %d Times", count);
-
-    int x = 400;
+    float x = 400;
     
     if(count >= 100)
         x += 50;
@@ -53,6 +53,7 @@ ONLOAD_HANDLER(OnButtonLoad)
     {
         //Reset our count
         count = 0;
+
         //Update our widget with new size and text
         QuickMenuRebornSetWidgetSize(BUTTON_REF_ID, 200, 75, 0, 0);
         QuickMenuRebornSetWidgetLabel(BUTTON_REF_ID, "Press Me!");
@@ -67,8 +68,8 @@ BUTTON_HANDLER(OnToggleCheckBox)
 int module_start()
 {
     QuickMenuRebornSeparator(SEPARATOR_ID, SCE_SEPARATOR_HEIGHT);
-    //Get our checkboxes saved state
 
+    //Get our checkboxes saved state
     int ret = QuickMenuRebornGetCheckboxValue(CHECKBOX_REF_ID);
     resetOnExit = ret == CONFIG_MGR_ERROR_NOT_EXIST ? false : ret;
 
@@ -91,15 +92,17 @@ int module_start()
     QuickMenuRebornRegisterEventHanlder(CHECKBOX_REF_ID, QMR_BUTTON_RELEASE_ID, OnToggleCheckBox, NULL);
 
     QuickMenuRebornRegisterWidget(CHECKBOX_TEXT_ID, PLANE_ID, text);
+    QuickMenuRebornSetWidgetColor(CHECKBOX_TEXT_ID, 1,1,1,1);
     QuickMenuRebornSetWidgetSize(CHECKBOX_TEXT_ID, 500, 75, 0, 0);
     QuickMenuRebornSetWidgetPosition(CHECKBOX_TEXT_ID, -255, 0, 0, 0);
     QuickMenuRebornSetWidgetLabel(CHECKBOX_TEXT_ID, "Reset On Exit");
-
+    
     QuickMenuRebornRegisterWidget(BUTTON_REF_ID, NULL, button);
     QuickMenuRebornSetWidgetSize(BUTTON_REF_ID, 200, 75, 0, 0);
     QuickMenuRebornSetWidgetColor(BUTTON_REF_ID, 1,1,1,1);
     QuickMenuRebornRegisterEventHanlder(BUTTON_REF_ID, QMR_BUTTON_RELEASE_ID, onPress, NULL);
-    QuickMenuRebornAssignOnLoadHandler(BUTTON_REF_ID, OnButtonLoad);
+    QuickMenuRebornSetWidgetLabel(BUTTON_REF_ID, "Press Me!");
+    QuickMenuRebornAssignOnLoadHandler(OnButtonLoad, BUTTON_REF_ID);
     
     return SCE_KERNEL_START_SUCCESS;
 }

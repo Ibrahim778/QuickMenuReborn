@@ -50,7 +50,7 @@
           </style_progressbar_touch>
 
         <style_text textobj="text_obj" id="text_quickmenu_style">
-            <textobj font_size="24" bold="1" align_y="0" align_x="0" text_align="0" color="1, 1, 1, 1" id="text_obj" />
+            <textobj font_size="24" bold="1" align_y="1" align_x="1" color="1, 1, 1, 1" id="text_obj" />
         </style_text>
 		
 		<style_busyindicator color="1, 1, 1, 1" ball_size="15" id="base_style_busyindicator" />

@@ -37,8 +37,8 @@ SceInt32 VblankCallback(SceUID notifyId, SceInt32 notifyCount, SceInt32 notifyAr
 #ifdef _DEBUG
                 leakTestTask();
 #endif
-                displayWidgets();
                 displayed = true;
+                displayWidgets();
             
             }
         }
@@ -104,13 +104,14 @@ int load_thread(SceSize, void*)
 
     SceIoDirent de;
     SceUID d = sceIoDopen(dir);
+
     int entries = 1;
     do 
     {
         entries = sceIoDread(d, &de);
         if(!SCE_STM_ISDIR(de.d_stat.st_mode))
         {
-            if(sce_paf_strncmp(&de.d_name[sce_paf_strlen(de.d_name) - 5], "suprx", 5) == 0)
+            if(sce_paf_strncmp(&de.d_name[sce_paf_strlen(de.d_name) - 5], "suprx", 5) == 0) // Check if it ends in "suprx"
             {
                 char buff[0x400] = {0};
                 sce_paf_snprintf(buff, 0x400, "%s/%s", dir, de.d_name);
@@ -127,6 +128,8 @@ int load_thread(SceSize, void*)
 int testWidgetThread(SceSize, void*)
 {
     //Only filled during dev
+
+    return sceKernelExitDeleteThread(0);
 }
 #endif
 
@@ -136,11 +139,19 @@ extern "C"
     {
         sceClibPrintf("QuickMenuReborn, by Ibrahim\n");
 
-        mainThreadID = sceKernelCreateThread("quickmenureborn", impose_thread, 248, SCE_KERNEL_64KiB, 0, 0, NULL);
-        if(sceKernelStartThread(mainThreadID, 0, NULL) < 0) return SCE_KERNEL_START_NO_RESIDENT;
-        
-        SceUID load_thread_id = sceKernelCreateThread("quickmenureborn_plugins", load_thread, 250, SCE_KERNEL_4KiB, 0, 0, NULL);
-        if(sceKernelStartThread(load_thread_id, 0, NULL) < 0) return SCE_KERNEL_START_NO_RESIDENT;
+        mainThreadID = sceKernelCreateThread("quickmenureborn", impose_thread, 248, SCE_KERNEL_128KiB, 0, 0, NULL);
+        if(sceKernelStartThread(mainThreadID, 0, NULL) < 0)
+        {
+            print("Error loading main thread: 0x%X\n", mainThreadID);
+            return SCE_KERNEL_START_NO_RESIDENT;
+        }
+
+        SceUID loadThreadId = sceKernelCreateThread("quickmenureborn_plugins", load_thread, 250, SCE_KERNEL_4KiB, 0, 0, NULL);
+        if(sceKernelStartThread(loadThreadId, 0, NULL) < 0) 
+        {
+            print("Error loading load thread: 0x%X\n", loadThreadId);
+            return SCE_KERNEL_START_NO_RESIDENT;
+        }
 
 #ifdef _DEBUG
         sceKernelStartThread(sceKernelCreateThread("test_widget_thread", testWidgetThread, 250, SCE_KERNEL_128KiB, 0, 0, NULL), 0, NULL);

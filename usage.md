@@ -20,7 +20,7 @@ Use the QuickMenuRebornRemoveWidget function and pass in the widget refrence id.
 To remove separators use the QuickMenuRebornRemoveSeparator function and pass in the refrence id.
 
 For Example
-```
+```c
     QuickMenuRebornRemoveWidget(BUTTON_REF_ID);
     QuickMenuRebornRemoveWidget(CHECKBOX_REF_ID);
     QuickMenuRebornRemoveWidget(TEXT_ID);

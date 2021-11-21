@@ -36,7 +36,7 @@ int QuickMenuRebornRegisterWidgetFromData(widgetData *widgetInfo)
     QMR::RegisterWidget(widgetInfo);
 }
 
-int QuickMenuRebornRegisterWidget(const char *id, const char *parentId, QMRWidgetType type)
+widgetData *QuickMenuRebornRegisterWidget(const char *id, const char *parentId, QMRWidgetType type)
 {
     widgetData dat;
     sce_paf_memset(&dat, 0, sizeof(dat));
@@ -55,12 +55,17 @@ int QuickMenuRebornRegisterWidget(const char *id, const char *parentId, QMRWidge
 
 int QuickMenuRebornUnregisterWidget(const char *id)
 {
+    if(widgetsDisplayed())
+    {
+        Widget *w = Utils::FindWidget(Utils::GetHashById(id));
+        if(w != NULL) w->PlayAnimationReverse(0, Widget::Animation_Reset);
+    }
     QMR::UnregisterWidget(id);
 }
 
-int QuickMenuRebornRegisterEventHanlder(const char *widgetID, SceInt32 EventID, ECallback Fucntion, void *userDat)
+int QuickMenuRebornRegisterEventHanlder(const char *widgetID, SceInt32 EventID, ECallback Function, void *userDat)
 {
-    QMR::RegisterEventHandler(EventID, currentWidgets.GetNode(widgetID), Fucntion, userDat);
+    QMR::RegisterEventHandler(EventID, currentWidgets.GetNode(widgetID), Function, userDat);
 }
 
 int QuickMenuRebornSetWidgetSize(const char *refID, float x, float y, float z, float w)
@@ -74,7 +79,9 @@ int QuickMenuRebornSetWidgetSize(const char *refID, float x, float y, float z, f
     data->size.w = w;
 
     if(widgetsDisplayed())
-        Utils::SetWidgetSize((Widget *)data->widget, x, y, z, w);
+    {
+        ((Widget *)data->widget)->SetSize((SceFVector4 *)&data->size);
+    }
 }
 
 int QuickMenuRebornSetWidgetPosition(const char *refID, float x, float y, float z, float w)
@@ -110,11 +117,17 @@ int QuickMenuRebornSetWidgetLabel(const char *refID, const char *label)
 {
     widgetData *data = currentWidgets.GetNode(refID);
     if(data == NULL) return;
-
+    sce_paf_memset(data->label, 0, sizeof(data->label));
     sce_paf_strncpy(data->label, label, sizeof(data->label));
 
     if(widgetsDisplayed())
-        Utils::SetWidgetLabel(label, (Widget *)data->widget);
+    {
+        WString wstr;
+        
+        WString::CharToNewWString(label, &wstr);
+        
+        ((Widget *)data->widget)->SetLabel(&wstr);
+    }
 }
 
 float QuickMenuRebornGetSlidebarValue(const char *refID)

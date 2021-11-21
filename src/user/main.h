@@ -18,11 +18,13 @@ using namespace widget;
 
 
 int sceClibPrintf(const char * fmt, ...);
+
 #define QM_REBORN_INTERNAL
+
 #ifdef _DEBUG
 #define print sceClibPrintf
 #else
-#define print void(NULL)
+#define print dummyprint
 #endif
 
 #endif

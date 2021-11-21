@@ -115,16 +115,12 @@ Widget *Utils::FindWidget(SceUInt32 hash)
     return Utils::GetChildByHash(getImposeRoot(), hash);
 }
 
-SceInt32 Utils::SetWidgetLabel(const char *text, Widget *widget)
+SceInt32 Utils::SetWidgetLabel(const char *label, Widget *w)
 {
-    if(text == NULL || widget == NULL || text[0] == '\0' /* empty string */ ) return;
     WString wstr;
-    String str;
-    str.Set(text);
-    str.ToWString(&wstr);
-    print("Assigning to 0x%X text: %s str: %s wstr: %ls\n", widget->hash, text, str.data, wstr.data);
+    WString::CharToNewWString(label, &wstr);
 
-    return widget->SetLabel(&wstr);
+    w->SetLabel(&wstr);
 }
 
 SceFVector4 Utils::MakeSceVector4(vector4 *vect)
@@ -158,6 +154,7 @@ bool widgetsDisplayed()
 
 bool checkFileExist(const char *path)
 {
-	SceIoStat stat;
-	return sceIoGetstat(path, &stat) >= 0;
+    return paf::io::Misc::Exists(path);
 }
+
+void dummyprint(const char *format, ...){}

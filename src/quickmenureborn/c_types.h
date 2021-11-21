@@ -81,6 +81,7 @@ typedef struct
     bool hasParent;
 
     QMRWidgetType type;
+    SceUInt32 hash;
 
     vector4 pos;
     widgetColor col;

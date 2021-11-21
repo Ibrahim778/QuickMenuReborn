@@ -54,7 +54,7 @@ void LinkedList::UpdateNode(widgetData *widget, int flags)
     }
 }
 
-void LinkedList::AddNode(widgetData *widget)
+widgetData *LinkedList::AddNode(widgetData *widget)
 {
     node *tmp = new node;
     sce_paf_memcpy(&tmp->widget, widget, sizeof(widgetData));
@@ -70,6 +70,8 @@ void LinkedList::AddNode(widgetData *widget)
         tail->next = tmp;
         tail = tail->next;
     }
+
+    return &tmp->widget;
 }
 
 //Credit to CreepNT for this

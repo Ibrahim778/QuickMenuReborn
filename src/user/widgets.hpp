@@ -18,7 +18,7 @@ namespace QMR
     Widget *MakeAdvancedWidgetWithHash(const char *refId, int styleHash, const char *type, Widget *parent);
     Widget *MakeWidgetFromTemplate(const char *id, Widget *targetRoot);
 
-    SceInt32 RegisterWidget(widgetData *dat);
+    widgetData *RegisterWidget(widgetData *dat);
     SceInt32 UnregisterWidget(const char *id);
 
     SceInt32 SetWidgetColor(const char *refID, float r, float g, float b, float a);

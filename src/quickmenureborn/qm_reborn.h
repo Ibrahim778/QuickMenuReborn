@@ -46,7 +46,7 @@ extern "C" {
 vector4 QuickMenuRebornMakeWidgetVector4(float x, float y, float z, float w);
 widgetColor QuickMenuRebornMakeWidgetColor(float r, float g, float b, float a);
 
-int QuickMenuRebornRegisterWidget(const char *id, const char *parentId, QMRWidgetType type);
+widgetData *QuickMenuRebornRegisterWidget(const char *id, const char *parentId, QMRWidgetType type);
 int QuickMenuRebornRegisterWidgetFromData(widgetData *widgetInfo);
 int QuickMenuRebornUnregisterWidget(const char *id);
 int QuickMenuRebornRegisterEventHanlder(const char *widgetID, SceInt32 EventID, ECallback Fucntion, void *userDat);

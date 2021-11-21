@@ -69,6 +69,7 @@ int initWidgets()
 
 int summon(widgetData *data)
 {
+    print("Making: %s\n", data->refId);
     Widget *w;
     if(data->isAdvanced)
     {
@@ -85,9 +86,10 @@ int summon(widgetData *data)
     else print("Made widget %s (0x%X) successfully!\n", data->refId, Utils::GetHashById(data->refId));
 
     data->widget = w;
-    print("Assigned pointer\n");
+
     w->hash = Utils::GetHashById(data->refId); //VERY IMPORTANT
-    print("Assigned w->hash\n");
+    data->hash = w->hash;
+
     Utils::SetWidgetPosition(w, &data->pos); print("Assigned position\n");
     Utils::SetWidgetColor(w, &data->col); print("Assigned Color\n");
     Utils::SetWidgetSize(w, &data->size); print("Assigned Size\n");
@@ -95,13 +97,13 @@ int summon(widgetData *data)
 
     //Create an int array and a variable to keep track of size. Loop through callbacks in struct. If event id is not present in int array add it and assign callback with id.
     {
-        int idNum = 0;
-        int *ids = NULL;
+        int idNum = 0; // Array Num
+        int *ids = NULL; //Array pointer
         for (int  i = 0; i < data->CallbackNum; i++)
         {
             bool isRegistered = false;
             for(int x = 0; x < idNum && !isRegistered; x++)
-                isRegistered = ids[x] == data->Callbacks[i].id;
+                isRegistered = ids[x] == data->Callbacks[i].id; //Is callback already in our idList?
 
             if(!isRegistered)
             {
@@ -123,7 +125,8 @@ int summon(widgetData *data)
         data->OnRecall(data->refId);
     
     if(data->OnLoad != NULL)
-        data->OnLoad(data->refId);
+        data->OnLoad(data->refId); 
+    
     return;
 }
 
@@ -142,9 +145,9 @@ SceInt32 QMR::UnregisterWidget(const char *id)
     currentWidgets.RemoveNode(id);
 }
 
-SceInt32 QMR::RegisterWidget(widgetData *dat)
+widgetData *QMR::RegisterWidget(widgetData *dat)
 {
-    currentWidgets.AddNode(dat);
+    return currentWidgets.AddNode(dat);
 }
 
 SceInt32 QMR::RegisterEventHandler(SceInt32 id, widgetData *dat, ECallback Function, void *userDat)
