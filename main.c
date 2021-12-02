@@ -83,7 +83,7 @@ int module_start()
     QuickMenuRebornSetWidgetSize(TEXT_ID, SCE_PLANE_WIDTH, 50, 0, 0);
     QuickMenuRebornSetWidgetColor(TEXT_ID, 1,1,1,1);
     QuickMenuRebornSetWidgetPosition(TEXT_ID, 0, 0, 0, 0);
-    QuickMenuRebornSetWidgetLabel(TEXT_ID, "Clicker");
+    QuickMenuRebornSetWidgetLabel(TEXT_ID, "Tapper");
 
     QuickMenuRebornRegisterWidget(PLANE_ID, NULL, plane);
     QuickMenuRebornSetWidgetSize(PLANE_ID, SCE_PLANE_WIDTH, 100, 0, 0);
