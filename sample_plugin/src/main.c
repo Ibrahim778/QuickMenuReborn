@@ -65,7 +65,7 @@ BUTTON_HANDLER(OnToggleCheckBox)
 {
     resetOnExit = QuickMenuRebornGetCheckboxValue(CHECKBOX_REF_ID);
 }
-
+void _start() __attribute__((weak, alias("module_start")));
 int module_start()
 {
     QuickMenuRebornSeparator(SEPARATOR_ID, SCE_SEPARATOR_HEIGHT);
