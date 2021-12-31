@@ -10,7 +10,7 @@
 Widget *(*getImposeRoot)() = SCE_NULL;
 Plugin *imposePlugin = SCE_NULL;
 Plugin *QuickMenuRebornPlugin = SCE_NULL;
-Widget *powerRoot = SCE_NULL;
+ScePVoid powerRoot = SCE_NULL;
 Box *scrollBox;
 
 LinkedList currentWidgets;
@@ -38,9 +38,9 @@ int initWidgets()
     {
         Framework::PluginInitParam piParam;
 
-        piParam.pluginName.Set("quick_menu_reborn_plugin");
-        piParam.resourcePath.Set("ur0:QuickMenuReborn/qmr_plugin.rco");
-        piParam.scopeName.Set("__main__");
+        piParam.pluginName = "quick_menu_reborn_plugin";
+        piParam.resourcePath = "ur0:QuickMenuReborn/qmr_plugin.rco";
+        piParam.scopeName = "__main__";
 
         piParam.pluginStartCB = onPluginReady;
 
@@ -60,7 +60,7 @@ int initWidgets()
     if(powerRoot < 0 || powerRoot == NULL) return -1;
 
     //Power manage root -> impose root (some virtual function)
-    getImposeRoot = (widget::Widget *(*)()) *(int *)((int)powerRoot + 0x54);
+    getImposeRoot = (Widget *(*)()) *(int *)((int)powerRoot + 0x54);
     
     scrollBox = (Box *)Utils::FindWidget(SCROLL_VIEW_BOX_ID);
     if(scrollBox == SCE_NULL) return -1;
@@ -183,10 +183,10 @@ Widget *QMR::MakeAdvancedWidgetWithID(const char *refId, const char *styleInfo, 
     //Search Request
     paf::Resource::Element searchRequest;
 
-    searchRequest.id.Set(refId);
+    searchRequest.id = (refId);
     winfo.hash = winfo.GetHashById(&searchRequest);
     
-    searchRequest.id.Set(styleInfo);
+    searchRequest.id = (styleInfo);
     sinfo.hash = sinfo.GetHashById(&searchRequest);    
 
     Widget *newWidget = imposePlugin->CreateWidgetWithStyle(parent, type, &winfo, &sinfo);
@@ -203,7 +203,7 @@ Widget *QMR::MakeAdvancedWidgetWithHash(const char *refId, int styleHash, const 
     //Search Request
     paf::Resource::Element searchRequest;
 
-    searchRequest.id.Set(refId);
+    searchRequest.id = (refId);
     winfo.hash = winfo.GetHashById(&searchRequest);
     
     sinfo.hash = styleHash;    
@@ -216,10 +216,10 @@ Widget *QMR::MakeWidgetFromTemplate(const char *id, Widget *targetRoot)
 {
     Plugin::TemplateInitParam tinit;
     Resource::Element e;
-    e.id.Set(id);
+    e.id = (id);
     e.hash = e.GetHashById(&e);
 
-    QuickMenuRebornPlugin->AddWidgetFromTemplate(targetRoot, &e, &tinit);
+    QuickMenuRebornPlugin->TemplateOpen(targetRoot, &e, &tinit);
 
     return targetRoot->GetChildByNum(targetRoot->childNum - 1);
 }

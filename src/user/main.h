@@ -11,7 +11,7 @@
 #include <display.h>
 
 using namespace paf;
-using namespace widget;
+using namespace ui;
 
 #define PLUGINS_DIR2 "ur0:QuickMenuReborn/"
 #define PLUGINS_DIR "ux0:QuickMenuReborn/"

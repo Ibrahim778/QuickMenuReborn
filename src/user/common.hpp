@@ -4,11 +4,11 @@
 #include "linkedList.hpp"
 #include <paf.h>
 using namespace paf;
-using namespace widget;
+using namespace ui;
 
-extern widget::Widget *(*getImposeRoot)();
+extern Widget *(*getImposeRoot)();
 extern Plugin *imposePlugin;
-extern widget::Widget *powerRoot;
+extern ScePVoid powerRoot;
 extern Box *scrollBox;
 extern Plugin *QuickMenuRebornPlugin;
 extern LinkedList currentWidgets;

@@ -46,7 +46,7 @@ SceFVector4 Utils::MakeSceVector4(float x, float y, float z, float w)
 SceVoid Utils::SetWidgetColor(Widget *w, widgetColor *col)
 {
     Widget::Color scol = Utils::MakeSceColor(col);
-    w->SetFilterColor(&scol);
+    w->SetColor(&scol);
 }
 
 SceVoid Utils::SetWidgetPosition(Widget *w, vector4 *pos)
@@ -68,7 +68,7 @@ SceVoid Utils::SetWidgetColor(Widget *w, float r, float g, float b, float a)
     col.g = g;
     col.b = b;
     col.a = a;
-    w->SetFilterColor(&col);
+    w->SetColor(&col);
 }
 
 SceVoid Utils::SetWidgetPosition(Widget *wi, float x, float y, float z, float w)
@@ -104,7 +104,7 @@ SceUInt32 Utils::GetHashById(const char *id)
     Resource::Element sinfo;
     Resource::Element searchRequest;
 
-    searchRequest.id.Set(id);
+    searchRequest.id = (id);
 
     sinfo.hash = searchRequest.GetHashById(&searchRequest);
     return sinfo.hash;
@@ -117,6 +117,9 @@ Widget *Utils::FindWidget(SceUInt32 hash)
 
 SceInt32 Utils::SetWidgetLabel(const char *label, Widget *w)
 {
+
+    if(label == NULL || label[0] == '\0' || sce_paf_strlen(label) == 0) return;
+
     WString wstr;
     WString::CharToNewWString(label, &wstr);
 

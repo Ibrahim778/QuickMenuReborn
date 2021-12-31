@@ -5,7 +5,7 @@
 #include "../quickmenureborn/c_types.h"
 
 using namespace paf;
-using namespace widget;
+using namespace ui;
 
 int initWidgets();
 int displayWidgets();
