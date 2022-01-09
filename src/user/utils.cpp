@@ -163,7 +163,7 @@ SceInt32 Utils::CreateTextureFromFile(graphics::Texture *tex, const char *file)
     if(err < 0)
         return err;
 
-    graphics::Texture::CreateFromFile(tex, imposePlugin->memoryPool, &openResult);
+    graphics::Texture::CreateFromFile(tex, QuickMenuRebornPlugin->memoryPool, &openResult);
 
     openResult.cleanup->cb(openResult.object);
     delete openResult.cleanup;

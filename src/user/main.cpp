@@ -10,12 +10,10 @@ bool mainEnd = false;
 bool displayed = false;
 
 #ifdef _DEBUG
-SceVoid leakTestTask(void)
+SceVoid leakTestTask(ScePVoid argp)
 {
-    Allocator *glAlloc = Allocator::GetGlobalAllocator();
-    SceInt32 sz = glAlloc->GetFreeSize();
-    
-    SCE_DBG_LOG_INFO("Free heap memory: %d\n", sz);
+    if(imposePlugin == NULL) return;
+    print("Free heap memory: %d\n", imposePlugin->memoryPool->GetFreeSize());
 }
 #endif
 
@@ -34,9 +32,6 @@ SceInt32 VblankCallback(SceUID notifyId, SceInt32 notifyCount, SceInt32 notifyAr
                 //Delay to make sure it displays it at the end
                 sceKernelDelayThread(1000);
 
-#ifdef _DEBUG
-                leakTestTask();
-#endif
                 displayed = true;
                 displayWidgets();
             
@@ -52,6 +47,10 @@ int impose_thread(SceSize, void *)
 {
     //Delay to let shell load properly
     sceKernelDelayThread(4 * 1000 * 1000);
+    
+    #ifdef _DEBUG
+    common::Utils::AddMainThreadTask(leakTestTask, NULL);
+    #endif
 
     SceUID CallbackUID = sceKernelCreateCallback("QMR_VblankCB", 0, VblankCallback, NULL);
     if (CallbackUID < 0)
