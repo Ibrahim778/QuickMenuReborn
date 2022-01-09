@@ -46,7 +46,7 @@ BUTTON_HANDLER(onPress)
     if(count >= 1000)
         x += 50;
 
-    //Set new vaulues
+    //Set new values
     QuickMenuRebornSetWidgetSize(BUTTON_REF_ID, x, 75, 0, 0);
     QuickMenuRebornSetWidgetLabel(BUTTON_REF_ID, newText);
     
