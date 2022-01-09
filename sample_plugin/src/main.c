@@ -130,6 +130,7 @@ int module_stop()
     QuickMenuRebornUnregisterWidget(TEXT_ID);
     QuickMenuRebornUnregisterWidget(CHECKBOX_TEXT_ID);
     QuickMenuRebornUnregisterWidget(PLANE_ID);
+    QuickMenuRebornUnregisterTexture(TEST_TEXTURE_PATH);
     QuickMenuRebornRemoveSeparator(SEPARATOR_ID); //Don't forget this!
     return SCE_KERNEL_STOP_SUCCESS;
 }

@@ -36,10 +36,11 @@ Once again these need refrence id's, You should only add separators at the start
 1. If your plugin is the first one, there is a separator between your widget and the accessability widgets
 2. If your widgets are in the middle, they separate with the previous ones and blend in with the next ones
 
-## Removing Widgets
+## Removing Widgets and Textures
 
 Use the QuickMenuRebornRemoveWidget function and pass in the widget refrence id.  
 To remove separators use the QuickMenuRebornRemoveSeparator function and pass in the refrence id.
+To remove textures use the QuickMenuRebornUnregisterTexture function and pass in the refrence id.
 
 For Example
 ```c
