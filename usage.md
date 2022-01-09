@@ -12,6 +12,23 @@ To actually add the widget you can use the QuickMenuRebornRegisterWidget, after 
 
 Checkboxes, slidebars and buttons can have callbacks assigned to them, use the QuickMenuRebornRegisterEventHanlder. In order to save checkbox / slidebar values / positions and reassign them when the quickmenu opens you must assign recall and save callbacks. You can either use your own custom ones and use QuickMenuRebornAssignRecallHandler and QuickMenuRebornAssignSaveHandler or you can use premade ones with QuickMenuRebornAssignDefaultSliderSave and QuickMenuRebornAssignDefaultSliderRecall and the same for other widgets. Other than that you can assign OnLoad callbacks with QuickMenuRebornAssignOnLoadHandler.
 
+### Textures
+
+You will first need to register a texture before you can use it, Use QuickMenuRebornRegisterTexture("texture_refrence_id", "path/to/file")
+You can then use the refrence id you passed to assign the texture to the widget, use QuickMenuRebornSetWidgetTexture("widget_refrence_id", "texture_refrence_id")
+For Example:
+```C
+    SceIoStat s;
+    if(sceIoGetstat(TEST_TEXTURE_PATH, &s) >= 0) //File Exists
+    {
+        QuickMenuRebornRegisterWidget(TEX_PLANE_ID, NULL, plane);
+        QuickMenuRebornRegisterTexture(TEXTURE_REF_ID, TEST_TEXTURE_PATH);
+        QuickMenuRebornSetWidgetSize(TEX_PLANE_ID, 128, 128, 0, 0);
+        QuickMenuRebornSetWidgetColor(TEX_PLANE_ID, 1,1,1,1);
+        QuickMenuRebornSetWidgetTexture(TEX_PLANE_ID, TEXTURE_REF_ID);
+    }
+```
+
 ## Separators
 You may have noticed that the default widgets in the quick menu all have a line to separate themselves. You can use Separators in quickmenureborn to do this.
 
@@ -34,8 +51,6 @@ For Example
     QuickMenuRebornRemoveSeparator(SEPARATOR_ID); //Don't forget this!
 ```
   
-I also recommend not removing widgets like checkboxes and buttons at times when the quickmenu is open, so do not remove widgets in the OnLoad and onPress/OnTrigger callbacks.  
-This is to ensure the user doesn't trigger dead callbacks, which would crash shell.
 
 # Kernel Plugins
 
