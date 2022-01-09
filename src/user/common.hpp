@@ -11,7 +11,7 @@ extern Plugin *imposePlugin;
 extern ScePVoid powerRoot;
 extern Box *scrollBox;
 extern Plugin *QuickMenuRebornPlugin;
-extern LinkedList currentWidgets;
+extern WidgetList currentWidgets;
 extern bool displayed;
 
 #define SCROLL_VIEW_BOX_ID 0x0EE0C8AF

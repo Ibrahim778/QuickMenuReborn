@@ -75,8 +75,10 @@ typedef struct
 typedef struct
 {
     char label[0x400];
-    char refId[256];
-    char parentRefId[256];
+    char refId[100];
+    char parentRefId[100];
+    char textureId[100];
+    char textureBaseId[100];
     //Set weather the widget has a parent or not
     int hasParent;
 

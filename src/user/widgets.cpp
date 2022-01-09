@@ -6,6 +6,7 @@
 #include "config_mgr.h"
 #include <kernel/libkernel.h>
 #include "common.hpp"
+#include <taihen.h>
 
 Widget *(*getImposeRoot)() = SCE_NULL;
 Plugin *imposePlugin = SCE_NULL;
@@ -13,9 +14,13 @@ Plugin *QuickMenuRebornPlugin = SCE_NULL;
 ScePVoid powerRoot = SCE_NULL;
 Box *scrollBox;
 
-LinkedList currentWidgets;
+WidgetList currentWidgets;
+TexList currTextures;
 
-const char *widgetTemplateID[] = 
+tai_hook_ref_t getControlsHookRef;
+SceUID getControlsHookID;
+
+const char *widgetTemplateID[] = //THESE ARE IN ORDER TO MATCH WITH THE ENUM
 {
     BUTTON_TEMPLATE_ID,
     CHECKBOX_TEMPLATE_ID,
@@ -25,10 +30,38 @@ const char *widgetTemplateID[] =
     PROGRESSBAR_TOUCH_TEMPLATE_ID,
 };
 
+static bool addedTask = false;
+
+SceVoid CheckMenuCloseTask(ScePVoid dat)
+{
+    if(Utils::FindWidget(0xC0099932) == NULL) //Check if exit button has been deleted
+    {
+        OnQuickMenuClose(0, NULL, 0, NULL);
+        common::Utils::RemoveMainThreadTask(CheckMenuCloseTask, NULL);
+        addedTask = false;
+        return;
+    }
+
+}
+
+SceVoid OnQuickMenuClose(SceInt32 eventId, Widget *self, SceInt32, ScePVoid puserData)
+{
+    print("Quick Menu has closed!\n");
+
+    texNode *n = currTextures.head;
+    while(n != NULL)
+    {
+        Utils::DeleteTexture(n->texture, true);
+        n->texture = SCE_NULL;
+        n = n->next;
+    }
+}
+
 SceVoid onPluginReady(Plugin *plugin)
 {
     if(plugin == SCE_NULL) print("Error Loading Plugin!\n");
     else print("Loaded Plugin Successfully!\n");
+
     QuickMenuRebornPlugin = plugin;
 }
 
@@ -47,7 +80,7 @@ int initWidgets()
         paf::Framework::LoadPlugin(&piParam);
     }
 
-    //Credit to GrapheneCT
+    //Credit to GrapheneCt
     //Get power manage plugin object
     Plugin *powerManagePlugin = Plugin::Find("power_manage_plugin");
     if(powerManagePlugin < 0 || powerManagePlugin == NULL) return -1;
@@ -64,6 +97,14 @@ int initWidgets()
     
     scrollBox = (Box *)Utils::FindWidget(SCROLL_VIEW_BOX_ID);
     if(scrollBox == SCE_NULL) return -1;
+
+    //We need to add a task to catch the time one of the widgets are deleted, means the menu was closed.
+    if(!addedTask)
+    {
+        common::Utils::AddMainThreadTask(CheckMenuCloseTask, NULL);
+        addedTask = true;
+    }
+
     return 0;
 }
 
@@ -95,30 +136,20 @@ int summon(widgetData *data)
     Utils::SetWidgetSize(w, &data->size); print("Assigned Size\n");
     Utils::SetWidgetLabel(data->label, w); print("Assigned Label\n");
 
-    //Create an int array and a variable to keep track of size. Loop through callbacks in struct. If event id is not present in int array add it and assign callback with id.
+    //Assigning handlers here
+
+    QMR::AssignHandlersToWidget(w, data); print("Assigned Handlers\n");
+
+    //Assigning textures here
+    if(sce_paf_strlen(data->textureId) > 0)
     {
-        int idNum = 0; // Array Num
-        int *ids = NULL; //Array pointer
-        for (int  i = 0; i < data->CallbackNum; i++)
-        {
-            bool isRegistered = false;
-            for(int x = 0; x < idNum && !isRegistered; x++)
-                isRegistered = ids[x] == data->Callbacks[i].id; //Is callback already in our idList?
-
-            if(!isRegistered)
-            {
-
-                QMREventHandler *eventHandler = new QMREventHandler();
-                eventHandler->pUserData = sce_paf_malloc(sizeof(widgetData *));
-                *(widgetData **)eventHandler->pUserData = data;
-                w->RegisterEventCallback(data->Callbacks[i].id, eventHandler, 0); 
-
-                ids = (int *)sce_paf_realloc(ids, sizeof(int) * (i + 1));
-                ids[i] = data->Callbacks->id;
-                idNum ++;
-            }
-        }
-        sce_paf_free(ids);
+        QMR::AssignTextureToWidget(w, data->textureId); 
+        print("Assigned Texture\n");
+    }
+    if(sce_paf_strlen(data->textureBaseId) > 0)
+    {
+        QMR::AssignTextureBaseToWidget(w, data->textureBaseId);
+        print("Assigned Texture Base\n");   
     }
 
     if(data->OnRecall != NULL)
@@ -140,6 +171,93 @@ int displayWidgets()
     }
 }
 
+SceVoid QMR::AssignHandlersToWidget(Widget *w, widgetData *data)
+{
+    //Create an int array and a variable to keep track of size. Loop through callbacks in struct. If event id is not present in int array add it and assign callback with id.
+    
+    int idNum = 0; // Array Num
+    int *ids = NULL; //Array pointer
+    for (int i = 0; i < data->CallbackNum; i++)
+    {
+        bool isRegistered = false;
+        for(int x = 0; x < idNum && !isRegistered; x++)
+            isRegistered = ids[x] == data->Callbacks[i].id; //Is callback already in our idList?
+
+        if(!isRegistered)
+        {
+
+            QMREventHandler *eventHandler = new QMREventHandler();
+            eventHandler->pUserData = data;
+            w->RegisterEventCallback(data->Callbacks[i].id, eventHandler, 0); 
+
+            ids = (int *)sce_paf_realloc(ids, sizeof(int) * (i + 1));
+            ids[i] = data->Callbacks->id;
+            idNum ++;
+        }
+    }
+    sce_paf_free(ids);
+}
+
+SceVoid QMR::AssignTextureToWidget(Widget *w, const char *refID)
+{
+    texNode *n = currTextures.GetNode(refID);
+    if(n != NULL)
+    {
+        if(n->texture == NULL)
+        {
+            n->texture = new graphics::Texture();
+            if(n->texture != NULL)
+            {
+                int ret = Utils::CreateTextureFromFile(n->texture, n->texturePath.data);
+                if(ret < 0)
+                {
+                    print("[Error] Cannot Create Texture! Utils::CreateTextureFromFile() -> 0x%X\n", ret);
+                    delete n->texture;
+                    return;
+                }
+            }
+            else
+            {
+                print("[Error] Cannot allocate memory for graphics::Texture()!\n");
+                return;
+            }
+        }
+
+        w->SetTexture(n->texture, 0, 0);
+    }
+    else print("[Error] Texture: %s is not registered!\n", refID);
+}
+
+SceVoid QMR::AssignTextureBaseToWidget(Widget *w, const char *refID)
+{
+    texNode *n = currTextures.GetNode(refID);
+    if(n != NULL)
+    {
+        if(n->texture == NULL)
+        {
+            n->texture = new graphics::Texture();
+            if(n->texture != NULL)
+            {
+                int ret = Utils::CreateTextureFromFile(n->texture, n->texturePath.data);
+                if(ret < 0)
+                {
+                    print("[Error] Cannot Create Texture! Utils::CreateTextureFromFile() -> 0x%X\n", ret);
+                    delete n->texture;
+                    return;
+                }
+            }
+            else
+            {
+                print("[Error] Cannot allocate memory for graphics::Texture()!\n");
+                return;
+            }
+        }
+
+        w->SetTextureBase(n->texture);
+    }
+    else print("[Error] Texture: %s is not registered!\n", refID);
+}
+
 SceInt32 QMR::UnregisterWidget(const char *id)
 {
     currentWidgets.RemoveNode(id);
@@ -148,6 +266,24 @@ SceInt32 QMR::UnregisterWidget(const char *id)
 widgetData *QMR::RegisterWidget(widgetData *dat)
 {
     return currentWidgets.AddNode(dat);
+}
+
+SceInt32 QMR::RegisterTexture(const char *id, const char *path)
+{
+    currTextures.AddNode(id, path);
+    return 0;
+}
+
+SceInt32 QMR::UnregisterTexture(const char *id)
+{
+    texNode *n = currTextures.GetNode(id);
+    if(n == NULL) return 0;
+
+    if(widgetsDisplayed() && n->texture != NULL)
+        return QMR_ERROR_RESOURCE_BUSY;
+    
+    QMR::UnregisterTexture(id);
+    return 0;
 }
 
 SceInt32 QMR::RegisterEventHandler(SceInt32 id, widgetData *dat, ECallback Function, void *userDat)

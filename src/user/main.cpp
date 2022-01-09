@@ -142,6 +142,7 @@ extern "C"
         mainThreadID = sceKernelCreateThread("quickmenureborn", impose_thread, 248, SCE_KERNEL_128KiB, 0, 0, NULL);
         if(sceKernelStartThread(mainThreadID, 0, NULL) < 0)
         {
+            sceKernelDeleteThread(mainThreadID);
             print("Error loading main thread: 0x%X\n", mainThreadID);
             return SCE_KERNEL_START_NO_RESIDENT;
         }
@@ -149,6 +150,7 @@ extern "C"
         SceUID loadThreadId = sceKernelCreateThread("quickmenureborn_plugins", load_thread, 250, SCE_KERNEL_4KiB, 0, 0, NULL);
         if(sceKernelStartThread(loadThreadId, 0, NULL) < 0) 
         {
+            sceKernelDeleteThread(loadThreadId);
             print("Error loading load thread: 0x%X\n", loadThreadId);
             return SCE_KERNEL_START_NO_RESIDENT;
         }

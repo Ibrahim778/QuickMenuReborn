@@ -9,7 +9,7 @@
 #include <ctrl.h>
 #include <quickmenureborn/qm_reborn.h>
 
-//define a refrence id for each our widgets, make sure they're all unique, like the ones below. Doesn't need to be anything specific, just something unique
+//define a refrence id for each our widgets and textures, make sure they're all unique, like the ones below. Doesn't need to be anything specific, just something unique
 #define BUTTON_REF_ID "qm_reborn_sample_button"
 #define CHECKBOX_REF_ID "qm_reborn_sample_checkbox"
 #define PLANE_ID "qm_reborn_sample_plane"
@@ -17,6 +17,10 @@
 #define CHECKBOX_TEXT_ID "qm_reborn_sample_checkbox_text"
 #define SLIDEBAR_ID "qm_reborn_sample_slidebar"
 #define SEPARATOR_ID "qm_reborn_sample_separator"
+#define TEX_PLANE_ID "qm_reborn_sample_plane_for_tex"
+#define TEXTURE_REF_ID "qm_reborn_sample_texture"
+
+#define TEST_TEXTURE_PATH "ux0:app/VITASHELL/sce_sys/icon0.png"
 
 //Set our current count
 int count = 0;
@@ -104,6 +108,16 @@ int module_start()
     QuickMenuRebornRegisterEventHanlder(BUTTON_REF_ID, QMR_BUTTON_RELEASE_ID, onPress, NULL);
     QuickMenuRebornSetWidgetLabel(BUTTON_REF_ID, "Press Me!");
     QuickMenuRebornAssignOnLoadHandler(OnButtonLoad, BUTTON_REF_ID);
+
+    SceIoStat s;
+    if(sceIoGetstat(TEST_TEXTURE_PATH, &s) >= 0) //File Exists
+    {
+        QuickMenuRebornRegisterWidget(TEX_PLANE_ID, NULL, plane);
+        QuickMenuRebornRegisterTexture(TEXTURE_REF_ID, TEST_TEXTURE_PATH);
+        QuickMenuRebornSetWidgetSize(TEX_PLANE_ID, 128, 128, 0, 0);
+        QuickMenuRebornSetWidgetColor(TEX_PLANE_ID, 1,1,1,1);
+        QuickMenuRebornSetWidgetTexture(TEX_PLANE_ID, TEXTURE_REF_ID);
+    }
     
     return SCE_KERNEL_START_SUCCESS;
 }

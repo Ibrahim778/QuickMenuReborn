@@ -29,3 +29,7 @@ modules:
           QuickMenuRebornSaveCheckBoxState: 0x7C987BD7
           QuickMenuRebornSaveSlidebarValue: 0x3FCE9D1B
           QuickMenuRebornSetSlidebarValue: 0x1CBDF817
+          QuickMenuRebornRegisterTexture: 0x474BBCDF
+          QuickMenuRebornUnregisterTexture: 0x7F595FCA
+          QuickMenuRebornSetWidgetTexture: 0x8475801A
+          QuickMenuRebornSetWidgetTextureBase: 0x80E62DC3

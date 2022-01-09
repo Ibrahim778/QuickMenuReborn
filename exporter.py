@@ -30,7 +30,11 @@ functionNames=[
         "QuickMenuRebornSetCheckBoxState",
         "QuickMenuRebornSaveCheckBoxState",
         "QuickMenuRebornSaveSlidebarValue",
-        "QuickMenuRebornSetSlidebarValue"
+        "QuickMenuRebornSetSlidebarValue",
+        "QuickMenuRebornRegisterTexture",
+        "QuickMenuRebornUnregisterTexture",
+        "QuickMenuRebornSetWidgetTexture",
+        "QuickMenuRebornSetWidgetTextureBase"
 ]
 
 def getHash(string):

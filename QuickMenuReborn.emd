@@ -32,3 +32,7 @@ Library: QuickMenuReborn function: QuickMenuRebornSetCheckBoxState nidvalue: 0xB
 Library: QuickMenuReborn function: QuickMenuRebornSaveCheckBoxState nidvalue: 0x7C987BD7
 Library: QuickMenuReborn function: QuickMenuRebornSaveSlidebarValue nidvalue: 0x3FCE9D1B
 Library: QuickMenuReborn function: QuickMenuRebornSetSlidebarValue nidvalue: 0x1CBDF817
+Library: QuickMenuReborn function: QuickMenuRebornRegisterTexture nidvalue: 0x474BBCDF
+Library: QuickMenuReborn function: QuickMenuRebornUnregisterTexture nidvalue: 0x7F595FCA
+Library: QuickMenuReborn function: QuickMenuRebornSetWidgetTexture nidvalue: 0x8475801A
+Library: QuickMenuReborn function: QuickMenuRebornSetWidgetTextureBase nidvalue: 0x80E62DC3

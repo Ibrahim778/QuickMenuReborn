@@ -10,6 +10,8 @@ using namespace ui;
 int initWidgets();
 int displayWidgets();
 
+SceVoid OnQuickMenuClose(SceInt32 eventId, Widget *self, SceInt32, ScePVoid puserData);
+
 #define TYPE_NEEDS_HANDLER(type) (type == button || type == slidebar || type == progressbar_touch || type == check_box)
 
 namespace QMR
@@ -26,6 +28,14 @@ namespace QMR
     SceInt32 SetWidgetSize(const char *refID, float x, float y, float z, float w);
     
     SceInt32 RegisterEventHandler(SceInt32 id, widgetData *dat, ECallback Fucntion, void *userDat = SCE_NULL);
+
+    SceInt32 RegisterTexture(const char *id, const char *path);
+    SceInt32 UnregisterTexture(const char *id);
+
+    SceVoid AssignTextureToWidget(Widget *widget, const char *refID);
+    SceVoid AssignTextureBaseToWidget(Widget *widget, const char *refID);
+
+    SceVoid AssignHandlersToWidget(Widget *widget, widgetData *data);
 
 };
 

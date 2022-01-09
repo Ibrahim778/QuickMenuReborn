@@ -30,6 +30,8 @@ namespace Utils
     SceVoid SetWidgetColor(Widget *w, float r, float g, float b, float a);
     SceVoid SetWidgetPosition(Widget *wi, float x, float y, float z, float w);
     SceVoid SetWidgetSize(Widget *wi, float x, float y, float z, float w);
+    SceBool CreateTextureFromFile(graphics::Texture *tex, const char *file);
+    SceVoid DeleteTexture(graphics::Texture *tex, bool deletePointer);
 };
 
 #endif

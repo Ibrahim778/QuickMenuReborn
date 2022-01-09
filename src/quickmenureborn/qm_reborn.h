@@ -27,6 +27,7 @@
 
 //Size of all the other planes in the quick menu
 #define SCE_PLANE_WIDTH 835.0f
+//Height of SCE separator planes
 #define SCE_SEPARATOR_HEIGHT 20.0f
 
 #define CONFIG_MGR_ERROR_NOT_EXIST -1
@@ -38,6 +39,7 @@
 
 #define QMR_SLIDEBAR_RELEASE_ID 0x10000003
 
+#define QMR_ERROR_RESOURCE_BUSY -1
 
 #ifdef __cplusplus
 extern "C" {
@@ -77,6 +79,12 @@ int QuickMenuRebornSaveSlidebarValue(const char *refID, float val);
 
 int QuickMenuRebornSetCheckBoxState(const char *refID, int state);
 int QuickMenuRebornSaveCheckBoxState(const char *refID, int state);
+
+int QuickMenuRebornRegisterTexture(const char *refID, const char *path);
+int QuickMenuRebornUnregisterTexture(const char *refID);
+
+int QuickMenuRebornSetWidgetTexture(const char *refID, const char *textureID);
+int QuickMenuRebornSetWidgetTextureBase(const char *refID, const char *textureID);
 
 #ifdef __cplusplus
 }

@@ -116,7 +116,7 @@ int QuickMenuRebornSetWidgetColor(const char *refID, float r, float g, float b, 
 int QuickMenuRebornSetWidgetLabel(const char *refID, const char *label)
 {
     widgetData *data = currentWidgets.GetNode(refID);
-    if(data == NULL) return;
+    if(data == NULL) return -1;
     sce_paf_memset(data->label, 0, sizeof(data->label));
     sce_paf_strncpy(data->label, label, sizeof(data->label));
 
@@ -128,6 +128,31 @@ int QuickMenuRebornSetWidgetLabel(const char *refID, const char *label)
         
         ((Widget *)data->widget)->SetLabel(&wstr);
     }
+}
+
+int QuickMenuRebornSetWidgetTexture(const char *refID, const char *textureID)
+{
+    widgetData *data = currentWidgets.GetNode(refID);
+    if(data == NULL) return -1;
+
+    sce_paf_memset(data->textureId, 0, sizeof(data->textureId));
+    sce_paf_strncpy(data->textureId, textureID, sizeof(data->textureId));
+
+    if(widgetsDisplayed())
+        QMR::AssignTextureToWidget((Widget *)data->widget, textureID);
+}
+
+int QuickMenuRebornSetWidgetTextureBase(const char *refID, const char *textureID)
+{
+    widgetData *data = currentWidgets.GetNode(refID);
+    if(data == NULL) return -1;
+
+    sce_paf_memset(data->textureBaseId, 0, sizeof(data->textureBaseId));
+    sce_paf_strncpy(data->textureBaseId, textureID, sizeof(data->textureBaseId));
+
+    if(widgetsDisplayed())
+        QMR::AssignTextureBaseToWidget((Widget *)data->widget, textureID);
+
 }
 
 float QuickMenuRebornGetSlidebarValue(const char *refID)
@@ -266,4 +291,14 @@ int QuickMenuRebornSetCheckBoxState(const char *refID, int state)
 int QuickMenuRebornSaveCheckBoxState(const char *refID, int state)
 {
     saveCheckBoxState(refID, state);
+}
+
+int QuickMenuRebornRegisterTexture(const char *refID, const char *path)
+{
+    return QMR::RegisterTexture(refID, path);
+}
+
+int QuickMenuRebornUnregisterTexture(const char *refID)
+{
+    return QMR::UnregisterTexture(refID);
 }

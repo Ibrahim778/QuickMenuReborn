@@ -2,7 +2,7 @@
 #include "config_mgr.h"
 #include "common.hpp"
 
-extern LinkedList currentWidgets;
+extern WidgetList currentWidgets;
 
 QMREventHandler::QMREventHandler()
 {
@@ -11,7 +11,7 @@ QMREventHandler::QMREventHandler()
 
 void QMREventHandler::onGet(SceInt32 eventId, Widget *self, SceInt32, ScePVoid puserData)
 {
-    widgetData *widgetInfo = *(widgetData **)puserData;
+    widgetData *widgetInfo = (widgetData *)puserData;
 
     if(puserData == NULL || self == NULL || widgetInfo == NULL || widgetInfo->CallbackNum == 0 || widgetInfo->Callbacks == NULL)
         return;

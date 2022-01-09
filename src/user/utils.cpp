@@ -137,6 +137,40 @@ SceFVector4 Utils::MakeSceVector4(vector4 *vect)
     return toret;
 }
 
+SceVoid Utils::DeleteTexture(graphics::Texture *tex, bool deletePointer)
+{
+    if(tex != NULL)
+    {
+        if(tex->texSurface != NULL)
+        {
+            graphics::Surface *s = tex->texSurface;
+            tex->texSurface = SCE_NULL;
+            delete s;
+        }
+        if(deletePointer)
+            delete tex;
+    }
+}
+
+SceInt32 Utils::CreateTextureFromFile(graphics::Texture *tex, const char *file)
+{
+    if(tex == NULL) return SCE_FALSE;
+
+    ObjectWithCleanup openResult;
+    SceInt32 err;
+    LocalFile::Open(&openResult, file, SCE_O_RDONLY, 0666, &err);
+
+    if(err < 0)
+        return err;
+
+    graphics::Texture::CreateFromFile(tex, imposePlugin->memoryPool, &openResult);
+
+    openResult.cleanup->cb(openResult.object);
+    delete openResult.cleanup;
+
+    return tex->texSurface != NULL ? 0 : -1;
+}
+
 SceFVector4 Utils::MakeSceVector4(vector4 vect)
 {
     SceFVector4 toret;
