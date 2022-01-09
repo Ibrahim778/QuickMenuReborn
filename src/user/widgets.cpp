@@ -213,6 +213,7 @@ SceVoid QMR::AssignTextureToWidget(Widget *w, const char *refID)
                 {
                     print("[Error] Cannot Create Texture! Utils::CreateTextureFromFile() -> 0x%X\n", ret);
                     delete n->texture;
+                    n->texture = SCE_NULL;
                     return;
                 }
             }
