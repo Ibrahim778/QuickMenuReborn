@@ -11,7 +11,7 @@
 
 #include "c_types.h"
 
-#define BUTTON_HANDLER(name) void name(SceInt32 hash, SceInt32 eventId, void *userDat)
+#define BUTTON_HANDLER(name) void name(const char *id, SceInt32 hash, SceInt32 eventId, void *userDat)
 #define ONLOAD_HANDLER(name) void name(const char *id)
 
 #define COLOR_WHITE QuickMenuRebornMakeWidgetColor(1.0f, 1.0f, 1.0f, 1.0f)

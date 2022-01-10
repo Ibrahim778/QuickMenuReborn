@@ -37,6 +37,7 @@
 	</templatetable>
 
 	<styletable>
+        <!-- still can't believe it works lol -->
         <style_progressbar_touch base_obj="slidebar_style_progressbar_base" slider_obj="slidebar_style_progressbar_slider" slider_glow_obj="slidebar_style_progressbar_slider_glow" glow_obj="slidebar_style_progressbar_glow" bar_shadow_obj="slidebar_style_progressbar_bar_shadow" shadow_margin="0, 0" bar_fore_obj="slidebar_style_progressbar_bar_front" shadow_offset="0, -5" bar_back_obj="slidebar_style_progressbar_bar_back" signal_obj="slidebar_style_progressbar_signal" base_shadow_obj="slidebar_style_progressbar_shadow" id="slidebar_style">
             <planeobj scale_mode_y="1" texture0="_common_texture_progressbar_base" id="slidebar_style_progressbar_base" />
             <planeobj color="0.659, 1, 0, 1" scale_mode_y="1" texture0="_common_texture_transparent" id="slidebar_style_progressbar_bar_front" />

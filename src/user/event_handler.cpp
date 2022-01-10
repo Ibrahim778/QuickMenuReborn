@@ -19,7 +19,7 @@ void QMREventHandler::onGet(SceInt32 eventId, Widget *self, SceInt32, ScePVoid p
     for (int i = 0; i < widgetInfo->CallbackNum; i++)
     {
         if(widgetInfo->Callbacks[i].function != NULL && widgetInfo->Callbacks[i].id == eventId)
-            widgetInfo->Callbacks[i].function(self->hash, eventId, widgetInfo->Callbacks[i].userDat);
+            widgetInfo->Callbacks[i].function(widgetInfo->refId, self->hash, eventId, widgetInfo->Callbacks[i].userDat);
     }   
 
     if(widgetInfo->OnSave != NULL)

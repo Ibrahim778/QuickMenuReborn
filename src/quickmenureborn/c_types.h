@@ -13,7 +13,7 @@
 extern "C" {
 #endif
 
-typedef void (*ECallback)(SceInt32 hash, SceInt32 eventId, void *userDat);
+typedef void (*ECallback)(const char *refID, SceInt32 hash, SceInt32 eventId, void *userDat);
 typedef void (*VoidCallback)(const char *refID);
 
 typedef struct
