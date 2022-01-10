@@ -13,6 +13,7 @@ Plugin *imposePlugin = SCE_NULL;
 Plugin *QuickMenuRebornPlugin = SCE_NULL;
 ScePVoid powerRoot = SCE_NULL;
 Box *scrollBox;
+Widget *exitButton;
 
 WidgetList currentWidgets;
 TexList currTextures;
@@ -97,6 +98,9 @@ int initWidgets()
     
     scrollBox = (Box *)Utils::FindWidget(SCROLL_VIEW_BOX_ID);
     if(scrollBox == SCE_NULL) return -1;
+
+    exitButton = Utils::FindWidget(0xC0099932);
+    if(exitButton == SCE_NULL) return -1;
 
     //We need to add a task to catch the time one of the widgets are deleted, means the menu was closed.
     if(!addedTask)

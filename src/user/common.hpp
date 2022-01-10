@@ -10,6 +10,7 @@ extern Widget *(*getImposeRoot)();
 extern Plugin *imposePlugin;
 extern ScePVoid powerRoot;
 extern Box *scrollBox;
+extern Widget *exitButton;
 extern Plugin *QuickMenuRebornPlugin;
 extern WidgetList currentWidgets;
 extern bool displayed;

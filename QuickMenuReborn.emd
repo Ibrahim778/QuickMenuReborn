@@ -36,3 +36,4 @@ Library: QuickMenuReborn function: QuickMenuRebornRegisterTexture nidvalue: 0x47
 Library: QuickMenuReborn function: QuickMenuRebornUnregisterTexture nidvalue: 0x7F595FCA
 Library: QuickMenuReborn function: QuickMenuRebornSetWidgetTexture nidvalue: 0x8475801A
 Library: QuickMenuReborn function: QuickMenuRebornSetWidgetTextureBase nidvalue: 0x80E62DC3
+Library: QuickMenuReborn function: QuickMenuRebornCloseMenu nidvalue: 0xCD66AED8

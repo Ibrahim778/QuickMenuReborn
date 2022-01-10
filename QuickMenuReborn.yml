@@ -33,3 +33,4 @@ modules:
           QuickMenuRebornUnregisterTexture: 0x7F595FCA
           QuickMenuRebornSetWidgetTexture: 0x8475801A
           QuickMenuRebornSetWidgetTextureBase: 0x80E62DC3
+          QuickMenuRebornCloseMenu: 0xCD66AED8

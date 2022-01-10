@@ -86,6 +86,8 @@ int QuickMenuRebornUnregisterTexture(const char *refID);
 int QuickMenuRebornSetWidgetTexture(const char *refID, const char *textureID);
 int QuickMenuRebornSetWidgetTextureBase(const char *refID, const char *textureID);
 
+int QuickMenuRebornCloseMenu();
+
 #ifdef __cplusplus
 }
 #endif

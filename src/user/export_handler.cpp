@@ -302,3 +302,9 @@ int QuickMenuRebornUnregisterTexture(const char *refID)
 {
     return QMR::UnregisterTexture(refID);
 }
+
+int QuickMenuRebornCloseMenu()
+{
+    if(widgetsDisplayed())
+        exitButton->SendEvent(Widget::EventMain::EventMain_Decide, 0);
+}
