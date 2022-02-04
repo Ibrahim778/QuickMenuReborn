@@ -158,7 +158,7 @@ int QuickMenuRebornSetWidgetTextureBase(const char *refID, const char *textureID
 float QuickMenuRebornGetSlidebarValue(const char *refID)
 {
     widgetData *dat = currentWidgets.GetNode(refID);
-    if(dat == NULL) return -1;
+    if(dat == NULL) return getSlidebarValue(refID);
 
     return ((ProgressBarTouch *)dat->widget)->currentValue;
 }
@@ -166,7 +166,7 @@ float QuickMenuRebornGetSlidebarValue(const char *refID)
 int QuickMenuRebornGetCheckboxValue(const char *refID)
 {
     widgetData *dat = currentWidgets.GetNode(refID);
-    if(dat == NULL) return -1;
+    if(dat == NULL) return readCheckBoxState(refID);
 
     return ((CheckBox *)dat->widget)->checked;
 }

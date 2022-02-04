@@ -5,8 +5,6 @@
 #include "../quickmenureborn/qm_reborn.h"
 #include "common.hpp"
 
-SceUID mainThreadID = SCE_UID_INVALID_UID;
-bool mainEnd = false;
 bool displayed = false;
 
 #ifdef _DEBUG
@@ -17,7 +15,7 @@ SceVoid leakTestTask(ScePVoid argp)
 }
 #endif
 
-SceInt32 VblankCallback(SceUID notifyId, SceInt32 notifyCount, SceInt32 notifyArg, void* pCommon) 
+SceVoid ImposeCheck(ScePVoid args) 
 {
     SceAppMgrAppState state;
 
@@ -39,38 +37,19 @@ SceInt32 VblankCallback(SceUID notifyId, SceInt32 notifyCount, SceInt32 notifyAr
         }
     }
     else displayed = false;
-
-    return 0;
 }
 
 int impose_thread(SceSize, void *)
 {
     //Delay to let shell load properly
     sceKernelDelayThread(4 * 1000 * 1000);
+
+    common::Utils::AddMainThreadTask(ImposeCheck, NULL);
     
     #ifdef _DEBUG
-    common::Utils::AddMainThreadTask(leakTestTask, NULL);
+    //common::Utils::AddMainThreadTask(leakTestTask, NULL);
     #endif
 
-    SceUID CallbackUID = sceKernelCreateCallback("QMR_VblankCB", 0, VblankCallback, NULL);
-    if (CallbackUID < 0)
-        sceKernelExitThread(CallbackUID);
-
-    SceInt32 ret = sceDisplayRegisterVblankStartCallback(CallbackUID);
-    if (ret < 0)
-        sceKernelExitThread(ret);
-
-    while(!mainEnd) {
-        sceKernelDelayThreadCB(0xFFFFFFFF);
-    }
-
-    ret = sceDisplayUnregisterVblankStartCallback(CallbackUID);
-    if (ret < 0)
-        sceKernelExitThread(ret);
-    
-    ret = sceKernelDeleteCallback(CallbackUID);
-    if (ret < 0)
-        sceKernelExitThread(ret);
 
     return sceKernelExitDeleteThread(0);
 }
@@ -138,7 +117,7 @@ extern "C"
     {
         sceClibPrintf("QuickMenuReborn, by Ibrahim\n");
 
-        mainThreadID = sceKernelCreateThread("quickmenureborn", impose_thread, 248, SCE_KERNEL_128KiB, 0, 0, NULL);
+        SceUID mainThreadID = sceKernelCreateThread("quickmenureborn", impose_thread, 248, SCE_KERNEL_128KiB, 0, 0, NULL);
         if(sceKernelStartThread(mainThreadID, 0, NULL) < 0)
         {
             sceKernelDeleteThread(mainThreadID);
@@ -155,7 +134,12 @@ extern "C"
         }
 
 #ifdef _DEBUG
-        sceKernelStartThread(sceKernelCreateThread("test_widget_thread", testWidgetThread, 250, SCE_KERNEL_128KiB, 0, 0, NULL), 0, NULL);
+        SceUID testThreadID = sceKernelCreateThread("test_widget_thread", testWidgetThread, 250, SCE_KERNEL_128KiB, 0, 0, NULL);
+        if(sceKernelStartThread(testThreadID, 0, NULL) < 0)
+        {
+            sceKernelDeleteThread(testThreadID);
+            print("Error loading test widget thread: 0x%X\n", testWidgetThread);
+        }
 #endif
 
         return SCE_KERNEL_START_SUCCESS;
@@ -163,10 +147,38 @@ extern "C"
 
     int module_stop()
     {
-        if(mainThreadID > 0)
+        common::Utils::RemoveMainThreadTask(ImposeCheck, NULL);
+
+        if(widgetsDisplayed()) //Hide our current widgets, and free textures...
         {
-            mainEnd = true;
-            sceKernelWaitThreadEnd(mainThreadID, NULL, NULL);
+            graphics::Texture transparentTexture; // Placeholder tex, to replace older widgets
+            Resource::Element searchParam;
+            searchParam.hash = Utils::GetHashById("_common_texture_check_mark");
+            Plugin::LoadTexture(&transparentTexture, Plugin::Find("__system__common_resource"), &searchParam);
+
+            Widget *w;
+            node *n = currentWidgets.head;
+
+            //Unassign textures    
+            while(n != NULL)
+            {
+                w = (Widget *)n->widget.widget;
+
+                w->PlayAnimationReverse(0, Widget::Animation_Reset);
+                w->SetTexture(&transparentTexture, 0); //Replace textures so they are unused
+                w->SetTextureBase(&transparentTexture);
+
+                n = n->next;
+            }
+
+            //Delete Textures
+            texNode *tn = currTextures.head;
+            while(tn != NULL)
+            {
+                Utils::DeleteTexture(tn->texture, true);
+                tn->texture = SCE_NULL;
+                tn = tn->next;
+            }
         }
 
         return SCE_KERNEL_STOP_SUCCESS;

@@ -140,8 +140,7 @@ int summon(widgetData *data)
     Utils::SetWidgetSize(w, &data->size); print("Assigned Size\n");
     Utils::SetWidgetLabel(data->label, w); print("Assigned Label\n");
 
-    //Assigning handlers here
-
+    //Assigning user handlers here
     QMR::AssignHandlersToWidget(w, data); print("Assigned Handlers\n");
 
     //Assigning textures here
