@@ -76,10 +76,6 @@ int load_thread(SceSize, void*)
         sce_paf_snprintf(dir, 20, PLUGINS_DIR2);
     }
 
-    SceUID id = -1;
-
-    sceAppMgrGetIdByName(&id, "NPXS19999");
-
     SceIoDirent de;
     SceUID d = sceIoDopen(dir);
 
@@ -93,7 +89,7 @@ int load_thread(SceSize, void*)
             {
                 char buff[0x400] = {0};
                 sce_paf_snprintf(buff, 0x400, "%s/%s", dir, de.d_name);
-                taiLoadStartModuleForPid(id, buff, 0, NULL, 0);
+                sceKernelLoadStartModule(buff, 0, NULL, 0, NULL, NULL);
                 print("Loading module at %s\n", buff);
             }
         }

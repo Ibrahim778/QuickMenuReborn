@@ -59,7 +59,6 @@ target_link_libraries(${PROJECT_NAME}
     SceAppMgrUser_stub
     SceRegMgr_stub
     SceDisplay_stub
-    taihenUnsafe_stub
 	ScePafStdc_stub_weak
     ScePafThread_stub_weak
     ScePafTopLevel_stub_weak
