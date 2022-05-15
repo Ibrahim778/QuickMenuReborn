@@ -68,9 +68,8 @@ typedef struct
 
     int useHash;
 
-    char type[256];
+    char type[32];
 } advancedData;
-
 
 typedef struct
 {

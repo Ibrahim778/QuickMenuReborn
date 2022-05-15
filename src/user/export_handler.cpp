@@ -308,3 +308,52 @@ int QuickMenuRebornCloseMenu()
     if(widgetsDisplayed())
         exitButton->SendEvent(Widget::EventMain::EventMain_Decide, 0);
 }
+
+widgetData *QuickMenuRebornRegisterWidgetFromStyle(const char *id, const char *parentId, const char *type, const char *style)
+{
+    widgetData dat;
+    sce_paf_memset(&dat, 0, sizeof(dat));
+
+    sce_paf_strncpy(dat.refId, id, sizeof(dat.refId));
+
+    if(parentId != NULL)
+        sce_paf_strncpy(dat.parentRefId, parentId, sizeof(dat.parentRefId));
+    
+    dat.hasParent = parentId != NULL;
+
+    dat.isAdvanced = true;
+
+    sce_paf_memset(dat.advancedData.type, 0, sizeof(dat.advancedData.type));
+    sce_paf_strncpy(dat.advancedData.type, type, sizeof(dat.advancedData.type));
+    
+    sce_paf_memset(dat.advancedData.StyleInfo.styleID, 0, sizeof(dat.advancedData.StyleInfo));
+    sce_paf_strncpy(dat.advancedData.StyleInfo.styleID, style, sizeof(dat.advancedData.StyleInfo));
+
+    dat.advancedData.useHash = false;
+
+    return QMR::RegisterWidget(&dat);
+}
+
+widgetData *QuickMenuRebornRegisterWidgetFromStyleHash(const char *id, const char *parentId, const char *type, int style)
+{
+    widgetData dat;
+    sce_paf_memset(&dat, 0, sizeof(dat));
+
+    sce_paf_strncpy(dat.refId, id, sizeof(dat.refId));
+
+    if(parentId != NULL)
+        sce_paf_strncpy(dat.parentRefId, parentId, sizeof(dat.parentRefId));
+    
+    dat.hasParent = parentId != NULL;
+
+    dat.isAdvanced = true;
+
+    sce_paf_memset(dat.advancedData.type, 0, sizeof(dat.advancedData.type));
+    sce_paf_strncpy(dat.advancedData.type, type, sizeof(dat.advancedData.type));
+    
+    dat.advancedData.StyleInfo.hash = style;
+
+    dat.advancedData.useHash = true;
+
+    return QMR::RegisterWidget(&dat);
+}

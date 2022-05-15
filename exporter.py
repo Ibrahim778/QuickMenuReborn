@@ -35,7 +35,9 @@ functionNames=[
         "QuickMenuRebornUnregisterTexture",
         "QuickMenuRebornSetWidgetTexture",
         "QuickMenuRebornSetWidgetTextureBase",
-        "QuickMenuRebornCloseMenu"
+        "QuickMenuRebornCloseMenu",
+        "QuickMenuRebornRegisterWidgetFromStyle",
+        "QuickMenuRebornRegisterWidgetFromStyleHash"
 ]
 
 def getHash(string):
