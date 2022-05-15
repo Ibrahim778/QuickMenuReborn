@@ -50,7 +50,7 @@ widgetColor QuickMenuRebornMakeWidgetColor(float r, float g, float b, float a);
 
 widgetData *QuickMenuRebornRegisterWidget(const char *id, const char *parentId, QMRWidgetType type);
 widgetData *QuickMenuRebornRegisterWidgetFromStyle(const char *id, const char *parentId, const char *type, const char *style);
-widgetData *QuickMenuRebornRegisterWidgetFromStyleHash(const char *id, const char *parentId, const char *type, const char *style);
+widgetData *QuickMenuRebornRegisterWidgetFromStyleHash(const char *id, const char *parentId, const char *type, int style);
 int QuickMenuRebornRegisterWidgetFromData(widgetData *widgetInfo);
 int QuickMenuRebornUnregisterWidget(const char *id);
 int QuickMenuRebornRegisterEventHanlder(const char *widgetID, SceInt32 EventID, ECallback Fucntion, void *userDat);
