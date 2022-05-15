@@ -24,10 +24,10 @@ set(CMAKE_C_STANDARD 99)
 set(CMAKE_CXX_STANDARD 11)
 enable_language(EMD)
 
-# ONLY COMPILE MAIN PLUGIN WITH -O0 or -O1
 add_compile_options(
-    -D_SCE_TARGET_OS_PSP2=1 -Xdiag=0 -Xquit=2 -O0
+    -D_SCE_TARGET_OS_PSP2=1 -Xdiag=0 -Xquit=2
 )
+
 add_link_options(
   --prx-no-runtime-support
 )
@@ -46,9 +46,9 @@ link_directories(
 
 add_library(${PROJECT_NAME} MODULE
     ${user_cppfiles}
-    ${qm_reborn_includes}
-    ${user_hfiles}
     ${user_cfiles}
+    ${user_hfiles}
+    ${qm_reborn_includes}
     QuickMenuReborn.emd
 )
 
