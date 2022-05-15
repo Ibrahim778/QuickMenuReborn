@@ -207,17 +207,12 @@ SceVoid QMR::AssignTextureToWidget(Widget *w, const char *refID)
     {
         if(n->texture == NULL)
         {
-            int ret = Utils::CreateTextureFromFile(&n->texture, n->texturePath.data);
-            if(ret < 0)
+            bool ret = Utils::CreateTextureFromFile(&n->texture, n->texturePath.data);
+            if(!ret)
             {
                 print("[Error] Cannot Create Texture! Utils::CreateTextureFromFile() -> 0x%X\n", ret);
                 delete n->texture;
                 n->texture = SCE_NULL;
-                return;
-            }
-            else
-            {
-                print("[Error] Cannot allocate memory for graphics::Texture()!\n");
                 return;
             }
         }
@@ -234,17 +229,12 @@ SceVoid QMR::AssignTextureBaseToWidget(Widget *w, const char *refID)
     {
         if(n->texture == NULL)
         {
-            int ret = Utils::CreateTextureFromFile(&n->texture, n->texturePath.data);
-            if(ret < 0)
+            bool ret = Utils::CreateTextureFromFile(&n->texture, n->texturePath.data);
+            if(!ret)
             {
                 print("[Error] Cannot Create Texture! Utils::CreateTextureFromFile() -> 0x%X\n", ret);
                 delete n->texture;
                 n->texture = SCE_NULL;
-                return;
-            }
-            else
-            {
-                print("[Error] Cannot allocate memory for graphics::Texture()!\n");
                 return;
             }
         }
