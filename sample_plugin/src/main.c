@@ -4,7 +4,6 @@
 
 #include <stdlib.h>
 #include <kernel.h>
-#include <kernel/libkernel.h>
 #include <libdbg.h>
 #include <ctrl.h>
 #include <quickmenureborn/qm_reborn.h>

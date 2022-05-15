@@ -120,8 +120,8 @@ SceInt32 Utils::SetWidgetLabel(const char *label, Widget *w)
 
     if(label == NULL || label[0] == '\0' || sce_paf_strlen(label) == 0) return;
 
-    WString wstr;
-    WString::CharToNewWString(label, &wstr);
+    wstring wstr;
+    wstring::CharToNewWString(label, &wstr);
 
     w->SetLabel(&wstr);
 }
@@ -137,38 +137,33 @@ SceFVector4 Utils::MakeSceVector4(vector4 *vect)
     return toret;
 }
 
-SceVoid Utils::DeleteTexture(graphics::Texture *tex, bool deletePointer)
+SceVoid Utils::DeleteTexture(graphics::Surface **tex)
 {
     if(tex != NULL)
     {
-        if(tex->texSurface != NULL)
+        if(*tex != NULL)
         {
-            graphics::Surface *s = tex->texSurface;
-            tex->texSurface = SCE_NULL;
+            graphics::Surface *s = *tex;
+            *tex = SCE_NULL;
             delete s;
         }
-        if(deletePointer)
-            delete tex;
     }
 }
 
-SceInt32 Utils::CreateTextureFromFile(graphics::Texture *tex, const char *file)
+SceBool Utils::CreateTextureFromFile(graphics::Surface **tex, const char *file)
 {
     if(tex == NULL) return SCE_FALSE;
 
-    ObjectWithCleanup openResult;
+    paf::shared_ptr<LocalFile> openResult;
     SceInt32 err;
     LocalFile::Open(&openResult, file, SCE_O_RDONLY, 0666, &err);
 
     if(err < 0)
-        return err;
+        return SCE_FALSE;
 
-    graphics::Texture::CreateFromFile(tex, QuickMenuRebornPlugin->memoryPool, &openResult);
+    graphics::Surface::CreateFromFile(tex, QuickMenuRebornPlugin->memoryPool, &openResult);
 
-    openResult.cleanup->cb(openResult.object);
-    delete openResult.cleanup;
-
-    return tex->texSurface != NULL ? 0 : -1;
+    return *tex != NULL;
 }
 
 SceFVector4 Utils::MakeSceVector4(vector4 vect)

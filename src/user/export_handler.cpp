@@ -122,9 +122,9 @@ int QuickMenuRebornSetWidgetLabel(const char *refID, const char *label)
 
     if(widgetsDisplayed())
     {
-        WString wstr;
+        wstring wstr;
         
-        WString::CharToNewWString(label, &wstr);
+        wstring::CharToNewWString(label, &wstr);
         
         ((Widget *)data->widget)->SetLabel(&wstr);
     }

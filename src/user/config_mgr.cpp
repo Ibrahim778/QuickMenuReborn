@@ -42,6 +42,7 @@ int preSetup()
 	{
 		sceIoMkdir(CONFIG_SAVE_DIR, 0777);
 		sceIoMkdir(CHECKBOX_SAVE_DIR, 0777);
+        sceIoMkdir(SLIDEBAR_SAVE_DIR, 0777);
 	}
 	else if(!checkFileExist(CHECKBOX_SAVE_DIR))
 		sceIoMkdir(CHECKBOX_SAVE_DIR, 0777);

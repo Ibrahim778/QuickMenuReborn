@@ -191,20 +191,11 @@ void TexList::RemoveNode(const char *refID)
 
         pCurrentNodeNext = &(*pCurrentNodeNext)->next;
     };
+
     texNode *nodeToDelete = *pCurrentNodeNext;
     *pCurrentNodeNext = (*pCurrentNodeNext)->next;
 
-    if(nodeToDelete->texture != NULL)
-    {
-        if(nodeToDelete->texture->texSurface != NULL)
-        {
-            graphics::Surface *s = nodeToDelete->texture->texSurface;
-            nodeToDelete->texture->texSurface = NULL;
-            delete s;
-        }
-
-        delete nodeToDelete->texture;
-    }
+    Utils::DeleteTexture(&nodeToDelete->texture);
 
     sce_paf_free(nodeToDelete);   
 }

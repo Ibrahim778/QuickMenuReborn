@@ -10,7 +10,6 @@
 
 extern "C" bool widgetsDisplayed();
 extern "C" bool checkFileExist(const char *id);
-extern "C" void dummyprint(const char *fmt, ...);
 
 namespace Utils
 {
@@ -30,8 +29,8 @@ namespace Utils
     SceVoid SetWidgetColor(Widget *w, float r, float g, float b, float a);
     SceVoid SetWidgetPosition(Widget *wi, float x, float y, float z, float w);
     SceVoid SetWidgetSize(Widget *wi, float x, float y, float z, float w);
-    SceBool CreateTextureFromFile(graphics::Texture *tex, const char *file);
-    SceVoid DeleteTexture(graphics::Texture *tex, bool deletePointer);
+    SceBool CreateTextureFromFile(graphics::Surface **tex, const char *file);
+    SceVoid DeleteTexture(graphics::Surface **tex);
 };
 
 #endif

@@ -37,7 +37,7 @@ SceVoid CheckMenuCloseTask(ScePVoid dat)
 {
     if(Utils::FindWidget(0xC0099932) == NULL) //Check if exit button has been deleted
     {
-        OnQuickMenuClose(0, NULL, 0, NULL);
+        OnQuickMenuClose();
         common::Utils::RemoveMainThreadTask(CheckMenuCloseTask, NULL);
         addedTask = false;
         return;
@@ -45,14 +45,14 @@ SceVoid CheckMenuCloseTask(ScePVoid dat)
 
 }
 
-SceVoid OnQuickMenuClose(SceInt32 eventId, Widget *self, SceInt32, ScePVoid puserData)
+SceVoid OnQuickMenuClose()
 {
     print("Quick Menu has closed!\n");
 
     texNode *n = currTextures.head;
     while(n != NULL)
     {
-        Utils::DeleteTexture(n->texture, true);
+        Utils::DeleteTexture(&n->texture);
         n->texture = SCE_NULL;
         n = n->next;
     }
@@ -60,9 +60,6 @@ SceVoid OnQuickMenuClose(SceInt32 eventId, Widget *self, SceInt32, ScePVoid puse
 
 SceVoid onPluginReady(Plugin *plugin)
 {
-    if(plugin == SCE_NULL) print("Error Loading Plugin!\n");
-    else print("Loaded Plugin Successfully!\n");
-
     QuickMenuRebornPlugin = plugin;
 }
 
@@ -79,6 +76,8 @@ int initWidgets()
         piParam.pluginStartCB = onPluginReady;
 
         paf::Framework::LoadPlugin(&piParam);
+        
+        if(QuickMenuRebornPlugin == NULL) return -1;
     }
 
     //Credit to GrapheneCt
@@ -208,17 +207,13 @@ SceVoid QMR::AssignTextureToWidget(Widget *w, const char *refID)
     {
         if(n->texture == NULL)
         {
-            n->texture = new graphics::Texture();
-            if(n->texture != NULL)
+            int ret = Utils::CreateTextureFromFile(&n->texture, n->texturePath.data);
+            if(ret < 0)
             {
-                int ret = Utils::CreateTextureFromFile(n->texture, n->texturePath.data);
-                if(ret < 0)
-                {
-                    print("[Error] Cannot Create Texture! Utils::CreateTextureFromFile() -> 0x%X\n", ret);
-                    delete n->texture;
-                    n->texture = SCE_NULL;
-                    return;
-                }
+                print("[Error] Cannot Create Texture! Utils::CreateTextureFromFile() -> 0x%X\n", ret);
+                delete n->texture;
+                n->texture = SCE_NULL;
+                return;
             }
             else
             {
@@ -227,7 +222,7 @@ SceVoid QMR::AssignTextureToWidget(Widget *w, const char *refID)
             }
         }
 
-        w->SetTexture(n->texture, 0, 0);
+        w->SetTexture(&n->texture, 0, 0);
     }
     else print("[Error] Texture: %s is not registered!\n", refID);
 }
@@ -239,16 +234,13 @@ SceVoid QMR::AssignTextureBaseToWidget(Widget *w, const char *refID)
     {
         if(n->texture == NULL)
         {
-            n->texture = new graphics::Texture();
-            if(n->texture != NULL)
+            int ret = Utils::CreateTextureFromFile(&n->texture, n->texturePath.data);
+            if(ret < 0)
             {
-                int ret = Utils::CreateTextureFromFile(n->texture, n->texturePath.data);
-                if(ret < 0)
-                {
-                    print("[Error] Cannot Create Texture! Utils::CreateTextureFromFile() -> 0x%X\n", ret);
-                    delete n->texture;
-                    return;
-                }
+                print("[Error] Cannot Create Texture! Utils::CreateTextureFromFile() -> 0x%X\n", ret);
+                delete n->texture;
+                n->texture = SCE_NULL;
+                return;
             }
             else
             {
@@ -257,7 +249,7 @@ SceVoid QMR::AssignTextureBaseToWidget(Widget *w, const char *refID)
             }
         }
 
-        w->SetTextureBase(n->texture);
+        w->SetTextureBase(&n->texture);
     }
     else print("[Error] Texture: %s is not registered!\n", refID);
 }

@@ -57,7 +57,7 @@ int impose_thread(SceSize, void *)
 int load_thread(SceSize, void*)
 {
     //Delay a bit, to let everything load
-    sceKernelDelayThread(5 * 1000000);
+    sceKernelDelayThread(5 * 1000 * 1000);
 
     char dir[20] = {0};
     
@@ -93,7 +93,7 @@ int load_thread(SceSize, void*)
                 print("Loading module at %s\n", buff);
             }
         }
-    }while(entries > 0);
+    } while(entries > 0);
     sceIoDclose(d);
     return sceKernelExitDeleteThread(0);
 }
@@ -147,9 +147,9 @@ extern "C"
 
         if(widgetsDisplayed()) //Hide our current widgets, and free textures...
         {
-            graphics::Texture transparentTexture; // Placeholder tex, to replace older widgets
+            graphics::Surface *transparentTexture; // Placeholder tex, to replace older widgets
             Resource::Element searchParam;
-            searchParam.hash = Utils::GetHashById("_common_texture_check_mark");
+            searchParam.hash = Utils::GetHashById("_common_texture_transparent");
             Plugin::LoadTexture(&transparentTexture, Plugin::Find("__system__common_resource"), &searchParam);
 
             Widget *w;
@@ -171,7 +171,7 @@ extern "C"
             texNode *tn = currTextures.head;
             while(tn != NULL)
             {
-                Utils::DeleteTexture(tn->texture, true);
+                Utils::DeleteTexture(&tn->texture);
                 tn->texture = SCE_NULL;
                 tn = tn->next;
             }

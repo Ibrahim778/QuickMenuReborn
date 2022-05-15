@@ -95,6 +95,7 @@ typedef struct
     SceInt32 CallbackNum;
 
     VoidCallback OnLoad;
+    VoidCallback OnDelete;
 
     //Meant for internal use only!
     VoidCallback OnSave;

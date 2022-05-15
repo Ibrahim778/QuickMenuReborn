@@ -10,7 +10,7 @@ using namespace ui;
 int initWidgets();
 int displayWidgets();
 
-SceVoid OnQuickMenuClose(SceInt32 eventId, Widget *self, SceInt32, ScePVoid puserData);
+SceVoid OnQuickMenuClose();
 
 #define TYPE_NEEDS_HANDLER(type) (type == button || type == slidebar || type == progressbar_touch || type == check_box)
 

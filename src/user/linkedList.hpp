@@ -22,10 +22,10 @@ public:
 
 struct texNode
 {
-    paf::String refID;
-    paf::String texturePath;
+    paf::string refID;
+    paf::string texturePath;
 
-    graphics::Texture *texture;
+    graphics::Surface *texture;
 
     texNode *next;
 };

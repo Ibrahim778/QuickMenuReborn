@@ -24,7 +24,7 @@ int sceClibPrintf(const char * fmt, ...);
 #ifdef _DEBUG
 #define print sceClibPrintf
 #else
-#define print dummyprint
+#define print (void)NULL;
 #endif
 
 #endif
