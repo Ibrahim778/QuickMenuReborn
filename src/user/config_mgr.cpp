@@ -24,7 +24,7 @@ int writeIntToFile(const char *path, int val)
 	SceUID file = sceIoOpen(path, SCE_O_WRONLY | SCE_O_CREAT | SCE_O_TRUNC, 0777);
 	int ret = sceIoWrite(file, &val, sizeof(val));
 	sceIoClose(file);
-	return ret == sizeof(int) ? CONFIG_MGR_OK : CONFIG_MGR_ERROR_COULD_NOT_WRITE_FULL;
+	return ret == sizeof(int) ? QMR_CONFIG_MGR_OK : QMR_CONFIG_MGR_ERROR_COULD_NOT_WRITE_FULL;
 }
 
 int writeFloatToFile(const char *path, float val)
@@ -32,7 +32,7 @@ int writeFloatToFile(const char *path, float val)
 	SceUID file = sceIoOpen(path, SCE_O_WRONLY | SCE_O_CREAT | SCE_O_TRUNC, 0777);
 	int ret = sceIoWrite(file, &val, sizeof(val));
 	sceIoClose(file);
-	return ret == sizeof(float) ? CONFIG_MGR_OK : CONFIG_MGR_ERROR_COULD_NOT_WRITE_FULL;
+	return ret == sizeof(float) ? QMR_CONFIG_MGR_OK : QMR_CONFIG_MGR_ERROR_COULD_NOT_WRITE_FULL;
 }
 
 int preSetup()
@@ -61,7 +61,7 @@ int readCheckBoxState(const char *refID)
 
 	sce_paf_snprintf(key, 0x400, CHECKBOX_SAVE_DIR "%s", refID);
 
-	if(!checkFileExist(key)) return CONFIG_MGR_ERROR_NOT_EXIST;
+	if(!checkFileExist(key)) return  QMR_CONFIG_MGR_ERROR_NOT_EXIST;
 
 	ret = readIntFromFile(key);
 
@@ -70,7 +70,7 @@ int readCheckBoxState(const char *refID)
 
 int saveCheckBoxState(const char *refID, int val)
 {
-	int ret = CONFIG_MGR_OK;
+	int ret = QMR_CONFIG_MGR_OK;
 	if(ret = preSetup(), ret < 0) return ret;
 
 	char key[0x400] = {0};
@@ -83,7 +83,7 @@ int saveCheckBoxState(const char *refID, int val)
 
 int saveSlidebarState(const char *refId, SceFloat32 val)
 {
-	int ret = CONFIG_MGR_OK;
+	int ret = QMR_CONFIG_MGR_OK;
 	if(ret = preSetup(), ret < 0)
     {
         print("preSetup() Failed!\n");
@@ -106,7 +106,7 @@ SceFloat32 getSlidebarValue(const char *refID)
 
 	sce_paf_snprintf(key, 0x400, SLIDEBAR_SAVE_DIR "%s", refID);
 
-	if(!checkFileExist(key)) return CONFIG_MGR_ERROR_NOT_EXIST;
+	if(!checkFileExist(key)) return  QMR_CONFIG_MGR_ERROR_NOT_EXIST;
 
 	return readFloatFromFile(key);
 }

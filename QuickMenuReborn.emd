@@ -39,3 +39,4 @@ Library: QuickMenuReborn function: QuickMenuRebornSetWidgetTextureBase nidvalue:
 Library: QuickMenuReborn function: QuickMenuRebornCloseMenu nidvalue: 0xCD66AED8
 Library: QuickMenuReborn function: QuickMenuRebornRegisterWidgetFromStyle nidvalue: 0xC236CE22
 Library: QuickMenuReborn function: QuickMenuRebornRegisterWidgetFromStyleHash nidvalue: 0x7538EB34
+Library: QuickMenuReborn function: QuickMenuRebornAssignOnDeleteHandler nidvalue: 0x3F667364

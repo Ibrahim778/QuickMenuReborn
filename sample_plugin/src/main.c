@@ -75,7 +75,7 @@ int module_start()
 
     //Get our checkboxes saved state
     int ret = QuickMenuRebornGetCheckboxValue(CHECKBOX_REF_ID);
-    resetOnExit = ret == CONFIG_MGR_ERROR_NOT_EXIST ? false : ret;
+    resetOnExit = ret == QMR_CONFIG_MGR_ERROR_NOT_EXIST ? false : ret;
 
     QuickMenuRebornRegisterWidget(TEXT_ID, NULL, text);
     QuickMenuRebornSetWidgetSize(TEXT_ID, SCE_PLANE_WIDTH, 50, 0, 0);

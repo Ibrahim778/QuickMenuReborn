@@ -36,3 +36,4 @@ modules:
           QuickMenuRebornCloseMenu: 0xCD66AED8
           QuickMenuRebornRegisterWidgetFromStyle: 0xC236CE22
           QuickMenuRebornRegisterWidgetFromStyleHash: 0x7538EB34
+          QuickMenuRebornAssignOnDeleteHandler: 0x3F667364

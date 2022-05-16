@@ -29,6 +29,7 @@ const char *widgetTemplateID[] = //THESE ARE IN ORDER TO MATCH WITH THE ENUM
     PLANE_TEMPLATE_ID,
     SLIDEBAR_TEMPLATE_ID,
     PROGRESSBAR_TOUCH_TEMPLATE_ID,
+    BUSYINDICATOR_TEMPLATE_ID
 };
 
 static bool addedTask = false;
@@ -55,6 +56,15 @@ SceVoid OnQuickMenuClose()
         Utils::DeleteTexture(&n->texture);
         n->texture = SCE_NULL;
         n = n->next;
+    }
+
+
+    node *widget = currentWidgets.head;
+    while(widget != NULL)
+    {
+        if(widget->widget.OnDelete != NULL)
+            widget->widget.OnDelete(widget->widget.refId);
+        widget = widget->next;
     }
 }
 

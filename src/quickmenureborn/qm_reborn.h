@@ -30,9 +30,9 @@
 //Height of SCE separator planes
 #define SCE_SEPARATOR_HEIGHT 20.0f
 
-#define CONFIG_MGR_ERROR_NOT_EXIST -1
-#define CONFIG_MGR_ERROR_COULD_NOT_WRITE_FULL -2
-#define CONFIG_MGR_OK 0
+#define QMR_CONFIG_MGR_ERROR_NOT_EXIST -1
+#define QMR_CONFIG_MGR_ERROR_COULD_NOT_WRITE_FULL -2
+#define QMR_CONFIG_MGR_OK 0
 
 #define QMR_BUTTON_RELEASE_ID 0x10000008
 #define QMR_BUTTON_PRESS_ID 0x10000003
@@ -69,6 +69,7 @@ int QuickMenuRebornGetCheckboxValue(const char *refID);
 int QuickMenuRebornAssignRecallHandler(VoidCallback callback, const char *refID);
 int QuickMenuRebornAssignSaveHandler(VoidCallback callback, const char *refID);
 int QuickMenuRebornAssignOnLoadHandler(VoidCallback callback, const char *refID);
+int QuickMenuRebornAssignOnDeleteHandler(VoidCallback callback, const char *refID);
 
 int QuickMenuRebornAssignDefaultCheckBoxSave(const char *refID);
 int QuickMenuRebornAssignDefaultCheckBoxRecall(const char *refID);
@@ -89,6 +90,9 @@ int QuickMenuRebornSetWidgetTexture(const char *refID, const char *textureID);
 int QuickMenuRebornSetWidgetTextureBase(const char *refID, const char *textureID);
 
 int QuickMenuRebornCloseMenu();
+
+int QuickMenuRebornStartBusyIndicator(const char *refID);
+int QuickMenuRebornStopBusyIndicator(const char *refID);
 
 #ifdef __cplusplus
 }

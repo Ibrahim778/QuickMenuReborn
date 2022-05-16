@@ -30,7 +30,7 @@
             <progressbar_touch style="slidebar_style" id="qmr_slidebar" />
         </template>
         
-        <template fast_open="1" id="busyindicator_template">
+        <template fast_open="1" id="qmr_busyindicator_template">
             <busyindicator id="qmr_busyindicator" style="base_style_busyindicator" texture="_common_texture_busy" />
         </template>
 

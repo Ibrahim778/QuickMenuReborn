@@ -27,7 +27,7 @@ void defaultCheckBoxRecall(const char *refID)
     if(data == NULL) return;
 
     int state = readCheckBoxState(refID);
-    if(state == CONFIG_MGR_ERROR_NOT_EXIST) return;
+    if(state == QMR_CONFIG_MGR_ERROR_NOT_EXIST) return;
 
     ((CheckBox *)data->widget)->SetChecked(0, state, 0);
 }
@@ -38,7 +38,7 @@ void defaultSliderRecall(const char *refID)
     if(data == NULL) return;
 
     SceFloat32 state = getSlidebarValue(refID);
-    if(state == CONFIG_MGR_ERROR_NOT_EXIST) return;
+    if(state ==  QMR_CONFIG_MGR_ERROR_NOT_EXIST) return;
 
     ((ProgressBarTouch *)data->widget)->SetProgress(state, 0, 0);
 }

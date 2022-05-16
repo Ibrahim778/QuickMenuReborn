@@ -31,6 +31,7 @@ typedef enum
     plane,
     slidebar,
     progressbar_touch,
+    busyindicator,
 } QMRWidgetType;
 
 typedef enum

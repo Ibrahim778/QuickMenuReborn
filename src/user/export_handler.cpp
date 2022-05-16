@@ -202,7 +202,7 @@ int QuickMenuRebornRemoveSeparator(const char *id)
 
     sce_paf_snprintf(rID, sizeof(rID), "qmr_sep_%s_internal", id);
 
-    QMR::UnregisterWidget(rID);
+    return QMR::UnregisterWidget(rID);
 
 }
 
@@ -274,7 +274,7 @@ int QuickMenuRebornSetSlidebarValue(const char *refID, float val)
 
 int QuickMenuRebornSaveSlidebarValue(const char *refID, float val)
 {
-    saveSlidebarState(refID, val);
+    return saveSlidebarState(refID, val);
 }
 
 int QuickMenuRebornSetCheckBoxState(const char *refID, int state)
@@ -356,4 +356,36 @@ widgetData *QuickMenuRebornRegisterWidgetFromStyleHash(const char *id, const cha
     dat.advancedData.useHash = true;
 
     return QMR::RegisterWidget(&dat);
+}
+
+int QuickMenuRebornAssignOnDeleteHandler(VoidCallback callback, const char *refID)
+{
+    widgetData *data = currentWidgets.GetNode(refID);
+    
+    if(data == NULL)
+        return -1;
+
+    data->OnDelete = callback;
+}
+
+int QuickMenuRebornStartBusyIndicator(const char *refID)
+{
+    widgetData *data = currentWidgets.GetNode(refID);
+    
+    if(data == NULL)
+        return -1;
+
+    ((BusyIndicator *)data->widget)->Start();
+    return 0;
+}
+
+int QuickMenuRebornStopBusyIndicator(const char *refID)
+{
+    widgetData *data = currentWidgets.GetNode(refID);
+    
+    if(data == NULL)
+        return -1;
+
+    ((BusyIndicator *)data->widget)->Stop();
+    return 0;
 }

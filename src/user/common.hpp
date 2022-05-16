@@ -24,5 +24,6 @@ extern bool displayed;
 #define PLANE_TEMPLATE_ID "qmr_plane_template"
 #define SLIDEBAR_TEMPLATE_ID "qmr_slidebar_template"
 #define PROGRESSBAR_TOUCH_TEMPLATE_ID "qmr_progressbar_touch_template"
+#define BUSYINDICATOR_TEMPLATE_ID "qmr_busyindicator_template"
 
 #endif
